@@ -78,3 +78,10 @@ Last Updated: 2026-06-06
 - Decision: Add recursive low-confidence handling with bounded depth and emit CompletionFailed events; for irreducible uncertainty also emit TrainingRequired and ToolsExtension; for budget depletion emit CompletionFailed with reason_code BudgetExhausted.
 - Rationale: User requested realistic failing/improving branches, recursion abort behavior, and explicit budget-exhausted semantics.
 - Consequence: Summary contains structured fallback_events and protocol-compliant tool invocations for both uncertainty and budget failure classes.
+
+## ADR-012: Adaptive Confidence Gate for Improving Mode
+
+- Date: 2026-06-06
+- Decision: In improving mode, apply an adaptive confidence threshold and permit bounded low-confidence execution attempts when recursion depth is exhausted.
+- Rationale: Fixed a lockup where Expert threshold forced all episodes into irreducible fallback, preventing any learning signal and making improving/stuck behavior indistinguishable.
+- Consequence: Improving mode now progresses through execution/reward updates and shows fewer fallbacks than stuck mode under the same episode count.

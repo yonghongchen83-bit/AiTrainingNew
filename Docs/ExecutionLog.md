@@ -179,3 +179,21 @@ Last Updated: 2026-06-06
 - Command: git add runtime/docs/artifacts; git commit -m "milestone: openai protocol fallback and alias trigger semantics"
 - Status: Success
 - Commit: fd60c84
+
+## Run 019
+
+- Command: python main.py --episodes 120 --simulation-mode improving --out run_summary_improving.json
+- Status: Success
+- Output Artifact: run_summary_improving.json
+
+## Run 020
+
+- Command: python main.py --episodes 120 --simulation-mode stuck --out run_summary_stuck.json
+- Status: Success
+- Output Artifact: run_summary_stuck.json
+
+### Regression Check Result
+
+- improving: fallback_events=9, tool_invocations=27, total_reward=-124.163, calibration_error=0.4545
+- stuck: fallback_events=120, tool_invocations=360, total_reward=-120.0, calibration_error=0.3026
+- conclusion: improving and stuck behavior is now clearly separated as intended.

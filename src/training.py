@@ -161,6 +161,15 @@ class ClosedLoopTrainer:
                     break
 
                 if recursion_depth >= self.config.max_recursion_depth or env.budget * 0.8 <= 0:
+                    # improving 分支允许在中等置信度下继续尝试，避免全量退化为失败回退。
+                    min_attempt_conf = max(0.35, threshold - 0.25)
+                    can_attempt = (
+                        self.config.simulation_mode == SimulationMode.IMPROVING
+                        and out.confidence >= min_attempt_conf
+                    )
+                    if can_attempt:
+                        break
+
                     self._register_fallback(
                         stage=stage.name,
                         task=problem.question,
@@ -325,10 +334,18 @@ class ClosedLoopTrainer:
 
     def _threshold(self, mode: Mode) -> float:
         if mode == Mode.CHAT:
-            return 0.4
-        if mode == Mode.EXPERT:
-            return 0.8
-        return 0.9
+            base = 0.4
+        elif mode == Mode.EXPERT:
+            base = 0.8
+        else:
+            base = 0.9
+
+        if self.config.simulation_mode == SimulationMode.IMPROVING:
+            # 改善模式需要可学习入口：初期降低门槛，随 skill 提升逐步恢复严格性。
+            adaptive = base - (0.25 - 0.15 * self.agent.skill)
+            return max(0.4, min(base, adaptive))
+
+        return base
 
     def _emit_tool_call(self, name: str, arguments: dict[str, Any]) -> None:
         call = OpenAIToolCall(

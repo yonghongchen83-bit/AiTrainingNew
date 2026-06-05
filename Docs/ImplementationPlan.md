@@ -42,6 +42,8 @@ Last Updated: 2026-06-06
 - [x] P5-06 Add runtime CLI controls (mode, recursion depth, stage initial budget)
 - [x] P5-07 Validate improving/stuck/budget scenarios and collect artifacts
 - [x] GIT-08 Commit protocol + fallback milestone
+- [x] P5-08 Fix fallback lockup so improving diverges from stuck
+- [x] GIT-09 Commit fallback divergence regression fix
 
 ## Runtime Entry Points
 

@@ -1353,7 +1353,7 @@
   ],
   "tool_invocations": [
     {
-      "id": "call_d382a4f74923",
+      "id": "call_5081289b5698",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1361,7 +1361,7 @@
       }
     },
     {
-      "id": "call_dfca3a4d8de8",
+      "id": "call_572e8f50fd9c",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1369,7 +1369,7 @@
       }
     },
     {
-      "id": "call_8a02a9b0c2aa",
+      "id": "call_fbbaa02ffb07",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1377,7 +1377,7 @@
       }
     },
     {
-      "id": "call_a9a4c6f17f74",
+      "id": "call_36b3a53bde7b",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1385,7 +1385,7 @@
       }
     },
     {
-      "id": "call_12770fe8fb86",
+      "id": "call_eae4835603f5",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1393,7 +1393,7 @@
       }
     },
     {
-      "id": "call_cd528b16832b",
+      "id": "call_56115321393a",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1401,7 +1401,7 @@
       }
     },
     {
-      "id": "call_ce912dc1773b",
+      "id": "call_b1bf38ac0ed5",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1409,7 +1409,7 @@
       }
     },
     {
-      "id": "call_497539bb5324",
+      "id": "call_755d034e1344",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1417,7 +1417,7 @@
       }
     },
     {
-      "id": "call_c952eeaa87d9",
+      "id": "call_bf940a73bf5c",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1425,7 +1425,7 @@
       }
     },
     {
-      "id": "call_e0262dd10f70",
+      "id": "call_77629ac31b5b",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1433,7 +1433,7 @@
       }
     },
     {
-      "id": "call_49e87ad6f8bc",
+      "id": "call_39d89fc652ae",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1441,7 +1441,7 @@
       }
     },
     {
-      "id": "call_1d62a599bb7f",
+      "id": "call_3857017325f3",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1449,7 +1449,7 @@
       }
     },
     {
-      "id": "call_c2bc41e7dda1",
+      "id": "call_71de67a22852",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1457,7 +1457,7 @@
       }
     },
     {
-      "id": "call_1c94cd2d5206",
+      "id": "call_c1d12bb459ef",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1465,7 +1465,7 @@
       }
     },
     {
-      "id": "call_357958ac22ef",
+      "id": "call_d9d3c020f8ae",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1473,7 +1473,7 @@
       }
     },
     {
-      "id": "call_f17dc330ba7b",
+      "id": "call_08bdefa3abd3",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1481,7 +1481,7 @@
       }
     },
     {
-      "id": "call_06d847cebd75",
+      "id": "call_df4ae6bf95ab",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1489,7 +1489,7 @@
       }
     },
     {
-      "id": "call_b4e6eb48e5d8",
+      "id": "call_5bd069c856e8",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1497,7 +1497,7 @@
       }
     },
     {
-      "id": "call_2f7d08913503",
+      "id": "call_482d80e060a7",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1505,7 +1505,7 @@
       }
     },
     {
-      "id": "call_da8b247daed0",
+      "id": "call_83e7a93d959e",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1513,7 +1513,7 @@
       }
     },
     {
-      "id": "call_70fc08d2c4cf",
+      "id": "call_31e6f2d92d04",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1521,7 +1521,7 @@
       }
     },
     {
-      "id": "call_6bc9a8960437",
+      "id": "call_8ee443b2132e",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1529,7 +1529,7 @@
       }
     },
     {
-      "id": "call_1ca9e1c1930e",
+      "id": "call_1f6b10ad14fa",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1537,7 +1537,7 @@
       }
     },
     {
-      "id": "call_7848c75a3f1f",
+      "id": "call_306bcc8f5fc7",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1545,7 +1545,7 @@
       }
     },
     {
-      "id": "call_22c42d5048fa",
+      "id": "call_095106b0f068",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1553,7 +1553,7 @@
       }
     },
     {
-      "id": "call_3b22975d03fc",
+      "id": "call_30a7045f6282",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1561,7 +1561,7 @@
       }
     },
     {
-      "id": "call_30bbe3972c99",
+      "id": "call_353d3a5583fd",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1569,7 +1569,7 @@
       }
     },
     {
-      "id": "call_668efe64342e",
+      "id": "call_8a8db5ac0b8c",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1577,7 +1577,7 @@
       }
     },
     {
-      "id": "call_57007c0ecc16",
+      "id": "call_50aaa45cf597",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1585,7 +1585,7 @@
       }
     },
     {
-      "id": "call_51036f6587c0",
+      "id": "call_6d0d751f5b02",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1593,7 +1593,7 @@
       }
     },
     {
-      "id": "call_32acc686b7c3",
+      "id": "call_b3cc29284aea",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1601,7 +1601,7 @@
       }
     },
     {
-      "id": "call_722cd5ed48e9",
+      "id": "call_d0a94166ee47",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1609,7 +1609,7 @@
       }
     },
     {
-      "id": "call_693e2d78039d",
+      "id": "call_a91dcd47ce0f",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1617,7 +1617,7 @@
       }
     },
     {
-      "id": "call_cb510a7846e5",
+      "id": "call_56bf5ae16f8f",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1625,7 +1625,7 @@
       }
     },
     {
-      "id": "call_5ad8fe262bea",
+      "id": "call_c120b8db5415",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1633,7 +1633,7 @@
       }
     },
     {
-      "id": "call_3384db28deb0",
+      "id": "call_7a2b4b80a4e3",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1641,7 +1641,7 @@
       }
     },
     {
-      "id": "call_f0cd9242071b",
+      "id": "call_14eff2daa8b9",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1649,7 +1649,7 @@
       }
     },
     {
-      "id": "call_88c3a74a8ecf",
+      "id": "call_d7c60e8ed35a",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1657,7 +1657,7 @@
       }
     },
     {
-      "id": "call_7fae97721e97",
+      "id": "call_ee610861dc71",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1665,7 +1665,7 @@
       }
     },
     {
-      "id": "call_64e682fb5f78",
+      "id": "call_9e9f2df736f2",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1673,7 +1673,7 @@
       }
     },
     {
-      "id": "call_7e532a93a9a9",
+      "id": "call_11e6d27c9af5",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1681,7 +1681,7 @@
       }
     },
     {
-      "id": "call_6a6a49f6306f",
+      "id": "call_f405534ae6f3",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1689,7 +1689,7 @@
       }
     },
     {
-      "id": "call_1e468a7dc296",
+      "id": "call_3208dc432b55",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1697,7 +1697,7 @@
       }
     },
     {
-      "id": "call_f5fb2b4741a5",
+      "id": "call_5e69c1d5167f",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1705,7 +1705,7 @@
       }
     },
     {
-      "id": "call_55b2521ba95f",
+      "id": "call_957dd56fb8a4",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1713,7 +1713,7 @@
       }
     },
     {
-      "id": "call_0506cd438fb6",
+      "id": "call_915264d79265",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1721,7 +1721,7 @@
       }
     },
     {
-      "id": "call_5757b76e0428",
+      "id": "call_e8210dfde8f6",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1729,7 +1729,7 @@
       }
     },
     {
-      "id": "call_cd7b33fcbe27",
+      "id": "call_edf6d90a4a66",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1737,7 +1737,7 @@
       }
     },
     {
-      "id": "call_b0ff1305a255",
+      "id": "call_18217d6330d2",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1745,7 +1745,7 @@
       }
     },
     {
-      "id": "call_3ae26c5b0c98",
+      "id": "call_5feff261ee95",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1753,7 +1753,7 @@
       }
     },
     {
-      "id": "call_5676806a7c46",
+      "id": "call_a563f61558fa",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1761,7 +1761,7 @@
       }
     },
     {
-      "id": "call_ccc353ebb2bb",
+      "id": "call_933811682feb",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1769,7 +1769,7 @@
       }
     },
     {
-      "id": "call_b32906e2b3c4",
+      "id": "call_e26ac725376f",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1777,7 +1777,7 @@
       }
     },
     {
-      "id": "call_970c41ea6e0b",
+      "id": "call_6364c3129641",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1785,7 +1785,7 @@
       }
     },
     {
-      "id": "call_6589b8cc6d9b",
+      "id": "call_bfb65de64321",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1793,7 +1793,7 @@
       }
     },
     {
-      "id": "call_465836f3d460",
+      "id": "call_636b4e04da85",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1801,7 +1801,7 @@
       }
     },
     {
-      "id": "call_7b8420e6ac60",
+      "id": "call_dd239d91fc65",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1809,7 +1809,7 @@
       }
     },
     {
-      "id": "call_ebad11ee94b2",
+      "id": "call_5769cca53ccb",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1817,7 +1817,7 @@
       }
     },
     {
-      "id": "call_078ef15dbfff",
+      "id": "call_93d2b7479a46",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1825,7 +1825,7 @@
       }
     },
     {
-      "id": "call_58f862344e8b",
+      "id": "call_e6be76a901bf",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1833,7 +1833,7 @@
       }
     },
     {
-      "id": "call_26d7957044aa",
+      "id": "call_3b614cf761c0",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1841,7 +1841,7 @@
       }
     },
     {
-      "id": "call_eb5439ea1f66",
+      "id": "call_eb227de25a9d",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1849,7 +1849,7 @@
       }
     },
     {
-      "id": "call_28c294daa8fe",
+      "id": "call_fab505cdeb8a",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1857,7 +1857,7 @@
       }
     },
     {
-      "id": "call_62aba979e1d5",
+      "id": "call_6305ae9b1c80",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1865,7 +1865,7 @@
       }
     },
     {
-      "id": "call_c16e23c148a5",
+      "id": "call_8868044bb5fa",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1873,7 +1873,7 @@
       }
     },
     {
-      "id": "call_fef14648bf99",
+      "id": "call_97884c139b1a",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1881,7 +1881,7 @@
       }
     },
     {
-      "id": "call_21263e971df8",
+      "id": "call_99d2501e8996",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1889,7 +1889,7 @@
       }
     },
     {
-      "id": "call_215371267c9e",
+      "id": "call_a2bcb64147d4",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1897,7 +1897,7 @@
       }
     },
     {
-      "id": "call_38e3fab9605f",
+      "id": "call_a70f03c1ea98",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1905,7 +1905,7 @@
       }
     },
     {
-      "id": "call_eb740a7fccaf",
+      "id": "call_1a177470141b",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1913,7 +1913,7 @@
       }
     },
     {
-      "id": "call_7c3157fb2d24",
+      "id": "call_6c8a3883a1af",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1921,7 +1921,7 @@
       }
     },
     {
-      "id": "call_14f825f987fc",
+      "id": "call_bd2789cb3286",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1929,7 +1929,7 @@
       }
     },
     {
-      "id": "call_bf07a4268087",
+      "id": "call_b4209db4fe80",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1937,7 +1937,7 @@
       }
     },
     {
-      "id": "call_27cd404afb40",
+      "id": "call_c65ae45d94bc",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1945,7 +1945,7 @@
       }
     },
     {
-      "id": "call_18ed816bef7d",
+      "id": "call_7dde4e3947ff",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1953,7 +1953,7 @@
       }
     },
     {
-      "id": "call_6d706bf94c57",
+      "id": "call_f003bdbd26f2",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1961,7 +1961,7 @@
       }
     },
     {
-      "id": "call_1bb3cbb90441",
+      "id": "call_3470fa08538f",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1969,7 +1969,7 @@
       }
     },
     {
-      "id": "call_409e4f52733b",
+      "id": "call_178f112b1900",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -1977,7 +1977,7 @@
       }
     },
     {
-      "id": "call_5de84a83f0e0",
+      "id": "call_b6a197009f3a",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -1985,7 +1985,7 @@
       }
     },
     {
-      "id": "call_6f614dba2ae1",
+      "id": "call_3fb5820f5faf",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -1993,7 +1993,7 @@
       }
     },
     {
-      "id": "call_3acff4c72fe0",
+      "id": "call_6a7a5ef13a08",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2001,7 +2001,7 @@
       }
     },
     {
-      "id": "call_ee6452188d16",
+      "id": "call_2a7ab73dae77",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2009,7 +2009,7 @@
       }
     },
     {
-      "id": "call_78d3a430c0fb",
+      "id": "call_a1be6f88a1bf",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2017,7 +2017,7 @@
       }
     },
     {
-      "id": "call_8609aea2ce07",
+      "id": "call_2fefd4d5ee69",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2025,7 +2025,7 @@
       }
     },
     {
-      "id": "call_6974567e4d0d",
+      "id": "call_3e9cb8ee5e6f",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2033,7 +2033,7 @@
       }
     },
     {
-      "id": "call_260c411df8cb",
+      "id": "call_e1b9fa1d3cbf",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2041,7 +2041,7 @@
       }
     },
     {
-      "id": "call_e48fcbaa7265",
+      "id": "call_d4d98cdfd714",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2049,7 +2049,7 @@
       }
     },
     {
-      "id": "call_7a2fc03e0187",
+      "id": "call_2b003e4b9ede",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2057,7 +2057,7 @@
       }
     },
     {
-      "id": "call_150089a332b4",
+      "id": "call_11c546a3d81b",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2065,7 +2065,7 @@
       }
     },
     {
-      "id": "call_beee025605c1",
+      "id": "call_fbc2cad82894",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2073,7 +2073,7 @@
       }
     },
     {
-      "id": "call_0dc849422b21",
+      "id": "call_4c6af7eadc87",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2081,7 +2081,7 @@
       }
     },
     {
-      "id": "call_471f52a7292f",
+      "id": "call_7afd87fe632d",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2089,7 +2089,7 @@
       }
     },
     {
-      "id": "call_d993ecf995dd",
+      "id": "call_a4c00098b977",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2097,7 +2097,7 @@
       }
     },
     {
-      "id": "call_bc7bfc7bbefc",
+      "id": "call_5321f81ffea4",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2105,7 +2105,7 @@
       }
     },
     {
-      "id": "call_4bc1ac1e6222",
+      "id": "call_ebcbd366ff4c",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2113,7 +2113,7 @@
       }
     },
     {
-      "id": "call_8f1d19ee7de4",
+      "id": "call_52bee16b99a2",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2121,7 +2121,7 @@
       }
     },
     {
-      "id": "call_24bf39d960cb",
+      "id": "call_59b220fca143",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2129,7 +2129,7 @@
       }
     },
     {
-      "id": "call_d74d0cd4bbc9",
+      "id": "call_edf148ec6540",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2137,7 +2137,7 @@
       }
     },
     {
-      "id": "call_85301f221f3d",
+      "id": "call_93c1a2e8e1f2",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2145,7 +2145,7 @@
       }
     },
     {
-      "id": "call_a1357e9b6cd8",
+      "id": "call_a45b789272ce",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2153,7 +2153,7 @@
       }
     },
     {
-      "id": "call_541dcc6f82a8",
+      "id": "call_c096c46549d4",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2161,7 +2161,7 @@
       }
     },
     {
-      "id": "call_c7eb2ed9d63a",
+      "id": "call_9faaa3ff9bbd",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2169,7 +2169,7 @@
       }
     },
     {
-      "id": "call_40bde55d3749",
+      "id": "call_40b1e2b3cf56",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2177,7 +2177,7 @@
       }
     },
     {
-      "id": "call_20d96ac298b9",
+      "id": "call_dca622f87a9f",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2185,7 +2185,7 @@
       }
     },
     {
-      "id": "call_f2a9edf9fa8a",
+      "id": "call_a287dd81ee2f",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2193,7 +2193,7 @@
       }
     },
     {
-      "id": "call_9d4129296025",
+      "id": "call_d0f9f7e5440e",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2201,7 +2201,7 @@
       }
     },
     {
-      "id": "call_9cecbc82af72",
+      "id": "call_5fcd9c6fccc9",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2209,7 +2209,7 @@
       }
     },
     {
-      "id": "call_39bfc8970ea9",
+      "id": "call_db7fc923113c",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2217,7 +2217,7 @@
       }
     },
     {
-      "id": "call_812b219a72fc",
+      "id": "call_08ff886026a4",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2225,7 +2225,7 @@
       }
     },
     {
-      "id": "call_144698d30424",
+      "id": "call_a45e64aeb3ba",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2233,7 +2233,7 @@
       }
     },
     {
-      "id": "call_02523584a1df",
+      "id": "call_4384dc4e7eb6",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2241,7 +2241,7 @@
       }
     },
     {
-      "id": "call_43c8f47cc43e",
+      "id": "call_f3b27bd1a962",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2249,7 +2249,7 @@
       }
     },
     {
-      "id": "call_d7d688a98ecf",
+      "id": "call_c0ebe7bf0cf9",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2257,7 +2257,7 @@
       }
     },
     {
-      "id": "call_7a42b01f0d1a",
+      "id": "call_4b15e90331ce",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2265,7 +2265,7 @@
       }
     },
     {
-      "id": "call_ce2322e77ebf",
+      "id": "call_f92510246b31",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2273,7 +2273,7 @@
       }
     },
     {
-      "id": "call_47e021b532c3",
+      "id": "call_6536af947462",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2281,7 +2281,7 @@
       }
     },
     {
-      "id": "call_04bc2b2a0832",
+      "id": "call_afd001a40e58",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2289,7 +2289,7 @@
       }
     },
     {
-      "id": "call_e7f22c2468d9",
+      "id": "call_1976c4c51f91",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2297,7 +2297,7 @@
       }
     },
     {
-      "id": "call_8d0c0b2170fe",
+      "id": "call_5cf61c63c86c",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2305,7 +2305,7 @@
       }
     },
     {
-      "id": "call_6fd3e835b0c0",
+      "id": "call_1c7b5686086e",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2313,7 +2313,7 @@
       }
     },
     {
-      "id": "call_25c9d18c8a13",
+      "id": "call_9ca46e547d9f",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2321,7 +2321,7 @@
       }
     },
     {
-      "id": "call_2cd6fc661fbc",
+      "id": "call_212c10b5a261",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2329,7 +2329,7 @@
       }
     },
     {
-      "id": "call_d70d59c989de",
+      "id": "call_d5d8778a2a1a",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2337,7 +2337,7 @@
       }
     },
     {
-      "id": "call_0b300bb38d30",
+      "id": "call_0a2632dd446c",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2345,7 +2345,7 @@
       }
     },
     {
-      "id": "call_85e0c33cce94",
+      "id": "call_22bde10b2e77",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2353,7 +2353,7 @@
       }
     },
     {
-      "id": "call_c1babea07b97",
+      "id": "call_c6223dafd705",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2361,7 +2361,7 @@
       }
     },
     {
-      "id": "call_1e8f44e1cf1a",
+      "id": "call_4141f4790b26",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2369,7 +2369,7 @@
       }
     },
     {
-      "id": "call_84bdc11a2ad0",
+      "id": "call_6660c3775036",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2377,7 +2377,7 @@
       }
     },
     {
-      "id": "call_53025f20f928",
+      "id": "call_20b17b8ebdd8",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2385,7 +2385,7 @@
       }
     },
     {
-      "id": "call_39a9636cc838",
+      "id": "call_50b252ccc4cd",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2393,7 +2393,7 @@
       }
     },
     {
-      "id": "call_cdc8108874c9",
+      "id": "call_bd9aae367ff3",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2401,7 +2401,7 @@
       }
     },
     {
-      "id": "call_200e699cc920",
+      "id": "call_24e5cec86cef",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2409,7 +2409,7 @@
       }
     },
     {
-      "id": "call_f58c4c353cd5",
+      "id": "call_ab34fc6fd900",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2417,7 +2417,7 @@
       }
     },
     {
-      "id": "call_f8d1d9479bac",
+      "id": "call_f6436dd11d2f",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2425,7 +2425,7 @@
       }
     },
     {
-      "id": "call_0ed7cace0014",
+      "id": "call_befc549d4a60",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2433,7 +2433,7 @@
       }
     },
     {
-      "id": "call_0fd563207164",
+      "id": "call_c5455b3269b8",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2441,7 +2441,7 @@
       }
     },
     {
-      "id": "call_f5685fdda4a8",
+      "id": "call_ca6b0e74f3e7",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2449,7 +2449,7 @@
       }
     },
     {
-      "id": "call_d83586558219",
+      "id": "call_8729fcd1e93c",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2457,7 +2457,7 @@
       }
     },
     {
-      "id": "call_bdfc4ffe4dcf",
+      "id": "call_d4c0a204b19b",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2465,7 +2465,7 @@
       }
     },
     {
-      "id": "call_655a39dfe49b",
+      "id": "call_ed13c10b4f00",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2473,7 +2473,7 @@
       }
     },
     {
-      "id": "call_a56b27ceb05e",
+      "id": "call_fe31b8693379",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2481,7 +2481,7 @@
       }
     },
     {
-      "id": "call_c39e951c24c8",
+      "id": "call_e76069687098",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2489,7 +2489,7 @@
       }
     },
     {
-      "id": "call_aa0426a220c9",
+      "id": "call_acdedd54f304",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2497,7 +2497,7 @@
       }
     },
     {
-      "id": "call_1220914a43b5",
+      "id": "call_8b00be11c513",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2505,7 +2505,7 @@
       }
     },
     {
-      "id": "call_ca0cc557af1c",
+      "id": "call_4751f56e22c3",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2513,7 +2513,7 @@
       }
     },
     {
-      "id": "call_78d31c7a10aa",
+      "id": "call_a0815f7caf1a",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2521,7 +2521,7 @@
       }
     },
     {
-      "id": "call_7b27883f6379",
+      "id": "call_f6097789b274",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2529,7 +2529,7 @@
       }
     },
     {
-      "id": "call_662544df02af",
+      "id": "call_8aad7770a212",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2537,7 +2537,7 @@
       }
     },
     {
-      "id": "call_79fad2d75092",
+      "id": "call_74ca8a0cf9ea",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2545,7 +2545,7 @@
       }
     },
     {
-      "id": "call_117f3bbd3511",
+      "id": "call_ebdb376ff2c7",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2553,7 +2553,7 @@
       }
     },
     {
-      "id": "call_e64056b64184",
+      "id": "call_b03647afdeef",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2561,7 +2561,7 @@
       }
     },
     {
-      "id": "call_2d9e28ab7551",
+      "id": "call_0d787422aa1c",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2569,7 +2569,7 @@
       }
     },
     {
-      "id": "call_96624c49dc82",
+      "id": "call_a415e0a32c03",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2577,7 +2577,7 @@
       }
     },
     {
-      "id": "call_cd99ff2664d9",
+      "id": "call_495a7e6a8a56",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2585,7 +2585,7 @@
       }
     },
     {
-      "id": "call_765f854394c9",
+      "id": "call_f613cf7e5eff",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2593,7 +2593,7 @@
       }
     },
     {
-      "id": "call_396b55eedcc5",
+      "id": "call_923f203f08b4",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2601,7 +2601,7 @@
       }
     },
     {
-      "id": "call_5f9a956d740a",
+      "id": "call_6635564b1e76",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2609,7 +2609,7 @@
       }
     },
     {
-      "id": "call_01a09280cef5",
+      "id": "call_2b2ff20f25c6",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2617,7 +2617,7 @@
       }
     },
     {
-      "id": "call_d4fb89ac51a4",
+      "id": "call_b7f411d772d2",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2625,7 +2625,7 @@
       }
     },
     {
-      "id": "call_119dfdf2b87c",
+      "id": "call_423df639ad16",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2633,7 +2633,7 @@
       }
     },
     {
-      "id": "call_22d6bed4ae1d",
+      "id": "call_28da24c24b79",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2641,7 +2641,7 @@
       }
     },
     {
-      "id": "call_4b44f943bb84",
+      "id": "call_6e6439a2744d",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2649,7 +2649,7 @@
       }
     },
     {
-      "id": "call_4771356c1c8b",
+      "id": "call_ba7613314cf7",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2657,7 +2657,7 @@
       }
     },
     {
-      "id": "call_56fb3bb40936",
+      "id": "call_2603a734122c",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2665,7 +2665,7 @@
       }
     },
     {
-      "id": "call_7d30437986ea",
+      "id": "call_f9a6693a6ddc",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2673,7 +2673,7 @@
       }
     },
     {
-      "id": "call_20e9b7afb3a9",
+      "id": "call_94ee8aaf4b9c",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2681,7 +2681,7 @@
       }
     },
     {
-      "id": "call_77fe29344842",
+      "id": "call_c12d4765ea8d",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2689,7 +2689,7 @@
       }
     },
     {
-      "id": "call_4b0cb778d936",
+      "id": "call_caf77b11d99d",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2697,7 +2697,7 @@
       }
     },
     {
-      "id": "call_b508a629f94f",
+      "id": "call_7e1bda4ad660",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2705,7 +2705,7 @@
       }
     },
     {
-      "id": "call_0796a5e9456c",
+      "id": "call_7c5daebda702",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2713,7 +2713,7 @@
       }
     },
     {
-      "id": "call_65cac0644d8a",
+      "id": "call_3c36eb216549",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2721,7 +2721,7 @@
       }
     },
     {
-      "id": "call_bb6637abf5b0",
+      "id": "call_7fc9e5b8379e",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2729,7 +2729,7 @@
       }
     },
     {
-      "id": "call_7ebecd400f17",
+      "id": "call_d67ca2007b4c",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2737,7 +2737,7 @@
       }
     },
     {
-      "id": "call_40fe2f464272",
+      "id": "call_498e4ef6bd39",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2745,7 +2745,7 @@
       }
     },
     {
-      "id": "call_2af5ab3ce322",
+      "id": "call_880b3326cf4b",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2753,7 +2753,7 @@
       }
     },
     {
-      "id": "call_d85331ff1f2f",
+      "id": "call_499f22602fbc",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2761,7 +2761,7 @@
       }
     },
     {
-      "id": "call_7243d66ed099",
+      "id": "call_a122f8812abf",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2769,7 +2769,7 @@
       }
     },
     {
-      "id": "call_2b9bb450a9bc",
+      "id": "call_ea5f6c799c74",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2777,7 +2777,7 @@
       }
     },
     {
-      "id": "call_e4746263c17a",
+      "id": "call_d250de8540af",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2785,7 +2785,7 @@
       }
     },
     {
-      "id": "call_4360d11e79b4",
+      "id": "call_e74da4504cdf",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2793,7 +2793,7 @@
       }
     },
     {
-      "id": "call_d57745842ac8",
+      "id": "call_8f21e5a74ef7",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2801,7 +2801,7 @@
       }
     },
     {
-      "id": "call_dd74354a6f4a",
+      "id": "call_b51557a42476",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2809,7 +2809,7 @@
       }
     },
     {
-      "id": "call_d240bca8b54d",
+      "id": "call_eb0c32acce00",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2817,7 +2817,7 @@
       }
     },
     {
-      "id": "call_3226a1fd04eb",
+      "id": "call_c5057f6d8bbe",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2825,7 +2825,7 @@
       }
     },
     {
-      "id": "call_b0e64879f3da",
+      "id": "call_58739990d51a",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2833,7 +2833,7 @@
       }
     },
     {
-      "id": "call_3cce0b264b36",
+      "id": "call_21e8b0a01019",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2841,7 +2841,7 @@
       }
     },
     {
-      "id": "call_9131dc136647",
+      "id": "call_6770d762057d",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2849,7 +2849,7 @@
       }
     },
     {
-      "id": "call_3ba033bb261e",
+      "id": "call_290321df6748",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2857,7 +2857,7 @@
       }
     },
     {
-      "id": "call_e5fe66ab0802",
+      "id": "call_1485636695ac",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2865,7 +2865,7 @@
       }
     },
     {
-      "id": "call_dd381ae832f8",
+      "id": "call_c941dd3a0216",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2873,7 +2873,7 @@
       }
     },
     {
-      "id": "call_3a6ff325bd7f",
+      "id": "call_043c8e8b3189",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2881,7 +2881,7 @@
       }
     },
     {
-      "id": "call_c929ee02ee97",
+      "id": "call_0d6c5bd9d225",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2889,7 +2889,7 @@
       }
     },
     {
-      "id": "call_823d5ba02f07",
+      "id": "call_210ef166f4fc",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2897,7 +2897,7 @@
       }
     },
     {
-      "id": "call_47fe96a8befe",
+      "id": "call_8eba7c58d853",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2905,7 +2905,7 @@
       }
     },
     {
-      "id": "call_f283439a8691",
+      "id": "call_f35f2ce2df23",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2913,7 +2913,7 @@
       }
     },
     {
-      "id": "call_ec9128884fc1",
+      "id": "call_fd441f40cafa",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2921,7 +2921,7 @@
       }
     },
     {
-      "id": "call_58de1bd4cf4b",
+      "id": "call_2e0eb0fa4989",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2929,7 +2929,7 @@
       }
     },
     {
-      "id": "call_4249df6a889c",
+      "id": "call_da012c1c43f4",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2937,7 +2937,7 @@
       }
     },
     {
-      "id": "call_b61be7b4788e",
+      "id": "call_cf82eda16fcf",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2945,7 +2945,7 @@
       }
     },
     {
-      "id": "call_a8138c9e692f",
+      "id": "call_d218de1d671d",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2953,7 +2953,7 @@
       }
     },
     {
-      "id": "call_2384bd35e711",
+      "id": "call_c1bf6fa95e16",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2961,7 +2961,7 @@
       }
     },
     {
-      "id": "call_088c398c7825",
+      "id": "call_49ed4dc8cf00",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2969,7 +2969,7 @@
       }
     },
     {
-      "id": "call_fbdf4724676b",
+      "id": "call_3890b2a8baae",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -2977,7 +2977,7 @@
       }
     },
     {
-      "id": "call_d9fd18ffc852",
+      "id": "call_9c2c5a737b39",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -2985,7 +2985,7 @@
       }
     },
     {
-      "id": "call_8945398b3b46",
+      "id": "call_be7fd9139795",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -2993,7 +2993,7 @@
       }
     },
     {
-      "id": "call_f5da0bb14810",
+      "id": "call_7cf9f4dd00d4",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3001,7 +3001,7 @@
       }
     },
     {
-      "id": "call_29a88ee62453",
+      "id": "call_e04c2f6c14a1",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3009,7 +3009,7 @@
       }
     },
     {
-      "id": "call_20f7e1e0e284",
+      "id": "call_d477456aaae6",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3017,7 +3017,7 @@
       }
     },
     {
-      "id": "call_fe560e057584",
+      "id": "call_834cf8960597",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3025,7 +3025,7 @@
       }
     },
     {
-      "id": "call_670959b8eacb",
+      "id": "call_964f1061ae82",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3033,7 +3033,7 @@
       }
     },
     {
-      "id": "call_f2f9ad01bbda",
+      "id": "call_dc923b7495c3",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3041,7 +3041,7 @@
       }
     },
     {
-      "id": "call_dd78ecd852f1",
+      "id": "call_629965e8b6e9",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3049,7 +3049,7 @@
       }
     },
     {
-      "id": "call_76da584479a2",
+      "id": "call_43969a9604e2",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3057,7 +3057,7 @@
       }
     },
     {
-      "id": "call_c9a82193aa0c",
+      "id": "call_42c815c25e03",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3065,7 +3065,7 @@
       }
     },
     {
-      "id": "call_08edb213101d",
+      "id": "call_1b9edf2ccae9",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3073,7 +3073,7 @@
       }
     },
     {
-      "id": "call_8afa4fcf2189",
+      "id": "call_855238e50e11",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3081,7 +3081,7 @@
       }
     },
     {
-      "id": "call_ae91000e8b38",
+      "id": "call_b9c8a289655c",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3089,7 +3089,7 @@
       }
     },
     {
-      "id": "call_8906a5be69e6",
+      "id": "call_f62b08dd647a",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3097,7 +3097,7 @@
       }
     },
     {
-      "id": "call_8de3b063b273",
+      "id": "call_4fad5614f2e2",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3105,7 +3105,7 @@
       }
     },
     {
-      "id": "call_cfcf5fe208e2",
+      "id": "call_bd51b4debe47",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3113,7 +3113,7 @@
       }
     },
     {
-      "id": "call_93537041414a",
+      "id": "call_3263fd11b2a7",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3121,7 +3121,7 @@
       }
     },
     {
-      "id": "call_855d3f59f5a0",
+      "id": "call_d1d462679ea7",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3129,7 +3129,7 @@
       }
     },
     {
-      "id": "call_a8b4c4137d20",
+      "id": "call_28f7dbf0854b",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3137,7 +3137,7 @@
       }
     },
     {
-      "id": "call_ba12eb4effa6",
+      "id": "call_f12e4019abf5",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3145,7 +3145,7 @@
       }
     },
     {
-      "id": "call_d7f4ade32005",
+      "id": "call_51ba82adc486",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3153,7 +3153,7 @@
       }
     },
     {
-      "id": "call_f5ba7e96ade6",
+      "id": "call_8d2d1576e2ce",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3161,7 +3161,7 @@
       }
     },
     {
-      "id": "call_2e20a633d454",
+      "id": "call_1b9e9f427b78",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3169,7 +3169,7 @@
       }
     },
     {
-      "id": "call_9280b2415cae",
+      "id": "call_843f54b0a29f",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3177,7 +3177,7 @@
       }
     },
     {
-      "id": "call_8eec4400bd4e",
+      "id": "call_6c67e5c86fca",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3185,7 +3185,7 @@
       }
     },
     {
-      "id": "call_6d7c109394e4",
+      "id": "call_a379cdb7a488",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3193,7 +3193,7 @@
       }
     },
     {
-      "id": "call_512a88e00949",
+      "id": "call_7466a32ca85c",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3201,7 +3201,7 @@
       }
     },
     {
-      "id": "call_1e648920d196",
+      "id": "call_b26f275d047e",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3209,7 +3209,7 @@
       }
     },
     {
-      "id": "call_9cf560001da9",
+      "id": "call_b1738eb03cf8",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3217,7 +3217,7 @@
       }
     },
     {
-      "id": "call_d02a4143fbbf",
+      "id": "call_18b5717adfc3",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3225,7 +3225,7 @@
       }
     },
     {
-      "id": "call_2280338e3a83",
+      "id": "call_3ccf30c7819b",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3233,7 +3233,7 @@
       }
     },
     {
-      "id": "call_03fe76ddfe9f",
+      "id": "call_a1acc78ea66d",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3241,7 +3241,7 @@
       }
     },
     {
-      "id": "call_2d2a2ffc0b12",
+      "id": "call_8add9036fc8e",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3249,7 +3249,7 @@
       }
     },
     {
-      "id": "call_b5a9de6528c5",
+      "id": "call_3cc2bd2dc8d2",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3257,7 +3257,7 @@
       }
     },
     {
-      "id": "call_3b7ab3f93ec8",
+      "id": "call_10608071aa68",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3265,7 +3265,7 @@
       }
     },
     {
-      "id": "call_4f4474c3c954",
+      "id": "call_80a5a728e770",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3273,7 +3273,7 @@
       }
     },
     {
-      "id": "call_812dcb394d6d",
+      "id": "call_098332175d19",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3281,7 +3281,7 @@
       }
     },
     {
-      "id": "call_81c5fabf2a56",
+      "id": "call_65bb6380b05e",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3289,7 +3289,7 @@
       }
     },
     {
-      "id": "call_367dcbe7b596",
+      "id": "call_f792e8b5ae87",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3297,7 +3297,7 @@
       }
     },
     {
-      "id": "call_b21ea0bee37f",
+      "id": "call_f84e012407be",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3305,7 +3305,7 @@
       }
     },
     {
-      "id": "call_cfefc0e09235",
+      "id": "call_d19ee57755d5",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3313,7 +3313,7 @@
       }
     },
     {
-      "id": "call_b97ddc749ba2",
+      "id": "call_76333b4f6ce4",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3321,7 +3321,7 @@
       }
     },
     {
-      "id": "call_a13a3090ce3f",
+      "id": "call_a4fd727fa3a3",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3329,7 +3329,7 @@
       }
     },
     {
-      "id": "call_6c7f73357ee9",
+      "id": "call_55972744d3a5",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3337,7 +3337,7 @@
       }
     },
     {
-      "id": "call_20c912947a68",
+      "id": "call_6c7eccee3eb9",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3345,7 +3345,7 @@
       }
     },
     {
-      "id": "call_1c674d74dd40",
+      "id": "call_d926e48c9a19",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3353,7 +3353,7 @@
       }
     },
     {
-      "id": "call_1bae7488294f",
+      "id": "call_ee48c9b39e06",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3361,7 +3361,7 @@
       }
     },
     {
-      "id": "call_37528d102eac",
+      "id": "call_2407d30ce139",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3369,7 +3369,7 @@
       }
     },
     {
-      "id": "call_02bee7c28dcf",
+      "id": "call_34cf184f39d3",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3377,7 +3377,7 @@
       }
     },
     {
-      "id": "call_078e03db3879",
+      "id": "call_4765974a02ab",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3385,7 +3385,7 @@
       }
     },
     {
-      "id": "call_624c56affb16",
+      "id": "call_b39313eea98a",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3393,7 +3393,7 @@
       }
     },
     {
-      "id": "call_d884038da933",
+      "id": "call_355fabed66c2",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3401,7 +3401,7 @@
       }
     },
     {
-      "id": "call_d3b06fd7a589",
+      "id": "call_1f994c3b938c",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3409,7 +3409,7 @@
       }
     },
     {
-      "id": "call_e8bdfabdf225",
+      "id": "call_50469b597cd9",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3417,7 +3417,7 @@
       }
     },
     {
-      "id": "call_c40dab7fbdaa",
+      "id": "call_bc2776c04eb9",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3425,7 +3425,7 @@
       }
     },
     {
-      "id": "call_7de29ab96709",
+      "id": "call_3c91a8e77de6",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3433,7 +3433,7 @@
       }
     },
     {
-      "id": "call_779580c28c05",
+      "id": "call_304c0778ed8b",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3441,7 +3441,7 @@
       }
     },
     {
-      "id": "call_de3246e8c707",
+      "id": "call_f92455c3d1a6",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3449,7 +3449,7 @@
       }
     },
     {
-      "id": "call_cc6ffa7addba",
+      "id": "call_1c8eaf7dc02a",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3457,7 +3457,7 @@
       }
     },
     {
-      "id": "call_bb05e490e692",
+      "id": "call_f6bd6af158cd",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3465,7 +3465,7 @@
       }
     },
     {
-      "id": "call_fa99084241ad",
+      "id": "call_dcbb23d934f4",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3473,7 +3473,7 @@
       }
     },
     {
-      "id": "call_013269cd4e16",
+      "id": "call_549c7c32369f",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3481,7 +3481,7 @@
       }
     },
     {
-      "id": "call_7d9249743b4d",
+      "id": "call_698c729fab98",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3489,7 +3489,7 @@
       }
     },
     {
-      "id": "call_0cbb282f7cd3",
+      "id": "call_7e2c85e9b6ad",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3497,7 +3497,7 @@
       }
     },
     {
-      "id": "call_fc6d4aea1e73",
+      "id": "call_c4cbe859a87d",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3505,7 +3505,7 @@
       }
     },
     {
-      "id": "call_0b6c43fb1ada",
+      "id": "call_201d07903ab6",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3513,7 +3513,7 @@
       }
     },
     {
-      "id": "call_14478f7633e4",
+      "id": "call_cded31256812",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3521,7 +3521,7 @@
       }
     },
     {
-      "id": "call_cdff5b44ff69",
+      "id": "call_039edab74092",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3529,7 +3529,7 @@
       }
     },
     {
-      "id": "call_3d2adfae469b",
+      "id": "call_96965ddc131e",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3537,7 +3537,7 @@
       }
     },
     {
-      "id": "call_3e1a4eca58f9",
+      "id": "call_c9ed3099419f",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3545,7 +3545,7 @@
       }
     },
     {
-      "id": "call_730d7ecff12a",
+      "id": "call_ebdb0f0c3c9e",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3553,7 +3553,7 @@
       }
     },
     {
-      "id": "call_df7b3b15354f",
+      "id": "call_013fd946d2d0",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3561,7 +3561,7 @@
       }
     },
     {
-      "id": "call_f0be576a40b1",
+      "id": "call_8947826c9a85",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3569,7 +3569,7 @@
       }
     },
     {
-      "id": "call_fd90b7bd5f82",
+      "id": "call_648fb9526998",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3577,7 +3577,7 @@
       }
     },
     {
-      "id": "call_d6333800d17e",
+      "id": "call_d3ac80802549",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3585,7 +3585,7 @@
       }
     },
     {
-      "id": "call_60062b64861e",
+      "id": "call_4f1b312e8970",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3593,7 +3593,7 @@
       }
     },
     {
-      "id": "call_e5235977f285",
+      "id": "call_833eff09bca9",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3601,7 +3601,7 @@
       }
     },
     {
-      "id": "call_7e4c6ba1034c",
+      "id": "call_acfcf179a012",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3609,7 +3609,7 @@
       }
     },
     {
-      "id": "call_a36fe4637586",
+      "id": "call_aca956b028b1",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3617,7 +3617,7 @@
       }
     },
     {
-      "id": "call_a22abebbedf6",
+      "id": "call_7940658a4e9e",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3625,7 +3625,7 @@
       }
     },
     {
-      "id": "call_cc647be970e5",
+      "id": "call_058e04d5e24a",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3633,7 +3633,7 @@
       }
     },
     {
-      "id": "call_9e027ddf2a0e",
+      "id": "call_166ec9ed4079",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3641,7 +3641,7 @@
       }
     },
     {
-      "id": "call_fa50030f8fcd",
+      "id": "call_4697eb4fd655",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3649,7 +3649,7 @@
       }
     },
     {
-      "id": "call_30dd1ec48165",
+      "id": "call_5009978c7a41",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3657,7 +3657,7 @@
       }
     },
     {
-      "id": "call_445ce09ceca9",
+      "id": "call_84c58b83dcf4",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3665,7 +3665,7 @@
       }
     },
     {
-      "id": "call_b5709a55cc84",
+      "id": "call_ba81b45f5baa",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3673,7 +3673,7 @@
       }
     },
     {
-      "id": "call_45a0b0f45af3",
+      "id": "call_bf02f35bb408",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3681,7 +3681,7 @@
       }
     },
     {
-      "id": "call_4d71128f282f",
+      "id": "call_f9dfe344c753",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3689,7 +3689,7 @@
       }
     },
     {
-      "id": "call_91f327776fca",
+      "id": "call_56b2a319cc66",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3697,7 +3697,7 @@
       }
     },
     {
-      "id": "call_5bf2052afd41",
+      "id": "call_23ca3de2d3f1",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3705,7 +3705,7 @@
       }
     },
     {
-      "id": "call_62172d64c37f",
+      "id": "call_1b1145549e57",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3713,7 +3713,7 @@
       }
     },
     {
-      "id": "call_a9fc7686a612",
+      "id": "call_3415b0434f09",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3721,7 +3721,7 @@
       }
     },
     {
-      "id": "call_61f4e9e768d0",
+      "id": "call_8acbd0375908",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3729,7 +3729,7 @@
       }
     },
     {
-      "id": "call_56860fab7e91",
+      "id": "call_125af1f9adfb",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3737,7 +3737,7 @@
       }
     },
     {
-      "id": "call_5a5da6b4259c",
+      "id": "call_0b3dd73f04f3",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3745,7 +3745,7 @@
       }
     },
     {
-      "id": "call_874e1ebe3efd",
+      "id": "call_85fb56297af2",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3753,7 +3753,7 @@
       }
     },
     {
-      "id": "call_315265a4a380",
+      "id": "call_e011686810e2",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3761,7 +3761,7 @@
       }
     },
     {
-      "id": "call_24387d9ca938",
+      "id": "call_bb61ef71bff1",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3769,7 +3769,7 @@
       }
     },
     {
-      "id": "call_3e6adadc2290",
+      "id": "call_6633b5600dbe",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3777,7 +3777,7 @@
       }
     },
     {
-      "id": "call_9f7f2d6c0810",
+      "id": "call_74868ab036aa",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3785,7 +3785,7 @@
       }
     },
     {
-      "id": "call_500fb55072f2",
+      "id": "call_4c6cd1e25132",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3793,7 +3793,7 @@
       }
     },
     {
-      "id": "call_35d3a83689bc",
+      "id": "call_7c63c9addc0a",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3801,7 +3801,7 @@
       }
     },
     {
-      "id": "call_549c9f1ce5b0",
+      "id": "call_2ee03b77afdf",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3809,7 +3809,7 @@
       }
     },
     {
-      "id": "call_43e16845b791",
+      "id": "call_15903da85cac",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3817,7 +3817,7 @@
       }
     },
     {
-      "id": "call_fa2511867b20",
+      "id": "call_e07501912956",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3825,7 +3825,7 @@
       }
     },
     {
-      "id": "call_ac7d766a46f7",
+      "id": "call_080763b8a5bf",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3833,7 +3833,7 @@
       }
     },
     {
-      "id": "call_55cbcb994063",
+      "id": "call_d1dcf3008bce",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3841,7 +3841,7 @@
       }
     },
     {
-      "id": "call_a74d18c4b06b",
+      "id": "call_f5d58fe87e67",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3849,7 +3849,7 @@
       }
     },
     {
-      "id": "call_093ee7969a9c",
+      "id": "call_466229e6e682",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3857,7 +3857,7 @@
       }
     },
     {
-      "id": "call_a9062dcb370b",
+      "id": "call_f19eb945c3b2",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3865,7 +3865,7 @@
       }
     },
     {
-      "id": "call_34c6c3bf2616",
+      "id": "call_b1b41e0bf626",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3873,7 +3873,7 @@
       }
     },
     {
-      "id": "call_2c9ddf23cf13",
+      "id": "call_b690b5a00ba9",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3881,7 +3881,7 @@
       }
     },
     {
-      "id": "call_acac4ba73a15",
+      "id": "call_7b4af4eab50c",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3889,7 +3889,7 @@
       }
     },
     {
-      "id": "call_350bfd145d13",
+      "id": "call_f841dbe03b16",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3897,7 +3897,7 @@
       }
     },
     {
-      "id": "call_40912bb78205",
+      "id": "call_acf6f4df4066",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3905,7 +3905,7 @@
       }
     },
     {
-      "id": "call_011b8e7394ab",
+      "id": "call_b9dde4ee9a98",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3913,7 +3913,7 @@
       }
     },
     {
-      "id": "call_15bb5c3be894",
+      "id": "call_02e92bf2803d",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3921,7 +3921,7 @@
       }
     },
     {
-      "id": "call_8f3813172cd6",
+      "id": "call_9413b35f1e79",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3929,7 +3929,7 @@
       }
     },
     {
-      "id": "call_2419cbc0ead0",
+      "id": "call_3143cf8af614",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3937,7 +3937,7 @@
       }
     },
     {
-      "id": "call_6b4c108b2f87",
+      "id": "call_81c197d29881",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3945,7 +3945,7 @@
       }
     },
     {
-      "id": "call_d2a8f0c512d0",
+      "id": "call_0781286874ae",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3953,7 +3953,7 @@
       }
     },
     {
-      "id": "call_730a85a0d008",
+      "id": "call_f8c5ab88617b",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3961,7 +3961,7 @@
       }
     },
     {
-      "id": "call_10d4f1e7c08c",
+      "id": "call_fc3c129cf7d8",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3969,7 +3969,7 @@
       }
     },
     {
-      "id": "call_d5af85cb63d3",
+      "id": "call_479b4629b226",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -3977,7 +3977,7 @@
       }
     },
     {
-      "id": "call_e6365decc561",
+      "id": "call_2e76f8f10636",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -3985,7 +3985,7 @@
       }
     },
     {
-      "id": "call_ab44cad93440",
+      "id": "call_50a2bfa82fad",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -3993,7 +3993,7 @@
       }
     },
     {
-      "id": "call_324d596ec154",
+      "id": "call_faa4c80748c3",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -4001,7 +4001,7 @@
       }
     },
     {
-      "id": "call_ea58930af11b",
+      "id": "call_2025f80e2285",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -4009,7 +4009,7 @@
       }
     },
     {
-      "id": "call_361f0ecd8424",
+      "id": "call_94efafa6bb21",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -4017,7 +4017,7 @@
       }
     },
     {
-      "id": "call_62d9dfd192e5",
+      "id": "call_0c13194e864f",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -4025,7 +4025,7 @@
       }
     },
     {
-      "id": "call_2bbefb1f8d4d",
+      "id": "call_76bbc7b1d272",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -4033,7 +4033,7 @@
       }
     },
     {
-      "id": "call_5c5dc1a22c1c",
+      "id": "call_bd3c01c020c3",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -4041,7 +4041,7 @@
       }
     },
     {
-      "id": "call_9e7a83ccbd6e",
+      "id": "call_d2f43dd39503",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -4049,7 +4049,7 @@
       }
     },
     {
-      "id": "call_112aa76bd458",
+      "id": "call_59f8f4e7497f",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -4057,7 +4057,7 @@
       }
     },
     {
-      "id": "call_50ddc3112384",
+      "id": "call_ac25ae0af5ad",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -4065,7 +4065,7 @@
       }
     },
     {
-      "id": "call_7be8aa697ba0",
+      "id": "call_4814bba2a5c8",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -4073,7 +4073,7 @@
       }
     },
     {
-      "id": "call_17a12db6a6e7",
+      "id": "call_2415a2557a6d",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -4081,7 +4081,7 @@
       }
     },
     {
-      "id": "call_adcf255b349e",
+      "id": "call_b366d7bf52db",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -4089,7 +4089,7 @@
       }
     },
     {
-      "id": "call_9b54c32fe243",
+      "id": "call_294ddac0be42",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -4097,7 +4097,7 @@
       }
     },
     {
-      "id": "call_817429ef689f",
+      "id": "call_9488c0a1dfe1",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -4105,7 +4105,7 @@
       }
     },
     {
-      "id": "call_1ea960ae2028",
+      "id": "call_35ebffea02ad",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -4113,7 +4113,7 @@
       }
     },
     {
-      "id": "call_9a5421de50d7",
+      "id": "call_bb403dc67722",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -4121,7 +4121,7 @@
       }
     },
     {
-      "id": "call_168c09c74740",
+      "id": "call_dab06a646959",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -4129,7 +4129,7 @@
       }
     },
     {
-      "id": "call_3666691958f5",
+      "id": "call_d33a09991871",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -4137,7 +4137,7 @@
       }
     },
     {
-      "id": "call_d90ad4d3eefe",
+      "id": "call_4c03e353ed9a",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -4145,7 +4145,7 @@
       }
     },
     {
-      "id": "call_6056392c6e3a",
+      "id": "call_1dd67787e891",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -4153,7 +4153,7 @@
       }
     },
     {
-      "id": "call_f2b9dac5ab52",
+      "id": "call_21774f70b77d",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -4161,7 +4161,7 @@
       }
     },
     {
-      "id": "call_cfabb242d8f1",
+      "id": "call_1900a746b748",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -4169,7 +4169,7 @@
       }
     },
     {
-      "id": "call_3af4637be957",
+      "id": "call_f5d71daf79d3",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -4177,7 +4177,7 @@
       }
     },
     {
-      "id": "call_f503cd3e84d4",
+      "id": "call_57198536dbf3",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -4185,7 +4185,7 @@
       }
     },
     {
-      "id": "call_072790bf2b8d",
+      "id": "call_19278a1b1ccb",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -4193,7 +4193,7 @@
       }
     },
     {
-      "id": "call_ab80216437d8",
+      "id": "call_345bf06f1ced",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -4201,7 +4201,7 @@
       }
     },
     {
-      "id": "call_0abf1f37ab11",
+      "id": "call_5f5d338e93e6",
       "type": "function",
       "function": {
         "name": "ToolsExtension",
@@ -4209,7 +4209,7 @@
       }
     },
     {
-      "id": "call_05ccd476fe0c",
+      "id": "call_9cd15faef329",
       "type": "function",
       "function": {
         "name": "CompletionFailed",
@@ -4217,7 +4217,7 @@
       }
     },
     {
-      "id": "call_db387b36ff4e",
+      "id": "call_8229e666867a",
       "type": "function",
       "function": {
         "name": "TrainingRequired",
@@ -4225,7 +4225,7 @@
       }
     },
     {
-      "id": "call_d81f0fbd655b",
+      "id": "call_4bcbbbc5891f",
       "type": "function",
       "function": {
         "name": "ToolsExtension",

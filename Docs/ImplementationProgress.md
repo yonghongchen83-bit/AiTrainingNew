@@ -38,6 +38,8 @@ Last Updated: 2026-06-06
 - [x] Add CLI flags for mode/recursion depth/stage budget scenario control
 - [x] Validate three required scenarios and export run artifacts
 - [x] Commit protocol + fallback milestone
+- [x] Fix fallback lockup to restore improving vs stuck behavioral separation
+- [x] Commit fallback divergence regression fix
 
 ## Evidence Pointers
 
