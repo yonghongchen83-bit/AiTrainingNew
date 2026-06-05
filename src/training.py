@@ -1,11 +1,26 @@
 from __future__ import annotations
 
+import json
+import uuid
 from dataclasses import dataclass
 from math import exp, log
+from typing import Any
 
 from .agent import HeuristicLLMAgent
 from .environment import MathEnvironment
-from .models import EpisodeRecord, FailureType, GeneratedTask, Mode, RuntimeStats, StageConfig, StageMetrics
+from .models import (
+    EpisodeRecord,
+    FailureType,
+    FallbackEvent,
+    GeneratedTask,
+    Mode,
+    OpenAIFunction,
+    OpenAIToolCall,
+    RuntimeStats,
+    SimulationMode,
+    StageConfig,
+    StageMetrics,
+)
 from .reward import compute_reward_profile
 from .self_extension import SelfExtensionPlanner
 from .toolbox import Toolbox
@@ -18,13 +33,19 @@ class TrainerConfig:
     seed: int = 11
     enable_self_extension: bool = True
     self_task_count: int = 60
+    simulation_mode: SimulationMode = SimulationMode.IMPROVING
+    max_recursion_depth: int = 2
+    stage_initial_budget: float = 100.0
+    convergence_window: int = 20
+    convergence_success: float = 0.9
+    convergence_surprise: float = 0.12
 
 
 class ClosedLoopTrainer:
     def __init__(self, config: TrainerConfig) -> None:
         self.config = config
         self.toolbox = Toolbox()
-        self.agent = HeuristicLLMAgent(seed=config.seed)
+        self.agent = HeuristicLLMAgent(seed=config.seed, simulation_mode=config.simulation_mode)
 
         self.stages = [
             StageConfig(0, "PlaceValue", False, None, False, False),
@@ -33,13 +54,21 @@ class ClosedLoopTrainer:
         ]
 
         self.stats = RuntimeStats()
+        self.tool_invocations: list[OpenAIToolCall] = []
+        self.fallback_events: list[FallbackEvent] = []
+        self.stop_reason: str = "Completed"
 
     def run(self) -> dict[str, object]:
         records: list[EpisodeRecord] = []
         per_stage = max(1, self.config.episodes // len(self.stages))
 
-        for stage in self.stages:
+        for idx, stage in enumerate(self.stages):
             self._run_stage(stage=stage, episodes=per_stage, records=records)
+            if self._is_naturally_converged(records) and self.config.simulation_mode == SimulationMode.IMPROVING:
+                self.stop_reason = f"NaturalConvergence@{stage.name}"
+                # 达到自然收敛后提前结束主循环。
+                if idx < len(self.stages) - 1:
+                    break
 
         self_extension_summary: dict[str, object] = {
             "enabled": self.config.enable_self_extension,
@@ -70,15 +99,44 @@ class ClosedLoopTrainer:
 
         summary = self._build_summary(records)
         summary["self_extension"] = self_extension_summary
+        summary["tool_invocations"] = [
+            {
+                "id": c.id,
+                "type": c.type,
+                "function": {
+                    "name": c.function.name,
+                    "arguments": c.function.arguments,
+                },
+            }
+            for c in self.tool_invocations
+        ]
+        summary["fallback_events"] = [
+            {
+                "reason_code": e.reason_code,
+                "reason": e.reason,
+                "stage": e.stage,
+                "task": e.task,
+                "remaining_budget": round(e.remaining_budget, 4),
+                "details": e.details,
+            }
+            for e in self.fallback_events
+        ]
+        summary["stop_reason"] = self.stop_reason
+        summary["simulation_mode"] = self.config.simulation_mode.value
         return summary
 
     def _run_stage(self, stage: StageConfig, episodes: int, records: list[EpisodeRecord]) -> None:
-        env = MathEnvironment(stage=stage, seed=self.config.seed + stage.index)
+        env = MathEnvironment(
+            stage=stage,
+            seed=self.config.seed + stage.index,
+            initial_budget=self.config.stage_initial_budget,
+        )
         if stage.name not in self.stats.stage_metrics:
             self.stats.stage_metrics[stage.name] = StageMetrics()
 
         for _ in range(episodes):
             problem = env.reset()
+            recursion_depth = 0
             out = self.agent.predict(
                 question=problem.question,
                 expected_answer=problem.expected_answer,
@@ -87,13 +145,70 @@ class ClosedLoopTrainer:
                 stage=stage,
             )
 
+            threshold = self._threshold(self.config.mode)
+            while out.confidence < threshold:
+                if out.use_tool and out.tool_trigger and self.toolbox.has_tool(out.tool_trigger):
+                    self.toolbox.use_tool(out.tool_trigger)
+                    self._emit_tool_call(
+                        "toolsApplication",
+                        {
+                            "tool": out.tool_trigger,
+                            "stage": stage.name,
+                            "task": problem.question,
+                            "reason": "low_confidence_need_tool",
+                        },
+                    )
+                    break
+
+                if recursion_depth >= self.config.max_recursion_depth or env.budget * 0.8 <= 0:
+                    self._register_fallback(
+                        stage=stage.name,
+                        task=problem.question,
+                        failure_type=FailureType.IRREDUCIBLE_UNCERTAINTY,
+                        remaining_budget=env.budget,
+                        reason="low_confidence_and_no_tool",
+                        details={"confidence": round(out.confidence, 4), "threshold": threshold},
+                    )
+                    record = EpisodeRecord(
+                        stage_name=stage.name,
+                        question=problem.question,
+                        answer=out.answer,
+                        expected=problem.expected_answer,
+                        success=False,
+                        confidence=out.confidence,
+                        surprise=abs(out.confidence - 0.0),
+                        reward=-1.0,
+                        cost=0.0,
+                        used_tool=None,
+                        recursion_flag=True,
+                        background_locked=out.background_locked,
+                        failure_type=FailureType.IRREDUCIBLE_UNCERTAINTY,
+                    )
+                    records.append(record)
+                    self._accumulate(record)
+                    out = None
+                    break
+
+                recursion_depth += 1
+                child_budget = env.budget * 0.8
+                out = self.agent.predict(
+                    question=problem.question,
+                    expected_answer=problem.expected_answer,
+                    budget=child_budget,
+                    mode=self.config.mode,
+                    stage=stage,
+                )
+
+            if out is None:
+                continue
+
             if out.use_tool:
                 self.toolbox.use_tool(out.tool_trigger)
 
             reward, success, actual_cost = env.step(
                 out=out,
                 expected_answer=problem.expected_answer,
-                recursion_depth=1 if out.recursion_flag else 0,
+                recursion_depth=recursion_depth,
             )
             self.agent.train_step(reward)
 
@@ -101,11 +216,23 @@ class ClosedLoopTrainer:
             failure_type = FailureType.NONE
             if env.budget <= 0:
                 failure_type = FailureType.BUDGET_EXHAUSTED
+                self._register_fallback(
+                    stage=stage.name,
+                    task=problem.question,
+                    failure_type=FailureType.BUDGET_EXHAUSTED,
+                    remaining_budget=env.budget,
+                    reason="remaining_budget<=0",
+                    details={"actual_cost": round(actual_cost, 4)},
+                )
             elif not success and out.confidence > 0.8:
                 failure_type = FailureType.VALIDATION_FAILED
 
             if success and out.confidence > 0.9:
-                self.toolbox.register("高信心模板", "在高置信成功情形下可复用的步骤模板")
+                self.toolbox.register(
+                    trigger_words=["高信心模板", "HighConfidenceTemplate"],
+                    description="在高置信成功情形下可复用的步骤模板",
+                    name="HighConfidenceTemplate",
+                )
 
             record = EpisodeRecord(
                 stage_name=stage.name,
@@ -118,7 +245,7 @@ class ClosedLoopTrainer:
                 reward=reward,
                 cost=actual_cost,
                 used_tool=out.tool_trigger,
-                recursion_flag=out.recursion_flag,
+                recursion_flag=recursion_depth > 0,
                 background_locked=out.background_locked,
                 failure_type=failure_type,
             )
@@ -195,6 +322,81 @@ class ClosedLoopTrainer:
         m.episodes += 1
         m.success_count += 1 if record.success else 0
         m.surprise_sum += record.surprise
+
+    def _threshold(self, mode: Mode) -> float:
+        if mode == Mode.CHAT:
+            return 0.4
+        if mode == Mode.EXPERT:
+            return 0.8
+        return 0.9
+
+    def _emit_tool_call(self, name: str, arguments: dict[str, Any]) -> None:
+        call = OpenAIToolCall(
+            id=f"call_{uuid.uuid4().hex[:12]}",
+            type="function",
+            function=OpenAIFunction(name=name, arguments=json.dumps(arguments, ensure_ascii=False)),
+        )
+        self.tool_invocations.append(call)
+
+    def _register_fallback(
+        self,
+        stage: str,
+        task: str,
+        failure_type: FailureType,
+        remaining_budget: float,
+        reason: str,
+        details: dict[str, Any],
+    ) -> None:
+        event = FallbackEvent(
+            reason_code=failure_type.value,
+            reason=reason,
+            stage=stage,
+            task=task,
+            remaining_budget=remaining_budget,
+            details=details,
+        )
+        self.fallback_events.append(event)
+
+        self._emit_tool_call(
+            "CompletionFailed",
+            {
+                "reason_code": failure_type.value,
+                "reason": reason,
+                "stage": stage,
+                "task": task,
+                "remaining_budget": remaining_budget,
+                "details": details,
+            },
+        )
+
+        if failure_type == FailureType.IRREDUCIBLE_UNCERTAINTY:
+            self._emit_tool_call(
+                "TrainingRequired",
+                {
+                    "domain": "math",
+                    "gap": "low_confidence_no_tool_path",
+                    "sample_task": task,
+                },
+            )
+            self._emit_tool_call(
+                "ToolsExtension",
+                {
+                    "requested_tool": "expression_decompose",
+                    "reason": "recursion_failed_no_tool",
+                    "stage": stage,
+                },
+            )
+
+    def _is_naturally_converged(self, records: list[EpisodeRecord]) -> bool:
+        if self.config.simulation_mode != SimulationMode.IMPROVING:
+            return False
+        if len(records) < self.config.convergence_window:
+            return False
+
+        window = records[-self.config.convergence_window :]
+        success_rate = sum(1 for r in window if r.success) / len(window)
+        mean_surprise = sum(r.surprise for r in window) / len(window)
+        return success_rate >= self.config.convergence_success and mean_surprise <= self.config.convergence_surprise
 
     def _build_summary(self, records: list[EpisodeRecord]) -> dict[str, object]:
         cal_error = 0.0

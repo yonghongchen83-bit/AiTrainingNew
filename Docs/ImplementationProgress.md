@@ -30,6 +30,14 @@ Last Updated: 2026-06-06
 - [x] Implement Stage 4 self curriculum expansion and execution
 - [x] Validate runnable Stage 0-4 loop output artifact
 - [x] Commit Stage 3-4 completion milestone
+- [x] Upgrade toolbox to multi-trigger alias words with canonical names
+- [x] Add OpenAI function tool-call output protocol into runtime summary
+- [x] Implement improving vs stuck simulation behavior in agent learning loop
+- [x] Implement recursive low-confidence fallback and abort semantics
+- [x] Implement budget-depletion CompletionFailed reason_code BudgetExhausted
+- [x] Add CLI flags for mode/recursion depth/stage budget scenario control
+- [x] Validate three required scenarios and export run artifacts
+- [x] Commit protocol + fallback milestone
 
 ## Evidence Pointers
 
@@ -46,6 +54,9 @@ Last Updated: 2026-06-06
 - Hook validator: scripts/validate_milestone_commit.py
 - Milestone bootstrap: scripts/start_milestone.py
 - Full-loop run artifact: run_summary_phase4.json
+- Improving scenario artifact: run_summary_improving.json
+- Stuck scenario artifact: run_summary_stuck.json
+- Budget depletion artifact: run_summary_budget_depleted.json
 
 ## Notes
 

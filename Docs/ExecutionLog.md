@@ -117,3 +117,59 @@ Last Updated: 2026-06-06
 
 - Command: git add Stage 3/4 implementation and docs; git commit -m "milestone: complete all goals stage 3 and stage 4"
 - Status: Success
+
+## Run 015
+
+- Command: python main.py --episodes 120 --simulation-mode improving --out run_summary_improving.json
+- Status: Success
+- Output Artifact: run_summary_improving.json
+
+### Key Metrics
+
+- episodes: 120
+- total_reward: -120.0
+- simulation_mode: improving
+- fallback_events: 120
+- tool_invocations: 360
+
+### Notes
+
+- All episodes entered low-confidence unresolved fallback in Expert mode.
+- Protocol output now contains OpenAI function tool-call objects for fallback escalation.
+
+## Run 016
+
+- Command: python main.py --episodes 120 --simulation-mode stuck --out run_summary_stuck.json
+- Status: Success
+- Output Artifact: run_summary_stuck.json
+
+### Key Metrics
+
+- episodes: 120
+- total_reward: -120.0
+- simulation_mode: stuck
+- fallback_events: 120
+- tool_invocations: 360
+
+### Notes
+
+- Stuck mode keeps confidence lower than improving mode and sustains fallback-heavy behavior.
+
+## Run 017
+
+- Command: python main.py --episodes 40 --mode Chat --simulation-mode improving --stage-initial-budget 1.2 --out run_summary_budget_depleted.json
+- Status: Success
+- Output Artifact: run_summary_budget_depleted.json
+
+### Key Metrics
+
+- episodes: 39
+- total_reward: -43.9599
+- simulation_mode: improving
+- fallback_events: 9
+- tool_invocations: 9
+- dominant reason_code: BudgetExhausted
+
+### Notes
+
+- This run validates explicit budget depletion fallback with `CompletionFailed` reason_code `BudgetExhausted`.

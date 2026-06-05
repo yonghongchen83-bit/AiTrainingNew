@@ -24,6 +24,27 @@ Last Updated: 2026-06-06
 - src.toolbox.Toolbox.query/register/use_tool
 - src.training.ClosedLoopTrainer.run() -> summary dict
 
+## Tool Alias and Protocol Interaction Flow
+
+1. src.toolbox.Toolbox stores each tool with canonical `name` and alias `trigger_words`.
+2. src.agent.HeuristicLLMAgent may emit alias or canonical trigger words in `LLMOutput.tool_trigger`.
+3. src.toolbox.Toolbox.resolve maps alias to canonical name before `use_tool` accounting.
+4. src.training.ClosedLoopTrainer emits protocol events in OpenAI function tool-call shape:
+   - `type: function`
+   - `id: call_<uuid>`
+   - `function.name`: one of `toolsApplication`, `CompletionFailed`, `TrainingRequired`, `ToolsExtension`
+   - `function.arguments`: JSON string payload
+
+## Fallback and Recursion Escalation Flow
+
+1. Trainer computes confidence threshold by mode (Chat/Expert/Audit).
+2. If confidence is below threshold:
+   - If a tool exists, trainer emits `toolsApplication` and records tool usage.
+   - Otherwise trainer recursively retries with reduced child budget (0.8x), bounded by `max_recursion_depth`.
+3. If retries remain unresolved, trainer emits `CompletionFailed` with reason_code `IrreducibleUncertainty` and additionally emits `TrainingRequired` + `ToolsExtension`.
+4. If environment budget reaches or drops below zero after step evaluation, trainer emits `CompletionFailed` with reason_code `BudgetExhausted`.
+5. Runtime summary exports both `fallback_events` and `tool_invocations` for auditing.
+
 ## Future Stub Interfaces (Stage 3-4)
 
 - src.self_extension.SelfExtensionPlanner.generate_tasks

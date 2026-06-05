@@ -81,7 +81,7 @@ class SelfExtensionPlanner:
         added: list[str] = []
         for trigger, desc in self.discover_tools(tasks):
             if not toolbox.has_tool(trigger):
-                toolbox.register(trigger, desc)
+                toolbox.register(trigger_words=[trigger], description=desc, name=trigger)
                 added.append(trigger)
         return added
 

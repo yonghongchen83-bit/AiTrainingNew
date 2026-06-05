@@ -34,6 +34,14 @@ Last Updated: 2026-06-06
 - [x] P3-Impl Self-generated tasks/reward implementation
 - [x] P4-Impl Self curriculum expansion implementation
 - [x] GIT-07 Commit Stage 3-4 completion milestone
+- [x] P5-01 Upgrade Toolbox to canonical name + multi-trigger alias words
+- [x] P5-02 Emit standard OpenAI function tool-call objects in run summary
+- [x] P5-03 Add simulation modes (improving/stuck) in heuristic agent
+- [x] P5-04 Add recursive low-confidence fallback with CompletionFailed/TrainingRequired/ToolsExtension
+- [x] P5-05 Add budget-depletion CompletionFailed path with reason_code=BudgetExhausted
+- [x] P5-06 Add runtime CLI controls (mode, recursion depth, stage initial budget)
+- [x] P5-07 Validate improving/stuck/budget scenarios and collect artifacts
+- [x] GIT-08 Commit protocol + fallback milestone
 
 ## Runtime Entry Points
 

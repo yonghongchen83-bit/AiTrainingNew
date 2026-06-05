@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import random
 
-from .models import LLMOutput, Mode, StageConfig
+from .models import LLMOutput, Mode, SimulationMode, StageConfig
 
 
 class HeuristicLLMAgent:
@@ -12,14 +12,20 @@ class HeuristicLLMAgent:
     - 根据 episode 进度逐步提高正确率，模拟训练改进
     """
 
-    def __init__(self, seed: int = 13) -> None:
+    def __init__(self, seed: int = 13, simulation_mode: SimulationMode = SimulationMode.IMPROVING) -> None:
         self._rng = random.Random(seed)
         self.skill = 0.25
+        self.simulation_mode = simulation_mode
 
     def train_step(self, reward: float) -> None:
-        # 用奖励信号驱动能力上调，保持在可解释范围。
-        delta = 0.01 if reward > 0 else -0.003
-        self.skill = max(0.05, min(0.98, self.skill + delta))
+        # improving 模式会学习；stuck 模式模拟难以学习/随机波动。
+        if self.simulation_mode == SimulationMode.IMPROVING:
+            delta = 0.01 if reward > 0 else -0.003
+            self.skill = max(0.05, min(0.98, self.skill + delta))
+            return
+
+        jitter = self._rng.uniform(-0.01, 0.01)
+        self.skill = max(0.05, min(0.25, self.skill + jitter))
 
     def predict(
         self,
@@ -32,17 +38,22 @@ class HeuristicLLMAgent:
         threshold = self._threshold(mode)
         need_tool = stage.tool_required
 
-        base_conf = 0.35 + self.skill * 0.6
-        noise = self._rng.uniform(-0.08, 0.08)
-        confidence = max(0.01, min(0.99, base_conf + noise))
+        if self.simulation_mode == SimulationMode.IMPROVING:
+            base_conf = 0.35 + self.skill * 0.6
+            noise = self._rng.uniform(-0.08, 0.08)
+            will_be_correct = self._rng.random() < self.skill
+        else:
+            base_conf = 0.18 + self.skill * 0.4
+            noise = self._rng.uniform(-0.22, 0.22)
+            will_be_correct = self._rng.random() < 0.12
 
-        will_be_correct = self._rng.random() < self.skill
+        confidence = max(0.01, min(0.99, base_conf + noise))
         answer = expected_answer if will_be_correct else self._perturb_answer(expected_answer)
 
         estimated_cost = max(1, int(1 + len(answer) / 3 + (0 if confidence > threshold else 2)))
 
         use_tool = need_tool and confidence < 0.85
-        tool_trigger = "竖式加法" if use_tool else None
+        tool_trigger = stage.required_tool if use_tool and stage.required_tool else ("vertical_addition" if use_tool else None)
         recursion_flag = confidence < threshold
 
         # 在本阶段（0-2）背景基本可锁定，仍保留行为位供后续扩展。

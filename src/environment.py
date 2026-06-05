@@ -14,10 +14,10 @@ class MathProblem:
 
 
 class MathEnvironment:
-    def __init__(self, stage: StageConfig, seed: int = 7) -> None:
+    def __init__(self, stage: StageConfig, seed: int = 7, initial_budget: float = 100.0) -> None:
         self.stage = stage
         self._rng = random.Random(seed)
-        self.initial_budget = 100.0
+        self.initial_budget = initial_budget
         self.budget = self.initial_budget
 
     def reset(self) -> MathProblem:

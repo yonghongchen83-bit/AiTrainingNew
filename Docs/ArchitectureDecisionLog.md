@@ -57,3 +57,24 @@ Last Updated: 2026-06-06
 - Decision: Implement Stage 3 (AI-generated tasks and reward profiles) and Stage 4 (self curriculum expansion) via deterministic planner logic integrated with runtime trainer.
 - Rationale: Complete remaining implementation goals while preserving a runnable baseline and auditable behavior.
 - Consequence: Closed loop now supports Stage 0-4 execution with expandable tool discovery and generated curriculum stages.
+
+## ADR-009: Canonical Tool Names with Alias Trigger Words
+
+- Date: 2026-06-06
+- Decision: Represent each tool with a canonical name plus a list of alias trigger words; resolve aliases at runtime before usage accounting.
+- Rationale: User required one tool to support multiple trigger phrases from ColdStartToolBox while preserving deterministic tracking.
+- Consequence: Toolbox registration/lookup/usage all operate through alias resolution, and newly generated tools can keep stable canonical identities.
+
+## ADR-010: OpenAI Function Tool-Call Protocol as Runtime Event Output
+
+- Date: 2026-06-06
+- Decision: Export tool invocations in standard OpenAI function call shape (`type=function`, `id`, `function.name`, `function.arguments`).
+- Rationale: User required protocol-level compatibility and auditable fallback traces.
+- Consequence: Runtime summary now includes machine-readable tool-call events for toolsApplication, CompletionFailed, TrainingRequired, and ToolsExtension.
+
+## ADR-011: Explicit Fallback Escalation Paths for Uncertainty and Budget Depletion
+
+- Date: 2026-06-06
+- Decision: Add recursive low-confidence handling with bounded depth and emit CompletionFailed events; for irreducible uncertainty also emit TrainingRequired and ToolsExtension; for budget depletion emit CompletionFailed with reason_code BudgetExhausted.
+- Rationale: User requested realistic failing/improving branches, recursion abort behavior, and explicit budget-exhausted semantics.
+- Consequence: Summary contains structured fallback_events and protocol-compliant tool invocations for both uncertainty and budget failure classes.
