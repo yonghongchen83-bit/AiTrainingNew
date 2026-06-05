@@ -83,3 +83,25 @@ Last Updated: 2026-06-06
 
 - Command: git add governance hook updates and docs; git commit -m "milestone: strict commit message enforcement"
 - Status: Success
+
+## Run 011
+
+- Command: python scripts/start_milestone.py --name "minimum governance loop" --apply
+- Status: Success
+- Result: Milestone template entries seeded into plan/progress/execution docs.
+
+## Milestone Template: minimum governance loop
+
+- Generated: 2026-06-06 04:38
+- Planned command: git commit -m "milestone: minimum governance loop"
+- Checklist seed:
+  - Update Docs/ImplementationPlan.md
+  - Update Docs/ImplementationProgress.md
+  - Update Docs/ArchitectureDecisionLog.md if architecture changes
+  - Update Docs/ModuleInteractionSpec.md if module flow changes
+  - Append run evidence in Docs/ExecutionLog.md
+
+## Run 012
+
+- Command: git add milestone bootstrap tool and governance docs; git commit -m "milestone: minimum governance loop automation"
+- Status: Success

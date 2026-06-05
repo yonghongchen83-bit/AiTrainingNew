@@ -24,6 +24,8 @@ Last Updated: 2026-06-06
 - [x] Commit hook governance files as milestone
 - [x] Enforce git commit message prefix milestone: via PreToolUse hook
 - [x] Commit strict commit-message governance milestone
+- [x] Add automated milestone bootstrap script for governance docs
+- [x] Complete minimum governance loop automation milestone
 
 ## Evidence Pointers
 
@@ -38,9 +40,12 @@ Last Updated: 2026-06-06
 - Agent index: AGENTS.md
 - Hook config: .github/hooks/milestone-governance.json
 - Hook validator: scripts/validate_milestone_commit.py
+- Milestone bootstrap: scripts/start_milestone.py
 
 ## Notes
 
 - This checklist is updated as execution progresses.
 - Any new architecture decision must be appended in Docs/ArchitectureDecisionLog.md.
 - Any interaction change between modules must be appended in Docs/ModuleInteractionSpec.md.
+
+- [x] Bootstrap milestone: minimum governance loop

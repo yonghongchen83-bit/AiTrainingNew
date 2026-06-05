@@ -8,6 +8,14 @@ Minimal runnable closed loop for the meta-cognitive training architecture define
 python main.py --episodes 120
 ```
 
+## Milestone Bootstrap
+
+Use the helper to pre-seed governance docs for a new milestone:
+
+```bash
+python scripts/start_milestone.py --name "your milestone" --apply
+```
+
 ## Scope
 
 - Implements Phase 0-2 runnable loop.

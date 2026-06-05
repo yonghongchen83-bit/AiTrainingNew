@@ -43,3 +43,10 @@ Last Updated: 2026-06-06
 - Decision: Enforce git commit message prefix "milestone:" through PreToolUse hook validation.
 - Rationale: Make milestone commits machine-detectable and consistently auditable.
 - Consequence: Non-compliant commit commands are denied before execution.
+
+## ADR-007: Milestone Bootstrap Automation
+
+- Date: 2026-06-06
+- Decision: Add scripts/start_milestone.py to auto-seed plan, progress, and execution placeholders for each new milestone.
+- Rationale: User requested visible progress and persistent governance without manual bookkeeping overhead.
+- Consequence: New milestones can start with one command and immediately appear in governance docs.

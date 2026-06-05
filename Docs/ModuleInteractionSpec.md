@@ -38,3 +38,10 @@ Last Updated: 2026-06-06
 4. On PreToolUse, if payload indicates git commit execution, script validates commit message starts with "milestone:".
 5. On PostToolUse, if payload indicates git commit execution, script inspects latest commit files.
 6. If required docs are missing, script returns block decision with remediation message.
+
+## Milestone Bootstrap Flow
+
+1. scripts/start_milestone.py receives a milestone name.
+2. Script appends seed checklist entries into Docs/ImplementationPlan.md and Docs/ImplementationProgress.md.
+3. Script appends a milestone template section into Docs/ExecutionLog.md.
+4. Governance loop continues with implementation, validation, and milestone commit.

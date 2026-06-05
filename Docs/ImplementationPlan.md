@@ -28,6 +28,8 @@ Last Updated: 2026-06-06
 - [x] GIT-04 Commit hook governance milestone
 - [x] GOV-03 Enforce milestone commit message prefix via PreToolUse hook
 - [x] GIT-05 Commit strict commit-message governance milestone
+- [x] GOV-04 Add automated milestone bootstrap tool for plan/progress/execution docs
+- [x] GIT-06 Commit minimum governance loop automation milestone
 - [x] P3-Stub Add self-extension planner stubs only
 - [ ] P3-Impl Self-generated tasks/reward implementation (future)
 - [ ] P4-Impl Self curriculum expansion implementation (future)
@@ -43,3 +45,5 @@ Last Updated: 2026-06-06
 - Summary JSON is written.
 - Stage-level metrics are produced.
 - Progress and architecture docs are updated after execution.
+
+- [x] GOV-AUTO: Bootstrap milestone template for minimum governance loop
