@@ -26,3 +26,23 @@ Last Updated: 2026-06-06
 
 - This is a runnable closed loop baseline, not tuned performance.
 - Current agent is heuristic and reward-driven; results establish execution validity.
+
+## Run 002
+
+- Command: git init
+- Status: Success
+- Result: Local repository initialized at workspace root.
+
+## Run 003
+
+- Command: git add .; git commit -m "milestone: runnable stage 0-2 closed loop with docs"
+- Status: Success
+- Commit: f935df4
+
+## Run 004
+
+- Action: Create workspace governance agent and registration docs
+- Files:
+	- .github/agents/milestone-governor.agent.md
+	- AGENTS.md
+	- .gitignore

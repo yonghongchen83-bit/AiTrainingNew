@@ -20,6 +20,10 @@ Last Updated: 2026-06-06
 - [x] P2-01 Implement training orchestrator for Stage 0-2 episodes
 - [x] P2-02 Export run summary artifact to JSON
 - [x] P2-03 Execute end-to-end run to validate close loop
+- [x] GIT-01 Initialize local git repository
+- [x] GIT-02 Commit Stage 0-2 milestone
+- [x] GOV-01 Add workspace governance agent for commit and documentation enforcement
+- [ ] GIT-03 Commit governance milestone
 - [x] P3-Stub Add self-extension planner stubs only
 - [ ] P3-Impl Self-generated tasks/reward implementation (future)
 - [ ] P4-Impl Self curriculum expansion implementation (future)
