@@ -29,3 +29,11 @@ Last Updated: 2026-06-06
 - src.self_extension.SelfExtensionPlanner.generate_tasks
 - src.self_extension.SelfExtensionPlanner.generate_reward_functions
 - src.self_extension.SelfExtensionPlanner.expand_curriculum
+
+## Governance Interaction Flow
+
+1. Hook file .github/hooks/milestone-governance.json triggers script execution on SessionStart and PostToolUse.
+2. scripts/validate_milestone_commit.py reads hook payload from stdin.
+3. On SessionStart, script emits governance reminder systemMessage.
+4. On PostToolUse, if payload indicates git commit execution, script inspects latest commit files.
+5. If required docs are missing, script returns block decision with remediation message.

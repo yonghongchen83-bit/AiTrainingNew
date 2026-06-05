@@ -52,3 +52,16 @@ Last Updated: 2026-06-06
 - Command: git rm -r --cached src/__pycache__; git add .; git commit -m "milestone: workspace governance agent and git policy"
 - Status: Success
 - Commit: 47dae8b
+
+## Run 006
+
+- Action: Add deterministic workspace hooks and validator script
+- Files:
+	- .github/hooks/milestone-governance.json
+	- scripts/validate_milestone_commit.py
+
+## Run 007
+
+- Command: "{}" | python scripts/validate_milestone_commit.py --event SessionStart; "{}" | python scripts/validate_milestone_commit.py --event PostToolUse
+- Status: Success
+- Result: Hook script returned valid JSON responses for both events.

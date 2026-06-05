@@ -29,3 +29,10 @@ Last Updated: 2026-06-06
 - Decision: Use AiDevelopmenPlan reward as canonical runtime reward.
 - Rationale: No true conflict across docs; other formulations are refinements for later experiments.
 - Consequence: Keep runtime reward stable and add extension points for future dynamic pressure terms.
+
+## ADR-005: Deterministic Governance Hooks
+
+- Date: 2026-06-06
+- Decision: Add workspace hooks in .github/hooks to enforce milestone documentation checks around commit operations.
+- Rationale: User requested visible and enforceable governance, not only instruction-level guidance.
+- Consequence: Commit-related tool executions are post-validated against required documentation files.

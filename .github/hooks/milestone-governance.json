@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "windows": "python scripts/validate_milestone_commit.py --event SessionStart",
+        "timeout": 10
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "windows": "python scripts/validate_milestone_commit.py --event PostToolUse",
+        "timeout": 15
+      }
+    ]
+  }
+}

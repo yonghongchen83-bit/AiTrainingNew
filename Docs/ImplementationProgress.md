@@ -19,6 +19,9 @@ Last Updated: 2026-06-06
 - [x] Create first milestone commit for runnable Stage 0-2
 - [x] Create workspace agent for commit and documentation enforcement
 - [x] Commit governance files as milestone
+- [x] Add workspace hook configuration for deterministic governance
+- [x] Add hook validator script for git commit documentation checks
+- [x] Commit hook governance files as milestone
 
 ## Evidence Pointers
 
@@ -31,6 +34,8 @@ Last Updated: 2026-06-06
 - Run evidence: Docs/ExecutionLog.md
 - Workspace agent: .github/agents/milestone-governor.agent.md
 - Agent index: AGENTS.md
+- Hook config: .github/hooks/milestone-governance.json
+- Hook validator: scripts/validate_milestone_commit.py
 
 ## Notes
 
