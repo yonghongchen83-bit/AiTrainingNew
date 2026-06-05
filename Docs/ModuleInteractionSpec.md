@@ -78,3 +78,13 @@ Last Updated: 2026-06-06
 5. src.self_extension.SelfExtensionPlanner.build_toolbox registers discovered tools into src.toolbox.Toolbox.
 6. src.training.ClosedLoopTrainer executes generated tasks and scores with src.reward.compute_reward_profile.
 7. main.py exports self_extension summary into run output JSON.
+
+## Training Workspace Flow (RLHF/SFT)
+
+1. `scripts/run_training_pipeline.py` reads per-training config from `training/materials/<training_id>/config/training_config.json`.
+2. Orchestrator enforces seed presence and writes immutable config snapshot into `training/runs/<run_id>/config_snapshot.json`.
+3. Mode is selected by config field `training_mode` (`rlhf` default, `sft` in later pattern stages).
+4. Orchestrator writes run summary to `training/runs/<run_id>/run_summary.json`.
+5. Best/last checkpoint artifact placeholders are written to `training/models/checkpoints/`.
+6. One-line run record is appended to `training/registry/runs_manifest.jsonl`.
+7. Promotion to `training/models/promoted/stageN.end.model` is gated by human approval.

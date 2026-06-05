@@ -45,6 +45,11 @@ Last Updated: 2026-06-06
 - [x] Wire runtime CLI/config to provider selection
 - [x] Document provider contract and architecture
 - [x] Commit provider abstraction milestone
+- [x] Create training workspace folders for materials/models/runs/registry
+- [x] Add RLHF and SFT training templates with per-training data/reward/config
+- [x] Add run pipeline stub with seed-required config snapshot and manifest append
+- [x] Set RLHF-first mode policy with planned SFT switch stage
+- [x] Commit training workspace and mode-switch policy milestone
 
 ## Evidence Pointers
 
@@ -65,6 +70,8 @@ Last Updated: 2026-06-06
 - Stuck scenario artifact: run_summary_stuck.json
 - Budget depletion artifact: run_summary_budget_depleted.json
 - Provider contract doc: Docs/LLMProviderContract.md
+- Training workspace root: training/
+- Training runner: scripts/run_training_pipeline.py
 
 ## Notes
 

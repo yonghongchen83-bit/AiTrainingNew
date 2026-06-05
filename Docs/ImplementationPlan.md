@@ -50,6 +50,12 @@ Last Updated: 2026-06-06
 - [x] P6-04 Add CLI provider selection and provider metadata in run summary
 - [x] P6-05 Document provider architecture and integration path
 - [x] GIT-10 Commit provider abstraction milestone
+- [x] P7-01 Create official training workspace scaffold under training/
+- [x] P7-02 Add RLHF-first and SFT switchable training material templates
+- [x] P7-03 Add run registry and reproducible config snapshot flow
+- [x] P7-04 Add orchestration stub for mode-driven training execution
+- [x] P7-05 Document RLHF-to-SFT switch policy and retention/promotion controls
+- [x] GIT-11 Commit training workspace and mode-switch policy milestone
 
 ## Runtime Entry Points
 

@@ -92,3 +92,17 @@ Last Updated: 2026-06-06
 - Decision: Introduce a formal LLM provider contract and factory-based provider selection (`simulated`, `real_stub`) that trainer logic depends on instead of a concrete agent class.
 - Rationale: Framework validation must remain possible without real model dependencies, while preserving a clean insertion path for real LLM integration later.
 - Consequence: Runtime can swap provider backends by CLI/config; summaries now emit provider metadata for auditability.
+
+## ADR-014: RLHF-First Training Policy with Config-Driven SFT Switch
+
+- Date: 2026-06-06
+- Decision: Make RLHF the default training mode for confidence calibration stages; allow SFT switch in later framework-pattern stages via config only.
+- Rationale: Current objective emphasizes confidence calibration and reward alignment, while future stages may require supervised pattern shaping.
+- Consequence: Training orchestration stays stable while mode changes remain explicit, auditable, and stage-bound.
+
+## ADR-015: Unified Training Workspace Contract
+
+- Date: 2026-06-06
+- Decision: Introduce `training/` with standardized subfolders for materials, model artifacts, run outputs, and run registry, plus required controls for best/last retention and human promotion gate.
+- Rationale: User requested a concrete filesystem contract where engines load models from a model folder and write trained outputs with summaries.
+- Consequence: RLHF/SFT runs now share one storage and governance contract with reproducibility snapshots and append-only run history.

@@ -1,0 +1,26 @@
+{
+  "training_id": "sft_framework_patterns_v1",
+  "stage": "stage3",
+  "training_mode": "sft",
+  "engine": "huggingface",
+  "engine_runtime_eval": "vllm",
+  "engine_optional_inference": "ollama",
+  "input_model": "training/models/promoted/stage2.end.model",
+  "output_model_prefix": "stage3_framework_patterns",
+  "datasets": {
+    "train": "training/materials/sft_framework_patterns_v1/data/train.jsonl",
+    "val": "training/materials/sft_framework_patterns_v1/data/val.jsonl",
+    "test": "training/materials/sft_framework_patterns_v1/data/test.jsonl"
+  },
+  "reward_function": "training/materials/sft_framework_patterns_v1/reward/reward.py",
+  "retention": {
+    "keep": ["best", "last"]
+  },
+  "promotion": {
+    "human_approval_required": true
+  },
+  "reproducibility": {
+    "seed_required": true,
+    "frozen_config_snapshot_required": true
+  }
+}

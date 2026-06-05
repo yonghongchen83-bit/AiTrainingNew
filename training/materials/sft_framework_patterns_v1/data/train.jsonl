@@ -1,0 +1,2 @@
+{"prompt":"Provide stage handoff checklist","response":"1. Freeze config\n2. Save best/last\n3. Human review\n4. Promote if approved"}
+{"prompt":"Explain fallback protocol","response":"Emit CompletionFailed, then TrainingRequired and ToolsExtension when irreducible uncertainty remains."}

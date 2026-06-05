@@ -60,3 +60,24 @@ When adding real API execution in later stages:
 3. Add provider type to LLMProviderType enum.
 4. Extend build_llm_provider factory.
 5. Keep simulated provider unchanged for framework-only verification and regression baselines.
+
+## Training Mode Switch Policy (RLHF -> SFT)
+
+- Default training mode for current stage objectives is `rlhf` (confidence calibration first).
+- `sft` is intentionally enabled in later stages when the objective shifts to framework-pattern learning.
+- Mode switching must be performed by config (`training_mode`) only.
+- Orchestration, artifact contract, and human promotion gate must remain unchanged across modes.
+
+## Training Workspace Contract
+
+- Workspace root: `training/`
+- Per-training materials: `training/materials/<training_id>/`
+- Model store for engine loading and outputs: `training/models/`
+- Run outputs and snapshots: `training/runs/`
+- Central append-only registry: `training/registry/runs_manifest.jsonl`
+
+Mandatory controls:
+
+- Reproducibility: fixed seed + frozen config snapshot per run
+- Retention: keep `best` and `last` checkpoints only
+- Promotion: human approval required before writing `stageN.end.model`

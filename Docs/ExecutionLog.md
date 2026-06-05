@@ -229,3 +229,37 @@ Last Updated: 2026-06-06
 ### Notes
 
 - This run validates framework execution with non-simulated provider wiring while preserving deterministic, API-free behavior.
+
+## Run 023
+
+- Action: Create official `training/` workspace scaffold for materials/models/runs/registry.
+- Status: Success
+- Result: Added RLHF (`rlhf_confidence_v1`) and SFT (`sft_framework_patterns_v1`) template folders with data/reward/config structure.
+
+## Run 024
+
+- Command: python scripts/run_training_pipeline.py --config training/materials/rlhf_confidence_v1/config/training_config.json --seed 42 --dry-run
+- Status: Success
+- Output Artifact: training/runs/20260605T195151Z_rlhf_confidence_v1/run_summary.json
+
+### Key Metrics
+
+- training_mode: rlhf
+- checkpoint_retention: [best, last]
+- human_approval_required: true
+
+## Run 025
+
+- Command: python scripts/run_training_pipeline.py --config training/materials/sft_framework_patterns_v1/config/training_config.json --seed 43
+- Status: Success
+- Output Artifact: training/runs/20260605T195152Z_sft_framework_patterns_v1/run_summary.json
+
+### Key Metrics
+
+- training_mode: sft
+- checkpoint_retention: [best, last]
+- human_approval_required: true
+
+### Notes
+
+- Both modes run through the same orchestrator contract, validating config-driven RLHF/SFT switching.
