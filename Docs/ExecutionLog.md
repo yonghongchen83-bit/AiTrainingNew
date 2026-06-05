@@ -46,3 +46,9 @@ Last Updated: 2026-06-06
 	- .github/agents/milestone-governor.agent.md
 	- AGENTS.md
 	- .gitignore
+
+## Run 005
+
+- Command: git rm -r --cached src/__pycache__; git add .; git commit -m "milestone: workspace governance agent and git policy"
+- Status: Success
+- Commit: 47dae8b
