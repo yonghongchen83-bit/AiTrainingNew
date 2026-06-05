@@ -173,3 +173,9 @@ Last Updated: 2026-06-06
 ### Notes
 
 - This run validates explicit budget depletion fallback with `CompletionFailed` reason_code `BudgetExhausted`.
+
+## Run 018
+
+- Command: git add runtime/docs/artifacts; git commit -m "milestone: openai protocol fallback and alias trigger semantics"
+- Status: Success
+- Commit: fd60c84

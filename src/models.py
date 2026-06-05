@@ -2,13 +2,18 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional
 
 
 class Mode(str, Enum):
     CHAT = "Chat"
     EXPERT = "Expert"
     AUDIT = "Audit"
+
+
+class SimulationMode(str, Enum):
+    IMPROVING = "improving"
+    STUCK = "stuck"
 
 
 class FailureType(str, Enum):
@@ -62,11 +67,35 @@ class StageMetrics:
 
 @dataclass
 class Tool:
-    trigger: str
+    name: str
+    trigger_words: list[str]
     description: str
     usage_count: int = 0
     cache_level: str = "L2"
     must_keep: bool = False
+
+
+@dataclass
+class OpenAIFunction:
+    name: str
+    arguments: str
+
+
+@dataclass
+class OpenAIToolCall:
+    id: str
+    type: str
+    function: OpenAIFunction
+
+
+@dataclass
+class FallbackEvent:
+    reason_code: str
+    reason: str
+    stage: str
+    task: str
+    remaining_budget: float
+    details: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
