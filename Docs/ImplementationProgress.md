@@ -40,6 +40,11 @@ Last Updated: 2026-06-06
 - [x] Commit protocol + fallback milestone
 - [x] Fix fallback lockup to restore improving vs stuck behavioral separation
 - [x] Commit fallback divergence regression fix
+- [x] Add official LLM provider abstraction layer
+- [x] Add real-provider stub backend for swap validation
+- [x] Wire runtime CLI/config to provider selection
+- [x] Document provider contract and architecture
+- [x] Commit provider abstraction milestone
 
 ## Evidence Pointers
 
@@ -59,6 +64,7 @@ Last Updated: 2026-06-06
 - Improving scenario artifact: run_summary_improving.json
 - Stuck scenario artifact: run_summary_stuck.json
 - Budget depletion artifact: run_summary_budget_depleted.json
+- Provider contract doc: Docs/LLMProviderContract.md
 
 ## Notes
 

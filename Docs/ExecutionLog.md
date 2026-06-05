@@ -197,3 +197,35 @@ Last Updated: 2026-06-06
 - improving: fallback_events=9, tool_invocations=27, total_reward=-124.163, calibration_error=0.4545
 - stuck: fallback_events=120, tool_invocations=360, total_reward=-120.0, calibration_error=0.3026
 - conclusion: improving and stuck behavior is now clearly separated as intended.
+
+## Run 021
+
+- Command: python main.py --episodes 30 --llm-provider simulated --out run_summary_simulated_provider.json
+- Status: Success
+- Output Artifact: run_summary_simulated_provider.json
+
+### Key Metrics
+
+- episodes: 30
+- llm_provider.type: simulated
+- llm_provider.model: null
+- fallback_events: 0
+- tool_invocations: 0
+
+## Run 022
+
+- Command: python main.py --episodes 30 --llm-provider real_stub --llm-model gpt-5.3-codex --out run_summary_real_stub.json
+- Status: Success
+- Output Artifact: run_summary_real_stub.json
+
+### Key Metrics
+
+- episodes: 30
+- llm_provider.type: real_stub
+- llm_provider.model: gpt-5.3-codex
+- fallback_events: 30
+- tool_invocations: 90
+
+### Notes
+
+- This run validates framework execution with non-simulated provider wiring while preserving deterministic, API-free behavior.

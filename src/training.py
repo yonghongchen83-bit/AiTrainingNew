@@ -6,13 +6,14 @@ from dataclasses import dataclass
 from math import exp, log
 from typing import Any
 
-from .agent import HeuristicLLMAgent
 from .environment import MathEnvironment
+from .llm_provider import LLMProvider, build_llm_provider
 from .models import (
     EpisodeRecord,
     FailureType,
     FallbackEvent,
     GeneratedTask,
+    LLMProviderType,
     Mode,
     OpenAIFunction,
     OpenAIToolCall,
@@ -34,6 +35,8 @@ class TrainerConfig:
     enable_self_extension: bool = True
     self_task_count: int = 60
     simulation_mode: SimulationMode = SimulationMode.IMPROVING
+    llm_provider_type: LLMProviderType = LLMProviderType.SIMULATED
+    llm_model_name: str | None = None
     max_recursion_depth: int = 2
     stage_initial_budget: float = 100.0
     convergence_window: int = 20
@@ -45,7 +48,12 @@ class ClosedLoopTrainer:
     def __init__(self, config: TrainerConfig) -> None:
         self.config = config
         self.toolbox = Toolbox()
-        self.agent = HeuristicLLMAgent(seed=config.seed, simulation_mode=config.simulation_mode)
+        self.llm: LLMProvider = build_llm_provider(
+            provider_type=config.llm_provider_type,
+            seed=config.seed,
+            simulation_mode=config.simulation_mode,
+            model_name=config.llm_model_name,
+        )
 
         self.stages = [
             StageConfig(0, "PlaceValue", False, None, False, False),
@@ -123,6 +131,10 @@ class ClosedLoopTrainer:
         ]
         summary["stop_reason"] = self.stop_reason
         summary["simulation_mode"] = self.config.simulation_mode.value
+        summary["llm_provider"] = {
+            "type": self.llm.provider_type,
+            "model": self.llm.model_name,
+        }
         return summary
 
     def _run_stage(self, stage: StageConfig, episodes: int, records: list[EpisodeRecord]) -> None:
@@ -137,7 +149,7 @@ class ClosedLoopTrainer:
         for _ in range(episodes):
             problem = env.reset()
             recursion_depth = 0
-            out = self.agent.predict(
+            out = self.llm.predict(
                 question=problem.question,
                 expected_answer=problem.expected_answer,
                 budget=env.budget,
@@ -200,7 +212,7 @@ class ClosedLoopTrainer:
 
                 recursion_depth += 1
                 child_budget = env.budget * 0.8
-                out = self.agent.predict(
+                out = self.llm.predict(
                     question=problem.question,
                     expected_answer=problem.expected_answer,
                     budget=child_budget,
@@ -219,7 +231,7 @@ class ClosedLoopTrainer:
                 expected_answer=problem.expected_answer,
                 recursion_depth=recursion_depth,
             )
-            self.agent.train_step(reward)
+            self.llm.train_step(reward)
 
             surprise = abs(out.confidence - (1.0 if success else 0.0))
             failure_type = FailureType.NONE
@@ -272,7 +284,7 @@ class ClosedLoopTrainer:
             self.stats.stage_metrics[stage.name] = StageMetrics()
 
         for task in tasks:
-            out = self.agent.predict(
+            out = self.llm.predict(
                 question=task.question,
                 expected_answer=task.expected_answer,
                 budget=100.0,
@@ -288,7 +300,7 @@ class ClosedLoopTrainer:
                 estimated_cost=out.estimated_cost,
                 profile=profile,
             )
-            self.agent.train_step(reward)
+            self.llm.train_step(reward)
 
             if out.use_tool:
                 self.toolbox.use_tool(out.tool_trigger)
@@ -342,7 +354,7 @@ class ClosedLoopTrainer:
 
         if self.config.simulation_mode == SimulationMode.IMPROVING:
             # 改善模式需要可学习入口：初期降低门槛，随 skill 提升逐步恢复严格性。
-            adaptive = base - (0.25 - 0.15 * self.agent.skill)
+            adaptive = base - (0.25 - 0.15 * self.llm.learning_progress())
             return max(0.4, min(base, adaptive))
 
         return base

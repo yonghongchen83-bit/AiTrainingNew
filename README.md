@@ -2,10 +2,24 @@
 
 Minimal runnable closed loop for the meta-cognitive training architecture defined in Docs/AiDevelopmenPlan.txt.
 
+This runtime includes an official swappable LLM provider layer so framework verification can run with a simulated backend or a real-provider stub.
+
 ## Run
 
 ```bash
 python main.py --episodes 120
+```
+
+Run with explicit simulated provider:
+
+```bash
+python main.py --episodes 120 --llm-provider simulated --out run_summary_simulated.json
+```
+
+Run with real-provider stub wiring (no external API calls):
+
+```bash
+python main.py --episodes 40 --llm-provider real_stub --llm-model gpt-5.3-codex --out run_summary_real_stub.json
 ```
 
 Run full Stage 0-4 loop with self-extension enabled:
@@ -24,6 +38,6 @@ python scripts/start_milestone.py --name "your milestone" --apply
 
 ## Scope
 
-- Implements Phase 0-2 runnable loop.
-- Uses Chinese native trigger words for toolbox tools.
-- Includes Stage 3-4 self-extension stubs only (no implementation/testing).
+- Implements Phase 0-4 runnable loop.
+- Uses canonical toolbox tools with multi-trigger alias words.
+- Includes official swappable LLM provider abstraction (simulated + real_stub).

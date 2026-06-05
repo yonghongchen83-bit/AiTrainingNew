@@ -1,0 +1,1090 @@
+{
+  "episodes": 30,
+  "total_reward": -30.0,
+  "calibration_error": 0.2,
+  "false_high_confidence": 0,
+  "budget_efficiency": 1.0,
+  "stage_metrics": {
+    "PlaceValue": {
+      "success_rate": 0.0,
+      "mean_surprise": 0.2,
+      "episodes": 10
+    },
+    "DigitCounting": {
+      "success_rate": 0.0,
+      "mean_surprise": 0.2,
+      "episodes": 10
+    },
+    "Addition1Digit": {
+      "success_rate": 0.0,
+      "mean_surprise": 0.2,
+      "episodes": 10
+    }
+  },
+  "self_extension": {
+    "enabled": false,
+    "generated_tasks": 0,
+    "added_tools": [],
+    "expanded_stages": []
+  },
+  "llm_provider": {
+    "type": "real_stub",
+    "model": "gpt-5.3-codex"
+  },
+  "simulation_mode": "improving",
+  "stop_reason": "Completed",
+  "fallback_events": [
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "PlaceValue",
+      "task": "数字 473 的百位是几？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "PlaceValue",
+      "task": "数字 887 的十位是几？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "PlaceValue",
+      "task": "数字 472 的百位是几？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "PlaceValue",
+      "task": "数字 885 的百位是几？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "PlaceValue",
+      "task": "数字 204 的个位是几？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "PlaceValue",
+      "task": "数字 833 的百位是几？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "PlaceValue",
+      "task": "数字 497 的百位是几？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "PlaceValue",
+      "task": "数字 638 的个位是几？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "PlaceValue",
+      "task": "数字 106 的十位是几？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "PlaceValue",
+      "task": "数字 320 的个位是几？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "DigitCounting",
+      "task": "数字 62202 一共有几位？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "DigitCounting",
+      "task": "数字 35257 一共有几位？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "DigitCounting",
+      "task": "数字 86176 一共有几位？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "DigitCounting",
+      "task": "数字 69354 一共有几位？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "DigitCounting",
+      "task": "数字 87347 一共有几位？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "DigitCounting",
+      "task": "数字 45847 一共有几位？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "DigitCounting",
+      "task": "数字 18690 一共有几位？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "DigitCounting",
+      "task": "数字 50022 一共有几位？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "DigitCounting",
+      "task": "数字 1423 一共有几位？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "DigitCounting",
+      "task": "数字 49119 一共有几位？",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "Addition1Digit",
+      "task": "4 + 4 = ?",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "Addition1Digit",
+      "task": "2 + 3 = ?",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "Addition1Digit",
+      "task": "2 + 3 = ?",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "Addition1Digit",
+      "task": "2 + 2 = ?",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "Addition1Digit",
+      "task": "1 + 8 = ?",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "Addition1Digit",
+      "task": "3 + 4 = ?",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "Addition1Digit",
+      "task": "0 + 6 = ?",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "Addition1Digit",
+      "task": "2 + 9 = ?",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "Addition1Digit",
+      "task": "0 + 4 = ?",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    },
+    {
+      "reason_code": "IrreducibleUncertainty",
+      "reason": "low_confidence_and_no_tool",
+      "stage": "Addition1Digit",
+      "task": "2 + 1 = ?",
+      "remaining_budget": 100.0,
+      "details": {
+        "confidence": 0.2,
+        "threshold": 0.625
+      }
+    }
+  ],
+  "tool_invocations": [
+    {
+      "id": "call_0550fc980e00",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"PlaceValue\", \"task\": \"数字 473 的百位是几？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_64ebfe0b178f",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 473 的百位是几？\"}"
+      }
+    },
+    {
+      "id": "call_387a0ff3bda3",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"PlaceValue\"}"
+      }
+    },
+    {
+      "id": "call_f26b8760f519",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"PlaceValue\", \"task\": \"数字 887 的十位是几？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_ac7a7a6bae3f",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 887 的十位是几？\"}"
+      }
+    },
+    {
+      "id": "call_c42bb1d2e7da",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"PlaceValue\"}"
+      }
+    },
+    {
+      "id": "call_f5bb77f84bb7",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"PlaceValue\", \"task\": \"数字 472 的百位是几？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_fc9aa771c99a",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 472 的百位是几？\"}"
+      }
+    },
+    {
+      "id": "call_e60a5f49aa0f",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"PlaceValue\"}"
+      }
+    },
+    {
+      "id": "call_a40f9a534857",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"PlaceValue\", \"task\": \"数字 885 的百位是几？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_780834ace11b",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 885 的百位是几？\"}"
+      }
+    },
+    {
+      "id": "call_1d2b4ce0b202",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"PlaceValue\"}"
+      }
+    },
+    {
+      "id": "call_ebe337ead15a",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"PlaceValue\", \"task\": \"数字 204 的个位是几？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_2424264cdb94",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 204 的个位是几？\"}"
+      }
+    },
+    {
+      "id": "call_7f124640f801",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"PlaceValue\"}"
+      }
+    },
+    {
+      "id": "call_d98277c20b70",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"PlaceValue\", \"task\": \"数字 833 的百位是几？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_a08314166637",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 833 的百位是几？\"}"
+      }
+    },
+    {
+      "id": "call_c2de386544c5",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"PlaceValue\"}"
+      }
+    },
+    {
+      "id": "call_c3e6641e27a2",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"PlaceValue\", \"task\": \"数字 497 的百位是几？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_11f0d5f5b829",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 497 的百位是几？\"}"
+      }
+    },
+    {
+      "id": "call_47460efe265b",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"PlaceValue\"}"
+      }
+    },
+    {
+      "id": "call_17be6b8856fc",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"PlaceValue\", \"task\": \"数字 638 的个位是几？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_95d78734fcd0",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 638 的个位是几？\"}"
+      }
+    },
+    {
+      "id": "call_eb1bebe7c07c",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"PlaceValue\"}"
+      }
+    },
+    {
+      "id": "call_1a2d3ef87ff9",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"PlaceValue\", \"task\": \"数字 106 的十位是几？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_3cb78ef162ce",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 106 的十位是几？\"}"
+      }
+    },
+    {
+      "id": "call_226fd6b404f2",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"PlaceValue\"}"
+      }
+    },
+    {
+      "id": "call_2c8cb49c3899",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"PlaceValue\", \"task\": \"数字 320 的个位是几？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_e02a439e9aaa",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 320 的个位是几？\"}"
+      }
+    },
+    {
+      "id": "call_160986033f23",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"PlaceValue\"}"
+      }
+    },
+    {
+      "id": "call_a37df6c6b77e",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"DigitCounting\", \"task\": \"数字 62202 一共有几位？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_72144ba0cbe0",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 62202 一共有几位？\"}"
+      }
+    },
+    {
+      "id": "call_3c58cae4185a",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"DigitCounting\"}"
+      }
+    },
+    {
+      "id": "call_0126eff6d242",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"DigitCounting\", \"task\": \"数字 35257 一共有几位？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_b7f4ee169dbc",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 35257 一共有几位？\"}"
+      }
+    },
+    {
+      "id": "call_b0fc29f7bcf8",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"DigitCounting\"}"
+      }
+    },
+    {
+      "id": "call_d9643e64b385",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"DigitCounting\", \"task\": \"数字 86176 一共有几位？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_900d9fb97de9",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 86176 一共有几位？\"}"
+      }
+    },
+    {
+      "id": "call_2f696aa89197",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"DigitCounting\"}"
+      }
+    },
+    {
+      "id": "call_5bb79fddc299",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"DigitCounting\", \"task\": \"数字 69354 一共有几位？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_176b1aee6910",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 69354 一共有几位？\"}"
+      }
+    },
+    {
+      "id": "call_087d3e13816e",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"DigitCounting\"}"
+      }
+    },
+    {
+      "id": "call_2e373b68330b",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"DigitCounting\", \"task\": \"数字 87347 一共有几位？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_5382258e3854",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 87347 一共有几位？\"}"
+      }
+    },
+    {
+      "id": "call_97d7903c36ab",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"DigitCounting\"}"
+      }
+    },
+    {
+      "id": "call_c60a05bc41d2",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"DigitCounting\", \"task\": \"数字 45847 一共有几位？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_224e32f199bc",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 45847 一共有几位？\"}"
+      }
+    },
+    {
+      "id": "call_ba94e5785bad",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"DigitCounting\"}"
+      }
+    },
+    {
+      "id": "call_842939031b81",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"DigitCounting\", \"task\": \"数字 18690 一共有几位？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_8ce1b4857908",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 18690 一共有几位？\"}"
+      }
+    },
+    {
+      "id": "call_01d6043370e3",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"DigitCounting\"}"
+      }
+    },
+    {
+      "id": "call_5d7f8d359699",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"DigitCounting\", \"task\": \"数字 50022 一共有几位？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_8d5ea259a83e",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 50022 一共有几位？\"}"
+      }
+    },
+    {
+      "id": "call_78cdad2d06bb",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"DigitCounting\"}"
+      }
+    },
+    {
+      "id": "call_effbc2982034",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"DigitCounting\", \"task\": \"数字 1423 一共有几位？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_7377413ce6f2",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 1423 一共有几位？\"}"
+      }
+    },
+    {
+      "id": "call_d2acc7488edf",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"DigitCounting\"}"
+      }
+    },
+    {
+      "id": "call_dbc20d2ff202",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"DigitCounting\", \"task\": \"数字 49119 一共有几位？\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_8ca30cb662ad",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"数字 49119 一共有几位？\"}"
+      }
+    },
+    {
+      "id": "call_2ea8efab8e65",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"DigitCounting\"}"
+      }
+    },
+    {
+      "id": "call_112511d9e5d6",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"Addition1Digit\", \"task\": \"4 + 4 = ?\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_d45cf16499af",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"4 + 4 = ?\"}"
+      }
+    },
+    {
+      "id": "call_fd0004dac667",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"Addition1Digit\"}"
+      }
+    },
+    {
+      "id": "call_52c802f8bbd7",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"Addition1Digit\", \"task\": \"2 + 3 = ?\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_b39adfbcdfce",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"2 + 3 = ?\"}"
+      }
+    },
+    {
+      "id": "call_ed7aee5c31f4",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"Addition1Digit\"}"
+      }
+    },
+    {
+      "id": "call_88cd76568ac6",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"Addition1Digit\", \"task\": \"2 + 3 = ?\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_c73118a9fff1",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"2 + 3 = ?\"}"
+      }
+    },
+    {
+      "id": "call_19fc7a98f733",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"Addition1Digit\"}"
+      }
+    },
+    {
+      "id": "call_e84ff7bc4c4c",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"Addition1Digit\", \"task\": \"2 + 2 = ?\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_9077fd7f0ef5",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"2 + 2 = ?\"}"
+      }
+    },
+    {
+      "id": "call_5db4f9fa87da",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"Addition1Digit\"}"
+      }
+    },
+    {
+      "id": "call_1b5090ceaf1e",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"Addition1Digit\", \"task\": \"1 + 8 = ?\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_03ddfb1b7724",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"1 + 8 = ?\"}"
+      }
+    },
+    {
+      "id": "call_ded10535ec60",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"Addition1Digit\"}"
+      }
+    },
+    {
+      "id": "call_5176d9bb9fcb",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"Addition1Digit\", \"task\": \"3 + 4 = ?\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_eb32769566e7",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"3 + 4 = ?\"}"
+      }
+    },
+    {
+      "id": "call_34e55db6e5ac",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"Addition1Digit\"}"
+      }
+    },
+    {
+      "id": "call_bc79025d3b31",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"Addition1Digit\", \"task\": \"0 + 6 = ?\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_402326f1f96b",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"0 + 6 = ?\"}"
+      }
+    },
+    {
+      "id": "call_be5558ef353c",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"Addition1Digit\"}"
+      }
+    },
+    {
+      "id": "call_ce7018f77a01",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"Addition1Digit\", \"task\": \"2 + 9 = ?\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_abfb9ae0c0b8",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"2 + 9 = ?\"}"
+      }
+    },
+    {
+      "id": "call_5db1b5e7e80e",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"Addition1Digit\"}"
+      }
+    },
+    {
+      "id": "call_3c0511e0e0f9",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"Addition1Digit\", \"task\": \"0 + 4 = ?\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_93af46853307",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"0 + 4 = ?\"}"
+      }
+    },
+    {
+      "id": "call_9ed922ca6106",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"Addition1Digit\"}"
+      }
+    },
+    {
+      "id": "call_32701e58432c",
+      "type": "function",
+      "function": {
+        "name": "CompletionFailed",
+        "arguments": "{\"reason_code\": \"IrreducibleUncertainty\", \"reason\": \"low_confidence_and_no_tool\", \"stage\": \"Addition1Digit\", \"task\": \"2 + 1 = ?\", \"remaining_budget\": 100.0, \"details\": {\"confidence\": 0.2, \"threshold\": 0.625}}"
+      }
+    },
+    {
+      "id": "call_8dc6e83c96a7",
+      "type": "function",
+      "function": {
+        "name": "TrainingRequired",
+        "arguments": "{\"domain\": \"math\", \"gap\": \"low_confidence_no_tool_path\", \"sample_task\": \"2 + 1 = ?\"}"
+      }
+    },
+    {
+      "id": "call_530bd2f034cb",
+      "type": "function",
+      "function": {
+        "name": "ToolsExtension",
+        "arguments": "{\"requested_tool\": \"expression_decompose\", \"reason\": \"recursion_failed_no_tool\", \"stage\": \"Addition1Digit\"}"
+      }
+    }
+  ]
+}

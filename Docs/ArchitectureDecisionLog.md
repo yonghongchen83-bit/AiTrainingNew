@@ -85,3 +85,10 @@ Last Updated: 2026-06-06
 - Decision: In improving mode, apply an adaptive confidence threshold and permit bounded low-confidence execution attempts when recursion depth is exhausted.
 - Rationale: Fixed a lockup where Expert threshold forced all episodes into irreducible fallback, preventing any learning signal and making improving/stuck behavior indistinguishable.
 - Consequence: Improving mode now progresses through execution/reward updates and shows fewer fallbacks than stuck mode under the same episode count.
+
+## ADR-013: Official Swappable LLM Provider Layer
+
+- Date: 2026-06-06
+- Decision: Introduce a formal LLM provider contract and factory-based provider selection (`simulated`, `real_stub`) that trainer logic depends on instead of a concrete agent class.
+- Rationale: Framework validation must remain possible without real model dependencies, while preserving a clean insertion path for real LLM integration later.
+- Consequence: Runtime can swap provider backends by CLI/config; summaries now emit provider metadata for auditability.

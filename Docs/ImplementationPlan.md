@@ -44,6 +44,12 @@ Last Updated: 2026-06-06
 - [x] GIT-08 Commit protocol + fallback milestone
 - [x] P5-08 Fix fallback lockup so improving diverges from stuck
 - [x] GIT-09 Commit fallback divergence regression fix
+- [x] P6-01 Define official LLM provider contract and factory
+- [x] P6-02 Wire trainer to provider abstraction (not concrete simulated class)
+- [x] P6-03 Add real-provider runtime stub for future swap-in
+- [x] P6-04 Add CLI provider selection and provider metadata in run summary
+- [x] P6-05 Document provider architecture and integration path
+- [x] GIT-10 Commit provider abstraction milestone
 
 ## Runtime Entry Points
 

@@ -1,0 +1,38 @@
+{
+  "episodes": 30,
+  "total_reward": -28.6446,
+  "calibration_error": 0.5024,
+  "false_high_confidence": 0,
+  "budget_efficiency": 1.0,
+  "stage_metrics": {
+    "PlaceValue": {
+      "success_rate": 0.3,
+      "mean_surprise": 0.5072,
+      "episodes": 10
+    },
+    "DigitCounting": {
+      "success_rate": 0.5,
+      "mean_surprise": 0.5001,
+      "episodes": 10
+    },
+    "Addition1Digit": {
+      "success_rate": 0.3,
+      "mean_surprise": 0.4999,
+      "episodes": 10
+    }
+  },
+  "self_extension": {
+    "enabled": false,
+    "generated_tasks": 0,
+    "added_tools": [],
+    "expanded_stages": []
+  },
+  "llm_provider": {
+    "type": "simulated",
+    "model": null
+  },
+  "simulation_mode": "improving",
+  "stop_reason": "Completed",
+  "fallback_events": [],
+  "tool_invocations": []
+}

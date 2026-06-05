@@ -16,6 +16,11 @@ class SimulationMode(str, Enum):
     STUCK = "stuck"
 
 
+class LLMProviderType(str, Enum):
+    SIMULATED = "simulated"
+    REAL_STUB = "real_stub"
+
+
 class FailureType(str, Enum):
     NONE = "None"
     BUDGET_EXHAUSTED = "BudgetExhausted"

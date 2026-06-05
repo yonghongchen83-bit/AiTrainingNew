@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 from src.training import ClosedLoopTrainer, TrainerConfig
-from src.models import Mode, SimulationMode
+from src.models import LLMProviderType, Mode, SimulationMode
 
 
 def parse_args() -> argparse.Namespace:
@@ -50,6 +50,19 @@ def parse_args() -> argparse.Namespace:
         choices=[Mode.CHAT.value, Mode.EXPERT.value, Mode.AUDIT.value],
         help="Reasoning mode used for confidence threshold and strictness",
     )
+    p.add_argument(
+        "--llm-provider",
+        type=str,
+        default=LLMProviderType.SIMULATED.value,
+        choices=[LLMProviderType.SIMULATED.value, LLMProviderType.REAL_STUB.value],
+        help="LLM provider backend: simulated or real_stub",
+    )
+    p.add_argument(
+        "--llm-model",
+        type=str,
+        default="gpt-5.3-codex",
+        help="Model name metadata for LLM provider (used by real_stub and future real provider)",
+    )
     return p.parse_args()
 
 
@@ -62,6 +75,8 @@ def main() -> int:
             self_task_count=args.self_task_count,
             mode=Mode(args.mode),
             simulation_mode=SimulationMode(args.simulation_mode),
+            llm_provider_type=LLMProviderType(args.llm_provider),
+            llm_model_name=args.llm_model,
             max_recursion_depth=args.max_recursion_depth,
             stage_initial_budget=args.stage_initial_budget,
         )
@@ -77,6 +92,7 @@ def main() -> int:
         "budget_efficiency": summary["budget_efficiency"],
         "stage_metrics": summary["stage_metrics"],
         "self_extension": summary.get("self_extension", {}),
+        "llm_provider": summary.get("llm_provider", {}),
         "simulation_mode": summary.get("simulation_mode"),
         "stop_reason": summary.get("stop_reason"),
         "fallback_events": summary.get("fallback_events", []),

@@ -5,19 +5,21 @@ Last Updated: 2026-06-06
 ## Runtime Flow (Stage 0-2)
 
 1. main.py creates TrainerConfig and ClosedLoopTrainer.
-2. ClosedLoopTrainer initializes Toolbox and HeuristicLLMAgent.
+2. ClosedLoopTrainer initializes Toolbox and an LLM provider via src.llm_provider.build_llm_provider.
 3. For each stage (PlaceValue, DigitCounting, Addition1Digit):
    - MathEnvironment generates one problem.
-   - Agent predicts structured output (answer/confidence/cost/tool/recursion/background).
+   - LLM provider predicts structured output (answer/confidence/cost/tool/recursion/background).
    - Toolbox records tool usage if selected.
    - MathEnvironment evaluates success/cost and calls reward.compute_reward.
-   - Trainer updates agent skill using reward signal.
+   - Trainer sends reward signal through provider train_step.
    - Trainer records episode metrics and aggregate statistics.
 4. main.py writes run_summary.json and prints metrics.
 
 ## Interfaces
 
-- src.agent.HeuristicLLMAgent.predict(question, expected_answer, budget, mode, stage) -> LLMOutput
+- src.llm_provider.LLMProvider.predict(question, expected_answer, budget, mode, stage) -> LLMOutput
+- src.llm_provider.LLMProvider.train_step(reward) -> None
+- src.llm_provider.build_llm_provider(provider_type, seed, simulation_mode, model_name) -> LLMProvider
 - src.environment.MathEnvironment.reset() -> MathProblem
 - src.environment.MathEnvironment.step(out, expected_answer, recursion_depth) -> (reward, success, cost)
 - src.reward.compute_reward(out, success, actual_cost, stage) -> float
