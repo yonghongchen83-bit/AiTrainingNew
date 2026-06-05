@@ -1,0 +1,157 @@
+//
+1. 把伪码逻辑控制部分做成一个agent
+2. 训练过程的目标：
+	1. LLM对信心评估能力
+	2. LLM对资源消耗评估能力
+	3. 工具库的生成
+	4. 工具库所带来的自我认知，自我扩展，自我校准。
+	5.  总体输出质量
+3. 训练环境，数学，从加法，到乘法，到四则运算 -- 假设能力是可以迁移的，也就是通过数学训练，我们实际训练的是信心评估，以及资源消耗的评估
+
+
+class Training
+{
+
+	SetNextDifficultyLevel();
+	bool CheckLevelGoal();
+	bool CheckTrainingGoal();
+	lambda GenerateAwardFunction();
+}
+
+
+class AdditionTraining : Training
+{
+    int numDigits = 1;
+    
+    void SetNextDifficultyLevel() 
+    { 
+        numDigits++;
+	totalTrainedLoops = 0;
+	TargetLearningLoops = numDigits * ExpectedTrainingCycleFactor;
+
+        
+        // 关键：难度变化时，训练目标也变化
+        if (numDigits == 4)
+        {
+            // 引入新工具，训练目标扩展
+            availableTools.Add("vertical_addition");
+            evaluationCriteria.Add("tool_usage_appropriateness");
+	 
+        }	
+    }
+    // when training first starts, the award might encourage confidence to stay around 0.5 to avoid surprise penalty, that is correct, 
+    // as any beginner should start cautions to a new field, but not completely cold feet
+    // As trainings goes on, it has to improve, or it is an indication of training design complete failure
+    // Must force AI improve confidence. But we don't need to worry about low capability as it is still heavily punished via surprise factor
+    Func<float> GenerateAwardFunction()
+    {
+	    float progressRatio = (float)totalTrainedLoops / TargetLearningLoops;
+	    float confidencePressure = (1.0 - confidence) * progressRatio * 0.5f;  // 0→0.5 线性增压
+        // 动态奖励函数：根据当前难度调整权重
+        if (numDigits <= 3)
+        {
+            // 简单阶段：只看结果和信心
+            return () => 
+            {
+                float actual = IsAnswerCorrect ? 1f : 0f;
+                float surprise = Math.Abs(confidence - actual);
+                return -surprise * 2 - confidencePressure;  // 答错时重罚盲目自信
+            };
+        }
+        else
+        {
+            // 复杂阶段：看过程、工具使用、步骤正确性
+            return () =>
+            {
+                float reward = 0f;
+                
+                // 1. 结果和信心（权重降低）
+                float actual = IsAnswerCorrect ? 1f : 0f;
+                float surprise = Math.Abs(confidence - actual);
+                reward += -surprise * 0.5f;
+                
+                // 2. 工具选择是否恰当
+                bool shouldUseTool = numDigits >= 4;
+                bool didUseTool = agent.UsedTool == "vertical_addition";
+                
+                if (shouldUseTool && didUseTool)
+                    reward += 1.0f;      // 该用且用了：大奖
+                else if (shouldUseTool && !didUseTool)
+                    reward -= 0.8f;      // 该用却硬撑：惩罚
+                else if (!shouldUseTool && didUseTool)
+                    reward -= 0.3f;      // 不该用却用：轻微惩罚（资源浪费）
+                
+                // 3. 步骤正确性（如果用了工具）
+                if (didUseTool)
+                {
+                    float stepAccuracy = EvaluateVerticalSteps(agent.Working);
+                    reward += stepAccuracy * 0.5f;
+                }
+                
+                // 4. 资源效率
+                float costRatio = agent.ActualCost / Math.Max(agent.EstimatedCost, 1);
+                if (costRatio > 2f)
+                    reward -= 0.3f;      // 严重超预算
+                    
+                return reward - confidencePressure;
+            };
+        }
+    }
+}
+根本目的是验证，
+假如ai被卡住，出不来，一直达不到目标
+main()
+{
+	AdditionTraining.Start();  // this will trigger the entire frame work we discussed in the agent code.
+}
+改成
+main()
+{
+	PlacementValueTraining.Start();
+	DigitCountingTraining.Start();
+	AdditionTraining.Start();
+}
+
+我希望训练部分能高度自动化，比如我甚至直接参考数学教材。 训练的内容本身就代表了人类对ai的指导，模拟了人类对孩子们训练。从简单要求。到复杂要求。做为一开始的数学加法，低位数只需要会做，信心评估正确，数位高了。需要你认识到，你做不出来。 然后要验证你是否使用正确工具，以后可能甚至要求你是否使用了合法工具，然后在一步步引导如何建立正确的背景锁定。没有基础工具箱，背景锁定是很空洞没有意义的。所以训练的类别，以及award 函数的变化代表了学习要求的变化。
+
+我设想中，大后期甚至可以自我训练。这个模板丢给它。给一本书，自己去生成训练资料， award function, 比较，这个训练模板没有多复杂。类似于
+MetaAgent
+{
+    GenerateTasks();
+    GenerateRewardFunctions();
+
+    Train();
+
+    DiscoverTools();
+
+    BuildToolbox();
+
+    EvaluateConfidence();
+
+    ExpandCurriculum();
+
+    SelfCorrect();
+}
+因为训练函数本身，就是confidence surprise, cost estimation这些东西，它完全可以自己设计。
+人类应该给出冷启动的具体训练计划，比如我原先的例子里的3步。
+	PlacementValueTraining.Start();
+	DigitCountingTraining.Start();
+	AdditionTraining.Start();
+等到ai开始对框架有基础理解了。也就是对confident, cost, tool已经开始有比较高的命中率。具备了一定规模的工具箱。那么它就具备了自我学习，（起码是数学，或者理科方面)的自我学习的能力。 也许，比如它转去学英语，还是需要冷启动的帮助。这个大概就是模拟人类社会，孩子早期成长更多是老师教，而后期是自己琢磨。
+
+Stage 0
+Human Curriculum
+
+Stage 1
+Commercial LLM Generated Tasks
+
+Stage 2
+AI Generated Tasks
+Human Audit
+
+Stage 3
+AI Generated Tasks
+AI Generated Reward
+
+Stage 4
+Self Curriculum Expansion

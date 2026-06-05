@@ -1,0 +1,360 @@
+//伪码，对框架的文字解释提供结构支撑, 语法未必正确，完整
+// 全局工具箱，存放已提炼的高信心工具
+static class Toolbox
+{
+    static List<Tool> tools;
+
+    // 检索匹配当前上下文的工具，返回置信度排序列表
+    static List<Tool> Query(Context ctx) { ... }
+
+    // 将成功的步骤抽象为工具
+    static void Register(Step step, string trigger) { ... }
+}
+
+
+class Task
+{
+    Goal goal;
+    float confidence;        // 当前任务的预估成功率 (0..1)
+    float cost;              // 已消耗资源
+    float budget;            // 剩余资源预算
+    Mode mode;               // Chat / Expert / Audit / Sleeping
+
+    List<Task> subtasks;
+    Result result;
+
+    Execute()
+    {
+        // 检查是否已标记为无法完成
+        if (context.FailureType == FailureType.IrreducibleUncertainty)
+            return Fallback();
+
+        while (!IsSolved() && budget > 0)
+        {
+            Step s = NextStep();
+
+            // 1. 背景锁定阶段：调用预测器预估信心
+            s.EstimateConfidence(context, budget, mode);
+
+            // 2. 根据模式动态调整阈值
+            float threshold = GetThreshold(mode);
+
+            // 3. 信心低于阈值 → 递归展开子任务
+            if (s.confidence < threshold)
+            {
+                // 传递部分预算给子任务，并设定子任务上下文
+                SpawnSubTasks(new Context
+                {
+                    FailureType = FailureType.None,
+                    Mode = mode,
+                    Budget = budget * 0.8  // 留出20%给父任务协调
+                });
+            }
+            else
+            {
+                // 4. 从工具箱中激活策略（如果Step是策略选择类型）
+                if (s.Type == StepType.StrategySelection)
+                {
+                    var tools = Toolbox.Query(context);
+                    s.SelectedTool = tools.FirstOrDefault();
+                }
+
+                s.Execute();
+            }
+
+            // 5. 内部严格校验（0/1或可分解的0/1子校验）
+            Feedback fb = s.InternalValidation();
+
+            // 6. 根据内部反馈更新信心预测器
+            MetaCognitivePredictor.Update(s, fb);
+
+            // 7. 如果内部校验失败，分析失败类型
+            if (!fb.Success)
+            {
+                context.FailureType = DiagnoseFailure(s, fb);
+                // 预算耗尽或不可消除的不确定性 → 触发Fallback
+                if (budget <= 0 || context.FailureType == FailureType.IrreducibleUncertainty)
+                    break;
+                else
+                    continue;  // 否则重试当前步骤或调整策略
+            }
+
+            // 8. 高信心成功 → 提炼为工具箱工具
+            if (s.confidence > 0.9 && fb.Success && MetaCognitivePredictor.FastPredict(s, ctx, new context("Reusability") > toolCandidateThreshold)
+            {
+                Toolbox.Register(s, s.GenerateTrigger());
+            }
+
+            // 9. 扣除成本
+            budget -= EstimateCost(s);
+        }
+
+        // 10. 外部主观反馈（用户、审批者）
+        ExternalFeedback ext = ExternalValidation();
+        UpdateContextPreferences(ext);  // 调整模式偏好、锁定的背景标准等
+    }
+
+    Result Fallback()
+    {
+        switch (mode)
+        {
+            case Mode.Normal:
+		if (!SleepMode)
+	                RegisterFailure();
+                return "I can't solve this right now.";
+
+            case Mode.Audit:
+                // 审批模式下保留失败现场，供人类检查
+                return new Result { Status = "Failed", Log = this.Log };
+        }
+    }
+
+    float GetThreshold(Mode mode)
+    {
+        // 聊天模式低阈值（允许冒险），专家模式高阈值（要求高把握）
+        return mode switch
+        {
+            Mode.Chat => 0.4,
+            Mode.Expert => 0.8,
+            Mode.Audit => 0.9,
+            _ => 0.7
+        };
+    }
+Sleep()
+{
+    // Pass 1：优先获取最高频需求的工具
+    foreach(task in AcquireTools.OrderByDescending(t => t.reuseCount))
+    {
+        task.budget *= 10;
+        task.Execute();
+        
+        if (task.Failed() && task.reuseCount > ApplyThreshold)
+            ApplyForTool(task);  // 人工介入 / 外部API / 专用模型
+    }
+
+    // Pass 2：重试失败任务，此时工具箱已更新
+    foreach(task in FailedTaskQueue)
+    {
+        task.budget *= 10;
+        task.Execute();
+    }
+    foreach(task in Toolbox.OrderByAscending(t => t.reuseCount)
+    {
+	AdjustToolsCacheLevel(task, task.reuseCount, task.refCount); // Move up or down the tool box cache
+	if (task.CacheLevel ==PURGE)
+	{
+		RegisterTask(task, new context("Fix tool or purge"));
+	}
+    }
+    // Pass 3 : 检测domain级别的能力缺口
+    var domainGaps = FailedTaskQueue
+        .Where(t => t.FailureType == IrreducibleUncertainty)
+        .GroupBy(t => t.context.Domain)
+        .Where(g => g.Count() > DomainGapThreshold);
+
+    foreach (var gap in domainGaps)
+    {
+    RegisterTask(task, gap, new Context
+    {
+        Type = "TrainingRequired",
+        Domain = gap.Key,
+        FailedTaskCount = gap.Count(),
+        SampleFailures = gap.Take(5),          // 审批者看具体失败案例
+        ProposedCurriculum = DraftCurriculum(gap),  // AI草拟，人/脚本审核
+        ProposedRewardFn = DraftRewardFunction(gap.Key)
+    });
+    }
+}
+}；
+class FailedTaskQueue : PriorityQueue<Task, float>
+{
+    void Enqueue(Task task)
+    {
+        float priority = ComputePriority(task);
+        base.Enqueue(task, priority);
+    }
+
+    float ComputePriority(Task task)
+    {
+        // 核心：预估信心与实际结果的偏差
+        float surprise = Math.Abs(task.confidence - (task.result.Success ? 1f : 0f));
+
+        // 失败类型权重
+        float typeWeight = task.FailureType switch
+        {
+            FailureType.BudgetExhausted      => 0.9f, // 加预算可能成功，高价值
+            FailureType.ValidationFailed     => 0.7f, // 需要新工具
+            FailureType.IrreducibleUncertainty => 0.2f, // 加预算也没用，等外部介入
+            _ => 0.5f
+        };
+
+        return surprise * typeWeight;
+    }
+}
+class Step : Task
+{
+    enum StepType
+    {
+        ContextFraming,      // 背景锁定
+        StrategySelection,   // 模式/工具选择
+        Execution,           // 执行
+        Validation           // 校验
+    }
+
+    StepType Type;
+    Tool SelectedTool;       // 如果被工具箱中的某个工具覆盖
+PriorityQueue SelectTools(Context ctx, List<Tool> allTools, budget)
+{
+    return allTools
+        .Where(t => t.IsApplicable(ctx.Problem))     // 相关性：能解决这个问题吗？
+        .Where(t => t.IsLegal(ctx.Constraints))       // 合法性：在这个背景下允许用吗？
+	.Where(t => t.costEstimate() <= remainingBudget * CostRatio)
+	.OrderBy(t => ( t.ContextFit(ctx)) / t.costEstimate())
+        .ToPriorityQueue();
+}
+
+    void EstimateConfidence(Context ctx, float remainingBudget, Mode mode)
+    {
+PriorityQueue legalToolsets = SelectTools(ctx, m_Tools, remainingBudget);
+
+// 工具箱为空 → 子任务目标是获取工具
+if (legalToolsets.IsEmpty)
+{
+    RegisterTask(Goal.AcquireTool(ctx), remainingBudget); //晚上好好想想
+    return;
+}
+
+float baseRate = MetaCognitivePredictor.Predict(legalToolsets, ctx);
+
+
+
+        // 预算越少，实际成功率可能越低（时间压力带来错误）
+        float budgetFactor = Math.Min(1.0f, remainingBudget / this.estimatedCost);
+        this.confidence = baseRate * budgetFactor;
+    }
+
+    Feedback InternalValidation()
+    {
+        // 根据类型进行严格校验：字数、逻辑自洽、数学前提等
+        // 返回 成功/失败 + 失败详情
+    }
+}
+
+enum FailureType
+{
+    None,
+    BudgetExhausted,
+    ValidationFailed,       // 内部校验失败
+    IrreducibleUncertainty  // 背景无法锁定，需要外部标准
+}
+
+class Tool : Task
+{
+    list<string> triggerwords;          // AI自提炼或人工赋予的触发词
+    string humanDesc;        // 给人类审计的简短说明
+    Step template;           // 步骤模板
+
+    int refCount; // cross used by other tools
+    List<task> ToolsDependency;
+    bool MustKeep; // prevent it from being purged during sleep
+    int reuseCount;
+
+float costEstimate() {
+    return baseCost + CacheAccessCost(this.cacheLevel);
+        List<Context> FailedContexts;
+        List<Context> MergedSuccessContexts;
+}
+float CacheAccessCost(CacheLevel level) => level switch {
+    L1 => 0.0f,
+    L2 => 0.1f,
+    L3 => 0.5f,
+    _  => float.MaxValue   // 已清除，不可用
+};
+
+void PushContext(bool success, Context newCtx) {
+    var bucket = success ? MergedSuccessContexts : FailedContexts;
+    if (bucket.Count < MaxContextLimit) { bucket.Add(newCtx); return; }
+    
+    // Remove the context most similar to newCtx (true redundancy)
+    var mostRedundant = bucket
+        .OrderByDescending(c => Similarity(c, newCtx))
+        .First();
+    bucket.Remove(mostRedundant);
+    bucket.Add(newCtx);
+}
+
+
+float ContextFit(Context ctx)
+{
+    float successScore = Similarity(ctx, MergedSuccessContexts);
+    float failurePenalty = Similarity(ctx, FailedContexts);
+ float prior = BaseApplicability(ctx); 
+    return prior + successScore - failurePenalty;
+}
+
+};
+
+CacheLevel Compute(Tool t) {
+    if (t.MustKeep)                              return L1;
+    if (t.reuseCount > HighThreshold)            return L1;
+    if (t.refCount > 0 && t.stability > 0.7f)   return L1; // 被依赖且稳定
+    if (t.reuseCount > LowThreshold)             return L2;
+    if (t.refCount > 0)                          return L2; // 被依赖但低频
+    if (t.stability < MinStability)              return Purge;
+                                                 return L3;
+}
+
+ColdStartToolBox =
+{
+	"Fail to complete", ”Prompt user that I am unable to complete the task, explain error code, show task expansion stack "
+	"Fail to frame context", "Prompt user, unable to determine the context and explain the problem"
+	"Apply External Tool", "Use standad tool invoke protocol to fire a requrest for external tool, details the name, purpose, user case, sample context of the tool and justification"
+        "Search Web", "Fire web searching tool by following tools standard, when not available, prompt user to search for result and conver this task into <Ask User for clarification>"
+         "Ask User for clarification", "Prompt user, exact where the confusion is and ask for confirmatino of clarification, provide options if can be defined"
+        "Request resource extension", "Prompt user or requestor for resource extension and explain the gap"
+	"Merge Tool", "Search for tools boxes for similiar tools but slightly different context and boundary, try to generalize the tool by merging use case/context"
+	"Purge Tool", "follow tool invoke protocol to delete teh register tool, detail the name and reason for purging"
+	"TrainingRequired", "follow tool invoke protocol to file a request record for a domain level training process, detailing the domain, training material, estimate effort and benefit with justification and sample use cases/contexts"
+}
+class MetaCognitivePredictor
+{
+    // 不是单一模型，而是分层评估
+    
+    // Layer 1: 基于工具历史的快速直觉
+    float FastPredict(Tool tool, Context ctx)
+    {
+        return tool.ContextFit(ctx) * tool.stability;
+    }
+    
+    // Layer 2: 基于任务相似度的类比推理
+    float SlowPredict(Task current, List<Task> history)
+    {
+        // 找到历史上最相似的任务
+        var analogies = history
+            .Where(t => Similarity(t.Context, current.Context) > Threshold)
+            .OrderByDescending(t => Similarity(t.Context, current.Context));
+        
+        // 类比推理：那些任务的成功率如何？
+        return analogies.Average(t => t.result.Success ? 1f : 0f);
+    }
+    
+    // Layer 3: 基于自我模拟的推演（最耗资源，但最准确）
+    float SimulatedPredict(Task task, int simulationDepth)
+    {
+        // 快速模拟执行几步，看是否容易偏离
+        // 类似于人类的"先在脑子里过一遍"
+        var simulation = task.FastForward(simulationDepth);
+        return simulation.DeviationScore;
+    }
+    
+    float Predict(Task task, Context ctx)
+    {
+        // 根据预算决定用哪一层
+        if (task.budget > HighBudgetThreshold)
+            return SimulatedPredict(task, 3);
+        else if (task.budget > MediumBudgetThreshold)
+            return SlowPredict(task, history);
+        else
+            return FastPredict(bestTool, ctx);
+    }
+}

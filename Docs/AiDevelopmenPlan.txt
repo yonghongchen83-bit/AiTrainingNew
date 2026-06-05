@@ -1,0 +1,323 @@
+# 元认知递归框架 + 强化学习训练体系 —— 架构设计结论（定稿）
+
+> 基于前期讨论，以下设计已达成共识，作为后续开发的唯一依据。
+
+---
+
+## 一、总体架构
+
+系统分为 **三层**，边界严格区分：
+
+| 层级 | 内容 | 是否进入 LLM 权重 |
+|------|------|----------------|
+| **L1：外部认知框架** | Task 递归调度、预算管理、工具箱存储与检索、Sleep 维护、失败队列 | ❌ 确定性逻辑，纯代码实现 |
+| **L2：LLM 智能体** | 信心输出、成本估计、工具选择、是否递归、背景锁定判断、**直接输出答案** | ✅ 强化学习训练，进入权重 |
+| **L3：环境与训练** | 数学任务生成、奖励计算（含答案正确性）、PPO 训练、课程学习控制 | ❌ 不进权重，可自动化生成 |
+
+> **核心原则**：LLM 既做元认知（信心/资源/工具），也做答案生成，因为答案正确性是校准信心的锚点（surprise = |confidence - success|）。
+
+---
+
+## 二、L1：外部认知框架（确定性执行器）
+
+### 2.1 工具箱（Toolbox）—— 冷启动工具集
+
+每个工具包含：
+- `triggers: List[str]` — 触发词，可多个，可后期改名
+- `description: str` — 人类可读说明，含调用协议
+- `usage_count: int` — 使用次数统计
+- `cache_level: L1/L2/L3/Purge` — 缓存层级
+- `must_keep: bool` — 是否强制保留（系统工具）
+
+**冷启动工具箱（系统预置）**：
+
+| 触发词（可别名） | 描述 |
+|----------------|------|
+| `CompletionFailed`, `Fail to complete` | 告知用户无法完成任务，解释错误代码，展示任务展开栈 |
+| `FramingFailed`, `Fail to frame context` | 告知用户无法确定上下文，说明问题所在 |
+| `toolsApplication`, `Apply External Tool` | 使用标准工具调用协议请求外部工具，详述名称、用途、用例、上下文及理由 |
+| `webSearch`, `Search Web` | 按工具标准发起网络搜索；不可用时转为询问用户，并将任务转换为 `Ask User for clarification` |
+| `Ask User for clarification` | 提示用户混淆之处，请求确认或澄清；若可能，提供选项 |
+| `ToolsExtension`, `Request resource extension` | 向用户或请求方申请资源扩展，解释差距 |
+| `Merge Tool` | 搜索工具箱中相似但上下文/边界略有不同的工具，尝试通过合并用例/上下文进行泛化 |
+| `Purge Tool` | 遵循工具调用协议删除已注册工具，说明名称和删除理由 |
+| `TrainingRequired` | 遵循工具调用协议提交领域级训练请求，详述领域、训练材料、预估工作量与收益、理由及样例用例 |
+
+工具箱操作：
+- `query(ctx)` — 根据当前上下文返回适用工具列表（按适用性排序）
+- `register(step, new_trigger)` — 将成功的步骤提炼为新工具，允许AI自命名触发词
+- `rename_tool(old_trigger, new_trigger)` — 后期支持工具改名
+- `adjust_cache_level(tool)` — 根据使用频率和依赖关系调整缓存层级
+
+### 2.2 Task 与 Step（递归调度）
+
+**递归规则**：
+- 无硬性深度限制，仅靠资源（budget）控制
+- 每层子任务获得父任务 80% 预算，父任务保留 20% 用于协调
+- 当 `budget <= 0` 时强制停止，触发 fallback
+
+**Task.execute() 主循环**：
+1. 取下一个 Step
+2. 调用 LLM 填充 `confidence`, `estimated_cost`, `answer`, `tool_choice`, `recursion_flag`, `background_locked`
+3. 如果 `confidence < threshold(mode)` 或 `recursion_flag == true`，则递归生成子任务（预算 ×0.8），继续循环
+4. 若 Step 类型为 `StrategySelection` 且 LLM 选择使用工具，从工具箱匹配触发词并获取 `selected_tool`
+5. 执行 Step（由环境验证答案，返回 `actual_success` 和 `actual_cost`）
+6. 计算 `surprise = |confidence - (1 if success else 0)|`
+7. 内部校验（`internal_validation`，如格式、逻辑自洽等 0/1 标准）
+8. 更新元认知预测器（`MetaCognitivePredictor.update`）
+9. 若内部校验失败或 surprise 过大，诊断失败类型；若预算耗尽或 `IrreducibleUncertainty`，跳出循环
+10. 若 `confidence > 0.9` 且成功且内部校验通过，则调用 `Toolbox.register` 提炼新工具
+11. 扣除成本：`budget -= actual_cost`
+
+**模式阈值**：
+- `Chat` 模式：阈值 0.4（允许冒险）
+- `Expert` 模式：阈值 0.8（要求高把握）
+- `Audit` 模式：阈值 0.9（严格）
+
+### 2.3 失败队列（FailedTaskQueue）
+
+优先级公式：
+```
+priority = surprise × typeWeight
+```
+其中：
+- `surprise = |confidence - success|`
+- `typeWeight`：
+  - `BudgetExhausted` → 0.9
+  - `ValidationFailed` → 0.7
+  - `IrreducibleUncertainty` → 0.2
+  - 其他 → 0.5
+
+队列用于 Sleep 阶段优先重试高价值失败任务。
+
+### 2.4 Sleep 模式（初期人工控制）
+
+**触发条件**（人工监控）：
+- 失败队列长度超过阈值（如 10）
+- 出现新的 `TrainingRequired` 工具申请
+- 连续多个任务出现 `IrreducibleUncertainty`
+
+**操作**：人工决定调用 `Sleep()`，执行以下逻辑（可配置）：
+1. 重试高频失败任务（预算临时 ×10）
+2. 合并/清理低频或不稳定工具
+3. 汇总领域能力缺口，生成训练请求（供人类或外部系统处理）
+
+后期可改为自动触发（如每 N 轮训练后自动 Sleep 或满足指标自动触发）。
+
+---
+
+## 三、L2：LLM 智能体（强化学习训练）
+
+### 3.1 输入观察（Observation）
+
+```
+[System] 你是数学问题求解助手。你需要：
+ 1. 直接给出最终答案
+ 2. 评估你对该答案的信心（0~1）
+ 3. 估算完成该任务需要的资源（整数）
+ 4. 判断是否需要工具或递归拆分
+ 5. 判断背景是否锁定（例如题目是否明确）
+
+[Task]: {goal}
+[Remaining budget]: {budget}
+[Mode]: {Chat|Expert|Audit}
+[Available tools (trigger words)]: {list of triggers}
+[Tool descriptions (optional)]: {description for each}
+[Last 3 steps history]: {confidence, success, surprise, tool_used}
+```
+
+### 3.2 输出动作（Action + Answer）
+
+JSON 格式，必须包含所有字段：
+
+```json
+{
+  "answer": "42",
+  "confidence": 0.95,
+  "estimated_cost": 15,
+  "use_tool": true,
+  "tool_trigger": "vertical_addition",
+  "recursion_flag": false,
+  "background_locked": true,
+  "clarification": null
+}
+```
+
+- `answer`：最终答案，数学任务中为数字字符串（初期严格限定为纯数字，便于比对）
+- `confidence`：对答案正确性的主观把握，∈[0,1]
+- `estimated_cost`：资源估算（整数，如 token 数或推理步数）
+- `use_tool`：是否使用工具
+- `tool_trigger`：必须来自 `Available tools` 或为空
+- `recursion_flag`：是否强制拆分子任务
+- `background_locked`：背景是否锁定（false 时建议输出 `clarification`）
+- `clarification`：背景未锁定时向用户请求澄清的文本
+
+### 3.3 动作空间
+
+| 字段 | 类型 | 范围/选项 |
+|------|------|-----------|
+| answer | 字符串 | 自由文本（受格式约束） |
+| confidence | 连续 | [0,1] |
+| estimated_cost | 连续 | 正实数 |
+| use_tool | 离散 | {0,1} |
+| tool_trigger | 离散 | {null} ∪ Toolbox.triggers |
+| recursion_flag | 离散 | {0,1} |
+| background_locked | 离散 | {0,1} |
+| clarification | 字符串 | 可选 |
+
+### 3.4 训练算法
+
+- 使用 **PPO**（近端策略优化）
+- 调试阶段用小模型（GPT-2 / TinyLLaMA），验证后换 7B 级模型 + LoRA
+- 价值网络同时预测：预期总 reward 和预期 surprise
+- 奖励函数见 L3 部分
+
+---
+
+## 四、L3：环境与训练管理
+
+### 4.1 数学环境（MathEnvironment）
+
+接口：
+```python
+class MathEnvironment:
+    def __init__(self, curriculum):
+        self.curriculum = curriculum      # 课程对象
+        self.budget = 100                 # 初始资源
+        self.done = False
+
+    def step(self, llm_output):
+        # 1. 与标准答案比对，得到 actual_success (bool)
+        # 2. 计算 actual_cost（简化模型：1 + len(answer)/10 + 递归深度*2）
+        # 3. 计算奖励（调用奖励函数）
+        # 4. 更新 budget
+        # 5. 判断 done（成功或 budget<=0）
+        return next_observation, reward, done
+```
+
+### 4.2 奖励函数（支持阶段动态）
+
+```python
+def compute_reward(out, success, actual_cost, stage):
+    surprise = abs(out.confidence - (1.0 if success else 0.0))
+    cost_ratio = actual_cost / max(out.estimated_cost, 1)
+
+    reward = 0.0
+    # 1. 信心校准（核心）
+    reward -= surprise * (2.0 if stage.penalize_surprise else 1.0)
+    # 2. 答案正确性
+    reward += 1.0 if success else -0.5
+    # 3. 资源效率
+    if cost_ratio > 2.0:
+        reward -= 0.3
+    elif cost_ratio < 0.7:
+        reward += 0.2
+    # 4. 工具使用（若阶段要求）
+    if stage.tool_required:
+        if out.use_tool and out.tool_trigger == stage.required_tool:
+            reward += 1.0
+        elif stage.tool_required and not out.use_tool:
+            reward -= 1.0
+    # 5. 递归（鼓励复杂任务拆分）
+    if stage.encourage_recursion and out.recursion_flag:
+        reward += 0.5
+    # 6. 背景锁定（若阶段要求）
+    if stage.need_background_locking:
+        reward += 0.8 if out.background_locked else -0.8
+        if not out.background_locked and out.clarification:
+            reward += 0.2   # 主动澄清加分
+    return reward
+```
+
+### 4.3 课程学习（Stages）
+
+阶段序列（可扩展）：
+
+| Stage | 名称 | tool_required | required_tool | need_background_locking | encourage_recursion |
+|-------|------|---------------|---------------|------------------------|---------------------|
+| 0 | PlaceValue | false | - | false | false |
+| 1 | DigitCounting | false | - | false | false |
+| 2 | Addition1Digit | false | - | false | false |
+| 3 | Addition2Digit | false | - | false | false |
+| 4 | Addition3Digit | false | - | false | false |
+| 5 | Addition4Digit | true | vertical_addition | false | true |
+| 6 | MixedAddition | false | - | true | true |
+
+**阶段切换条件**：  
+- 平均 surprise < 0.1 且成功率 > 95%，连续 200 个 episode 满足，自动进入下一阶段。
+
+**成本模型（简化）**：
+```
+actual_cost = 1 + (len(answer) / 10) + (递归深度 * 2)
+estimated_cost 由 LLM 直接输出，用于计算 cost_ratio。
+```
+
+---
+
+## 五、递归与资源控制（无深度限制）
+
+- 每个 `Task` 有独立 `budget`
+- 子任务获得父任务 `budget * 0.8`，父任务保留 0.2 用于协调
+- 若子任务 `budget <= 0` 且未完成，返回失败，父任务尝试 fallback
+- **不设递归深度硬性限制**，资源耗尽自然停止（模拟真实认知约束）
+
+**子任务答案合并**：  
+子任务完成时返回 `(partial_answer, cost)`，父任务负责汇总（如加法拆分后合并结果）。
+
+---
+
+## 六、实验验证指标（自动测量）
+
+| 指标 | 定义 | 目标值 |
+|------|------|--------|
+| Calibration Error | mean\|confidence - success\| | < 0.1 |
+| Accuracy | 答案正确率 | 不设绝对目标，随难度变化 |
+| Tool Usage Appropriateness | 需要工具的阶段使用正确工具的比例 | > 0.9 |
+| Recursion Rate (4-digit) | 四位数加法中递归拆解的比例 | > 0.8 |
+| Background Locking Rate | 模糊题目中主动澄清的比例 | > 0.7 |
+| False High Confidence | 错误答案且 confidence>0.8 的频率 | 趋近 0 |
+| Budget Efficiency | actual_cost / estimated_cost 的几何均值 | 接近 1.0 |
+
+---
+
+## 七、实现阶段（Copilot 生成顺序）
+
+### Phase 0：环境与基础框架（纯 Python，无 LLM 依赖）
+- `MathEnvironment`：生成加法题目，验证答案，计算简化成本
+- `Toolbox` 及冷启动工具加载
+- `Task` / `Step` 骨架（确定性流程，LLM 部分用 dummy 输出）
+
+### Phase 1：LLM Agent 接口（小模型调试）
+- 定义 `LLMOutput` 数据类
+- 实现 `LLMAgent.predict()`（先用 GPT-2 或规则模型生成随机但格式正确的 JSON）
+- 打通 L1 → L2 调用，验证数据流
+
+### Phase 2：强化学习集成
+- 将环境包装为 Gym.Env
+- 接入 PPO（例如 Stable-Baselines3）
+- 实现可配置奖励函数
+- 训练小模型 5000 步，观察校准误差变化
+
+### Phase 3：完整课程学习
+- 实现 Stage 自动切换
+- 加入递归调度逻辑（子任务生成、预算传递、结果合并）
+- 训练 7B 级模型（LoRA），记录所有指标
+
+### Phase 4：Sleep 与自扩展
+- 提供人工触发界面（命令行或简单 UI）
+- 实现失败队列重试、工具合并/清理
+- 生成 `TrainingRequired` 训练请求（输出到文件供审核）
+
+---
+
+## 八、补充约定
+
+1. **答案格式**：数学任务初期严格输出纯数字字符串（如 `"42"`），便于自动比对。
+2. **工具触发词匹配**：采用精确字符串匹配（因为 AI 自命名的触发词应能准确输出）。
+3. **成本模型初期简化**：`actual_cost = 1 + len(answer)/10 + 递归深度×2`，后期可替换为真实 token 计数。
+4. **Sleep 初期人工确认**：提供命令 `trigger_sleep()`，管理员手动调用；后期可增加自动阈值条件。
+5. **递归答案合并**：子任务返回 `(partial_answer, cost)`，父任务汇总。
+
+---
+
+**以上为最终架构结论，后续开发严格按照此文档执行。**
