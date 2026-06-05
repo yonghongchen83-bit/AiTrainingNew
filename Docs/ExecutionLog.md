@@ -65,3 +65,21 @@ Last Updated: 2026-06-06
 - Command: "{}" | python scripts/validate_milestone_commit.py --event SessionStart; "{}" | python scripts/validate_milestone_commit.py --event PostToolUse
 - Status: Success
 - Result: Hook script returned valid JSON responses for both events.
+
+## Run 008
+
+- Action: Extend governance hooks with PreToolUse event and strict milestone commit message prefix validation.
+- Files:
+	- .github/hooks/milestone-governance.json
+	- scripts/validate_milestone_commit.py
+
+## Run 009
+
+- Command: PreToolUse validator smoke test with milestone-prefixed and non-prefixed commit messages
+- Status: Success
+- Result: milestone-prefixed message allowed; non-prefixed message denied.
+
+## Run 010
+
+- Command: git add governance hook updates and docs; git commit -m "milestone: strict commit message enforcement"
+- Status: Success

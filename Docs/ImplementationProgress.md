@@ -22,6 +22,8 @@ Last Updated: 2026-06-06
 - [x] Add workspace hook configuration for deterministic governance
 - [x] Add hook validator script for git commit documentation checks
 - [x] Commit hook governance files as milestone
+- [x] Enforce git commit message prefix milestone: via PreToolUse hook
+- [x] Commit strict commit-message governance milestone
 
 ## Evidence Pointers
 

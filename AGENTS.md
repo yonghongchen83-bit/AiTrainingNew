@@ -15,4 +15,4 @@ Governance requirements:
 - Log architecture decisions in Docs/ArchitectureDecisionLog.md.
 - Log module interaction changes in Docs/ModuleInteractionSpec.md.
 - Log execution commands and key outputs in Docs/ExecutionLog.md.
-- Commit once per completed milestone with message: milestone: <name>.
+- Commit once per completed milestone with message prefix: milestone: <name>.

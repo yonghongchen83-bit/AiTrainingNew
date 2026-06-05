@@ -26,6 +26,8 @@ Last Updated: 2026-06-06
 - [x] GIT-03 Commit governance milestone
 - [x] GOV-02 Add deterministic workspace hooks for documentation/commit enforcement
 - [x] GIT-04 Commit hook governance milestone
+- [x] GOV-03 Enforce milestone commit message prefix via PreToolUse hook
+- [x] GIT-05 Commit strict commit-message governance milestone
 - [x] P3-Stub Add self-extension planner stubs only
 - [ ] P3-Impl Self-generated tasks/reward implementation (future)
 - [ ] P4-Impl Self curriculum expansion implementation (future)

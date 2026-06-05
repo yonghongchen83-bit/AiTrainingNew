@@ -7,6 +7,13 @@
         "timeout": 10
       }
     ],
+    "PreToolUse": [
+      {
+        "type": "command",
+        "windows": "python scripts/validate_milestone_commit.py --event PreToolUse",
+        "timeout": 15
+      }
+    ],
     "PostToolUse": [
       {
         "type": "command",

@@ -36,3 +36,10 @@ Last Updated: 2026-06-06
 - Decision: Add workspace hooks in .github/hooks to enforce milestone documentation checks around commit operations.
 - Rationale: User requested visible and enforceable governance, not only instruction-level guidance.
 - Consequence: Commit-related tool executions are post-validated against required documentation files.
+
+## ADR-006: Strict Milestone Commit Message Prefix
+
+- Date: 2026-06-06
+- Decision: Enforce git commit message prefix "milestone:" through PreToolUse hook validation.
+- Rationale: Make milestone commits machine-detectable and consistently auditable.
+- Consequence: Non-compliant commit commands are denied before execution.

@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+REQUIRED_COMMIT_PREFIX = "milestone:"
 
 REQUIRED_PROGRESS = "Docs/ImplementationProgress.md"
 DOC_CHANGE_OPTIONS = {
@@ -50,6 +52,30 @@ def _run_git(args: list[str]) -> str:
     return cp.stdout.strip()
 
 
+def _collect_command_values(obj: object) -> list[str]:
+    values: list[str] = []
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            if key.lower() == "command" and isinstance(value, str):
+                values.append(value)
+            values.extend(_collect_command_values(value))
+    elif isinstance(obj, list):
+        for item in obj:
+            values.extend(_collect_command_values(item))
+    return values
+
+
+def _extract_commit_message(payload: dict) -> str:
+    """Best-effort extraction of commit message from structured hook payload."""
+    commands = _collect_command_values(payload)
+    pattern = re.compile(r"git\s+commit\b.*?-m\s+['\"]([^'\"]+)['\"]", re.IGNORECASE)
+    for cmd in commands:
+        match = pattern.search(cmd)
+        if match:
+            return match.group(1).strip().lower()
+    return ""
+
+
 def _latest_commit_files() -> set[str]:
     out = _run_git(["show", "--name-only", "--pretty=", "HEAD"])
     files = [line.strip().replace("\\", "/") for line in out.splitlines() if line.strip()]
@@ -64,6 +90,41 @@ def _session_start_message() -> dict:
             "document architecture/module interaction changes when applicable, "
             "and create a milestone commit after completion."
         ),
+    }
+
+
+def _pre_tool_decision(payload: dict) -> dict:
+    commit_message = _extract_commit_message(payload)
+    if not commit_message:
+        return {
+            "continue": True,
+            "hookSpecificOutput": {
+                "hookEventName": "PreToolUse",
+                "permissionDecision": "allow",
+            },
+        }
+
+    if commit_message.startswith(REQUIRED_COMMIT_PREFIX):
+        return {
+            "continue": True,
+            "hookSpecificOutput": {
+                "hookEventName": "PreToolUse",
+                "permissionDecision": "allow",
+            },
+        }
+
+    return {
+        "continue": False,
+        "stopReason": "Commit message policy violation",
+        "systemMessage": (
+            "Commit blocked: git commit message must start with 'milestone:'. "
+            "Example: milestone: add trainer checkpoint logging"
+        ),
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": "Commit message must use milestone prefix",
+        },
     }
 
 
@@ -104,13 +165,17 @@ def _post_tool_decision(payload: dict) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--event", required=True, choices=["SessionStart", "PostToolUse"])
+    parser.add_argument("--event", required=True, choices=["SessionStart", "PreToolUse", "PostToolUse"])
     args = parser.parse_args()
 
     payload = _read_hook_input()
 
     if args.event == "SessionStart":
         print(json.dumps(_session_start_message(), ensure_ascii=False))
+        return 0
+
+    if args.event == "PreToolUse":
+        print(json.dumps(_pre_tool_decision(payload), ensure_ascii=False))
         return 0
 
     print(json.dumps(_post_tool_decision(payload), ensure_ascii=False))

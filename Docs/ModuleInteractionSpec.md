@@ -35,5 +35,6 @@ Last Updated: 2026-06-06
 1. Hook file .github/hooks/milestone-governance.json triggers script execution on SessionStart and PostToolUse.
 2. scripts/validate_milestone_commit.py reads hook payload from stdin.
 3. On SessionStart, script emits governance reminder systemMessage.
-4. On PostToolUse, if payload indicates git commit execution, script inspects latest commit files.
-5. If required docs are missing, script returns block decision with remediation message.
+4. On PreToolUse, if payload indicates git commit execution, script validates commit message starts with "milestone:".
+5. On PostToolUse, if payload indicates git commit execution, script inspects latest commit files.
+6. If required docs are missing, script returns block decision with remediation message.
