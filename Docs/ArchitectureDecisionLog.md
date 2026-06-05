@@ -50,3 +50,10 @@ Last Updated: 2026-06-06
 - Decision: Add scripts/start_milestone.py to auto-seed plan, progress, and execution placeholders for each new milestone.
 - Rationale: User requested visible progress and persistent governance without manual bookkeeping overhead.
 - Consequence: New milestones can start with one command and immediately appear in governance docs.
+
+## ADR-008: Stage 3-4 Deterministic Self-Extension Realization
+
+- Date: 2026-06-06
+- Decision: Implement Stage 3 (AI-generated tasks and reward profiles) and Stage 4 (self curriculum expansion) via deterministic planner logic integrated with runtime trainer.
+- Rationale: Complete remaining implementation goals while preserving a runnable baseline and auditable behavior.
+- Consequence: Closed loop now supports Stage 0-4 execution with expandable tool discovery and generated curriculum stages.

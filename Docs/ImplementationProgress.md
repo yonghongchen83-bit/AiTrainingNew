@@ -26,6 +26,10 @@ Last Updated: 2026-06-06
 - [x] Commit strict commit-message governance milestone
 - [x] Add automated milestone bootstrap script for governance docs
 - [x] Complete minimum governance loop automation milestone
+- [x] Implement Stage 3 self-generated tasks and dynamic reward profile
+- [x] Implement Stage 4 self curriculum expansion and execution
+- [x] Validate runnable Stage 0-4 loop output artifact
+- [x] Commit Stage 3-4 completion milestone
 
 ## Evidence Pointers
 
@@ -41,6 +45,7 @@ Last Updated: 2026-06-06
 - Hook config: .github/hooks/milestone-governance.json
 - Hook validator: scripts/validate_milestone_commit.py
 - Milestone bootstrap: scripts/start_milestone.py
+- Full-loop run artifact: run_summary_phase4.json
 
 ## Notes
 

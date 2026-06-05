@@ -8,6 +8,12 @@ Minimal runnable closed loop for the meta-cognitive training architecture define
 python main.py --episodes 120
 ```
 
+Run full Stage 0-4 loop with self-extension enabled:
+
+```bash
+python main.py --episodes 120 --enable-self-extension --self-task-count 60 --out run_summary_phase4.json
+```
+
 ## Milestone Bootstrap
 
 Use the helper to pre-seed governance docs for a new milestone:

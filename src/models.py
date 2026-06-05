@@ -94,3 +94,23 @@ class RuntimeStats:
     budget_efficiency_product: float = 1.0
     budget_efficiency_count: int = 0
     stage_metrics: dict[str, StageMetrics] = field(default_factory=dict)
+
+
+@dataclass
+class RewardProfile:
+    penalize_surprise_weight: float = 2.0
+    success_reward: float = 1.0
+    failure_penalty: float = -0.5
+    cost_overrun_penalty: float = -0.3
+    low_cost_bonus: float = 0.2
+    recursion_bonus: float = 0.5
+    background_lock_bonus: float = 0.8
+    clarification_bonus: float = 0.2
+
+
+@dataclass
+class GeneratedTask:
+    stage_name: str
+    question: str
+    expected_answer: str
+    difficulty: int

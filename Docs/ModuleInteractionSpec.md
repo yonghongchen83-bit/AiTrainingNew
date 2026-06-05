@@ -45,3 +45,13 @@ Last Updated: 2026-06-06
 2. Script appends seed checklist entries into Docs/ImplementationPlan.md and Docs/ImplementationProgress.md.
 3. Script appends a milestone template section into Docs/ExecutionLog.md.
 4. Governance loop continues with implementation, validation, and milestone commit.
+
+## Self-Extension Runtime Flow (Stage 3-4)
+
+1. src.training.ClosedLoopTrainer completes Stage 0-2 base run.
+2. src.self_extension.SelfExtensionPlanner.generate_tasks creates generated task sets for AutoArithmeticS3 and AutoArithmeticS4.
+3. src.self_extension.SelfExtensionPlanner.generate_reward_functions derives RewardProfile from calibration error.
+4. src.self_extension.SelfExtensionPlanner.expand_curriculum returns StageConfig entries for new stages.
+5. src.self_extension.SelfExtensionPlanner.build_toolbox registers discovered tools into src.toolbox.Toolbox.
+6. src.training.ClosedLoopTrainer executes generated tasks and scores with src.reward.compute_reward_profile.
+7. main.py exports self_extension summary into run output JSON.

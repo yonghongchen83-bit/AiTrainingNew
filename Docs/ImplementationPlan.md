@@ -6,8 +6,8 @@ Last Updated: 2026-06-06
 
 - Baseline: AiDevelopmenPlan.txt
 - Runtime Language: Python
-- Current Target: Runnable closed loop for Stage 0-2
-- Out of Scope in this delivery: Full Stage 3-4 implementation and testing
+- Current Target: Runnable closed loop for Stage 0-4
+- Out of Scope in this delivery: Performance tuning and large-model PPO integration
 
 ## Work Breakdown with Checkboxes
 
@@ -31,8 +31,9 @@ Last Updated: 2026-06-06
 - [x] GOV-04 Add automated milestone bootstrap tool for plan/progress/execution docs
 - [x] GIT-06 Commit minimum governance loop automation milestone
 - [x] P3-Stub Add self-extension planner stubs only
-- [ ] P3-Impl Self-generated tasks/reward implementation (future)
-- [ ] P4-Impl Self curriculum expansion implementation (future)
+- [x] P3-Impl Self-generated tasks/reward implementation
+- [x] P4-Impl Self curriculum expansion implementation
+- [x] GIT-07 Commit Stage 3-4 completion milestone
 
 ## Runtime Entry Points
 

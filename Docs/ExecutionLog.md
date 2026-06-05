@@ -105,3 +105,15 @@ Last Updated: 2026-06-06
 
 - Command: git add milestone bootstrap tool and governance docs; git commit -m "milestone: minimum governance loop automation"
 - Status: Success
+
+## Run 013
+
+- Command: python main.py --episodes 120 --enable-self-extension --self-task-count 60 --out run_summary_phase4.json
+- Status: Success
+- Output Artifact: run_summary_phase4.json
+- Result: Stage 3/4 completed with self-generated tasks, dynamic reward profile, and expanded curriculum stages AutoArithmeticS3/AutoArithmeticS4.
+
+## Run 014
+
+- Command: git add Stage 3/4 implementation and docs; git commit -m "milestone: complete all goals stage 3 and stage 4"
+- Status: Success

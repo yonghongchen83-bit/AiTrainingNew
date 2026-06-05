@@ -8,15 +8,33 @@ from src.training import ClosedLoopTrainer, TrainerConfig
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Meta-cognitive closed-loop trainer (Phase 0-2)")
+    p = argparse.ArgumentParser(description="Meta-cognitive closed-loop trainer (Phase 0-4)")
     p.add_argument("--episodes", type=int, default=120, help="Total episodes across Stage 0-2")
     p.add_argument("--out", type=str, default="run_summary.json", help="Summary output JSON path")
+    p.add_argument(
+        "--enable-self-extension",
+        action="store_true",
+        default=False,
+        help="Enable Stage 3-4 self-generated tasks, reward profiles, and curriculum expansion",
+    )
+    p.add_argument(
+        "--self-task-count",
+        type=int,
+        default=60,
+        help="Generated task count for self-extension loop",
+    )
     return p.parse_args()
 
 
 def main() -> int:
     args = parse_args()
-    trainer = ClosedLoopTrainer(TrainerConfig(episodes=args.episodes))
+    trainer = ClosedLoopTrainer(
+        TrainerConfig(
+            episodes=args.episodes,
+            enable_self_extension=args.enable_self_extension,
+            self_task_count=args.self_task_count,
+        )
+    )
     summary = trainer.run()
 
     out_path = Path(args.out)
@@ -27,6 +45,7 @@ def main() -> int:
         "false_high_confidence": summary["false_high_confidence"],
         "budget_efficiency": summary["budget_efficiency"],
         "stage_metrics": summary["stage_metrics"],
+        "self_extension": summary.get("self_extension", {}),
     }
 
     out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
