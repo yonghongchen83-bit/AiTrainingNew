@@ -56,6 +56,10 @@ Last Updated: 2026-06-06
 - [x] P7-04 Add orchestration stub for mode-driven training execution
 - [x] P7-05 Document RLHF-to-SFT switch policy and retention/promotion controls
 - [x] GIT-11 Commit training workspace and mode-switch policy milestone
+- [x] P8-01 Add human-friendly stage launch scripts under training/scripts
+- [x] P8-02 Add human-gated promotion decision utility
+- [x] P8-03 Document operator commands for stage execution and promotion
+- [x] GIT-12 Commit training operator scripts milestone
 
 ## Runtime Entry Points
 

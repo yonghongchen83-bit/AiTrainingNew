@@ -50,6 +50,10 @@ Last Updated: 2026-06-06
 - [x] Add run pipeline stub with seed-required config snapshot and manifest append
 - [x] Set RLHF-first mode policy with planned SFT switch stage
 - [x] Commit training workspace and mode-switch policy milestone
+- [x] Add human-friendly training start scripts per stage
+- [x] Add promotion decision script for human approval flow
+- [x] Validate stage launcher and promotion utility execution
+- [x] Commit training operator scripts milestone
 
 ## Evidence Pointers
 
@@ -72,6 +76,7 @@ Last Updated: 2026-06-06
 - Provider contract doc: Docs/LLMProviderContract.md
 - Training workspace root: training/
 - Training runner: scripts/run_training_pipeline.py
+- Training operator scripts: training/scripts/
 
 ## Notes
 

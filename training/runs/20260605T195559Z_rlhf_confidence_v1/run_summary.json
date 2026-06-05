@@ -1,0 +1,18 @@
+{
+  "run_id": "20260605T195559Z_rlhf_confidence_v1",
+  "training_id": "rlhf_confidence_v1",
+  "training_mode": "rlhf",
+  "engine": "huggingface",
+  "seed": 55,
+  "status": "dry_run",
+  "checkpoint_retention": [
+    "best",
+    "last"
+  ],
+  "human_approval_required": true,
+  "artifacts": {
+    "best": "training/models/checkpoints/stage2_confidence.best",
+    "last": "training/models/checkpoints/stage2_confidence.last",
+    "promoted": "training/models/promoted/stage2.end.model"
+  }
+}

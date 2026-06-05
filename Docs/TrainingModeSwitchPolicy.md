@@ -30,3 +30,9 @@ A stage is eligible to switch from RLHF to SFT when:
 3. On approval, create promoted model artifact under `training/models/promoted/stageN.end.model`.
 4. Update next stage config `input_model` to point to promoted artifact.
 5. Append decision and artifact path to run registry manifest.
+
+## Operator Commands
+
+- Start stage2 RLHF: `training/scripts/start_stage2_confidence.ps1 -Seed 42 -DryRun`
+- Start stage3 SFT: `training/scripts/start_stage3_patterns.ps1 -Seed 43`
+- Human promotion approval: `training/scripts/promote_stage.ps1 -RunId <run_id> -Stage stage2 -Approve -Reason "passed human review"`

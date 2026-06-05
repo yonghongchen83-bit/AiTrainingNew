@@ -29,3 +29,20 @@ If a stage passes human review:
 1. Produce stageN.end.model artifact under models/promoted
 2. Update next stage config to use that promoted model path as input
 3. Record decision in run summary and registry manifest
+
+## Human-Friendly Scripts
+
+Stage launchers:
+
+- `training/scripts/start_stage2_confidence.ps1 -Seed 42 [-DryRun]`
+- `training/scripts/start_stage3_patterns.ps1 -Seed 43 [-DryRun]`
+
+Generic launcher:
+
+- `python training/scripts/start_training.py --stage stage2 --seed 42 --dry-run`
+- `python training/scripts/start_training.py --stage stage3 --seed 43`
+
+Promotion decision (human gate):
+
+- `training/scripts/promote_stage.ps1 -RunId <run_id> -Stage stage2 -Approve -Reason "passed human review"`
+- `python training/scripts/promote_stage_model.py --run-id <run_id> --stage stage2 --approve --reason "passed human review"`

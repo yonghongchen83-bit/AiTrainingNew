@@ -88,3 +88,10 @@ Last Updated: 2026-06-06
 5. Best/last checkpoint artifact placeholders are written to `training/models/checkpoints/`.
 6. One-line run record is appended to `training/registry/runs_manifest.jsonl`.
 7. Promotion to `training/models/promoted/stageN.end.model` is gated by human approval.
+
+## Operator Script Flow
+
+1. `training/scripts/start_stage2_confidence.ps1` and `training/scripts/start_stage3_patterns.ps1` call `training/scripts/start_training.py`.
+2. `training/scripts/start_training.py` resolves stage-to-config mapping and invokes `scripts/run_training_pipeline.py`.
+3. `training/scripts/promote_stage_model.py` records human promotion decision and, on approval, writes `training/models/promoted/stageN.end.model`.
+4. Promotion decision events are appended to `training/registry/runs_manifest.jsonl` with `record_type=promotion_decision`.

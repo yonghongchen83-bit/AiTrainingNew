@@ -106,3 +106,10 @@ Last Updated: 2026-06-06
 - Decision: Introduce `training/` with standardized subfolders for materials, model artifacts, run outputs, and run registry, plus required controls for best/last retention and human promotion gate.
 - Rationale: User requested a concrete filesystem contract where engines load models from a model folder and write trained outputs with summaries.
 - Consequence: RLHF/SFT runs now share one storage and governance contract with reproducibility snapshots and append-only run history.
+
+## ADR-016: Operator-Friendly Stage Launch and Promotion Scripts
+
+- Date: 2026-06-06
+- Decision: Add human-friendly stage launcher scripts and an explicit promotion decision utility under `training/scripts`.
+- Rationale: Reduce operator friction for stage-targeted execution while preserving human-gated promotion requirements.
+- Consequence: Users can start stage-specific training and record promotion approval/rejection without editing command internals.

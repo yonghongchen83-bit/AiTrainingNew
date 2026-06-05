@@ -263,3 +263,38 @@ Last Updated: 2026-06-06
 ### Notes
 
 - Both modes run through the same orchestrator contract, validating config-driven RLHF/SFT switching.
+
+## Run 026
+
+- Command: python training/scripts/start_training.py --stage stage2 --seed 55 --dry-run
+- Status: Success
+- Output Artifact: training/runs/20260605T195559Z_rlhf_confidence_v1/run_summary.json
+
+### Key Metrics
+
+- training_mode: rlhf
+- seed: 55
+- status: dry_run
+
+## Run 027
+
+- Command: python training/scripts/promote_stage_model.py --run-id 20260605T195222Z_rlhf_confidence_v1 --stage stage2 --approve --reason "passed human review"
+- Status: Success
+- Output Artifact: training/models/promoted/stage2.end.model
+
+### Key Metrics
+
+- record_type: promotion_decision
+- approved: true
+- stage: stage2
+
+## Run 028
+
+- Command: python training/scripts/promote_stage_model.py --run-id 20260605T195222Z_rlhf_confidence_v1 --stage stage2 --reason "audit only no approve"
+- Status: Success
+
+### Key Metrics
+
+- record_type: promotion_decision
+- approved: false
+- stage: stage2
