@@ -23,6 +23,7 @@ from .models import (
     SimulationMode,
     StageConfig,
     StageMetrics,
+    TrainingMode,
 )
 from .reward import compute_reward_profile
 from .self_extension import SelfExtensionPlanner
@@ -46,6 +47,7 @@ class TrainerConfig:
     convergence_surprise: float = 0.12
     stage_test_roots: dict[str, str] = field(default_factory=dict)
     dumb_mode: bool = False
+    training_mode: TrainingMode = TrainingMode.RLHF
 
 
 class ClosedLoopTrainer:
@@ -58,6 +60,7 @@ class ClosedLoopTrainer:
             simulation_mode=config.simulation_mode,
             model_name=config.llm_model_name,
             base_url=config.llm_base_url,
+            training_mode=config.training_mode,
         )
 
         self.stages = [
@@ -422,7 +425,7 @@ class ClosedLoopTrainer:
             progress_ratio=progress_ratio,
             confidence_pressure_strength=confidence_pressure_strength,
         )
-        self.llm.train_step(reward)
+        self.llm.train_step(problem.question, problem.expected_answer, out.answer, reward)
 
         surprise = abs(out.confidence - (1.0 if success else 0.0))
         failure_type = FailureType.NONE
@@ -515,7 +518,7 @@ class ClosedLoopTrainer:
                 estimated_cost=out.estimated_cost,
                 profile=profile,
             )
-            self.llm.train_step(reward)
+            self.llm.train_step(task.question, task.expected_answer, out.answer, reward)
 
             if out.use_tool:
                 self.toolbox.use_tool(out.tool_trigger)

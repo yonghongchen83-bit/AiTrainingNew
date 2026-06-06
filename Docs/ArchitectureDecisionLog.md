@@ -1,6 +1,6 @@
 # Architecture Decision Log
 
-Last Updated: 2026-06-06
+Last Updated: 2026-06-07
 
 ## ADR-001: Single Source of Implementation Truth
 
@@ -176,3 +176,12 @@ Last Updated: 2026-06-06
 - Decision: Restrict `scripts/run_training_pipeline.py` to `training_mode=rlhf` and generate a run-scoped Ollama bundle (`Modelfile` + GGUF pointer/copy state) under `training/runs/<run_id>/ollama/`.
 - Rationale: User explicitly requested to ignore SFT for this phase and to save/load the resulting model through Ollama.
 - Consequence: Non-RLHF configs now fail fast in this orchestrator path; each RLHF run emits explicit Ollama create/run commands and conversion-required evidence when GGUF is not yet present.
+
+## ADR-026: Config-Driven Training Mode Switch (RLHF / SFT)
+
+- Date: 2026-06-07
+- Decision: Introduce `TrainingMode` enum (`RLHF`, `SFT`) with `--training-mode` CLI arg and `TrainerConfig.training_mode` field. RealLocalProvider supports both modes:
+  - RLHF (default): reward-weighted regression on model's own output
+  - SFT: supervised cross-entropy on expected correct answer from test controller
+- Rationale: User required both modes per ADR-014. RLHF is default for confidence calibration; SFT available for format compliance and cold-start teaching.
+- Consequence: `train_step` signature changed to `(question, expected_answer, model_answer, reward)`. All provider implementations updated. `build_llm_provider` accepts `training_mode` parameter. AGENTS.md updated with test-development-agent documenting both modes.

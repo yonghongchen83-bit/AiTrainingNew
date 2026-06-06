@@ -23,6 +23,15 @@ class LLMProviderType(str, Enum):
     REAL_LOCAL = "real_local"
 
 
+class TrainingMode(str, Enum):
+    """Training mode for real model providers.
+    RLHF: reward-weighted learning on model's own output (default).
+    SFT:  supervised fine-tuning on correct expected answer.
+    """
+    RLHF = "rlhf"
+    SFT = "sft"
+
+
 class FailureType(str, Enum):
     NONE = "None"
     BUDGET_EXHAUSTED = "BudgetExhausted"

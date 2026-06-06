@@ -7,7 +7,7 @@ import re
 from urllib import error, request
 
 from .agent import HeuristicLLMAgent
-from .models import LLMOutput, LLMProviderType, Mode, SimulationMode, StageConfig
+from .models import LLMOutput, LLMProviderType, Mode, SimulationMode, StageConfig, TrainingMode
 
 
 class LLMProvider(ABC):
@@ -25,7 +25,7 @@ class LLMProvider(ABC):
         return 0.5
 
     @abstractmethod
-    def train_step(self, reward: float) -> None:
+    def train_step(self, question: str, expected_answer: str, model_answer: str, reward: float) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -51,7 +51,7 @@ class SimulatedLLMProvider(LLMProvider):
     def learning_progress(self) -> float:
         return self._agent.skill
 
-    def train_step(self, reward: float) -> None:
+    def train_step(self, question: str, expected_answer: str, model_answer: str, reward: float) -> None:
         self._agent.train_step(reward)
 
     def predict(
@@ -83,9 +83,8 @@ class RealLLMProviderStub(LLMProvider):
     def model_name(self) -> str | None:
         return self._model_name
 
-    def train_step(self, reward: float) -> None:
-        # Real providers are usually stateless at runtime; training signals are logged externally.
-        _ = reward
+    def train_step(self, question: str, expected_answer: str, model_answer: str, reward: float) -> None:
+        _ = (question, model_answer, reward)
 
     def predict(
         self,
@@ -124,8 +123,8 @@ class RealVLLMProvider(LLMProvider):
     def model_name(self) -> str | None:
         return self._model_name
 
-    def train_step(self, reward: float) -> None:
-        _ = reward
+    def train_step(self, question: str, expected_answer: str, model_answer: str, reward: float) -> None:
+        _ = (question, expected_answer, model_answer, reward)
 
     @staticmethod
     def _threshold(mode: Mode) -> float:
@@ -250,12 +249,20 @@ class RealVLLMProvider(LLMProvider):
 
 
 class RealLocalProvider(LLMProvider):
-    """Loads a HuggingFace model directly in-process — no external server needed."""
+    """Loads a HuggingFace model directly in-process — no external server needed.
+    Supports online fine-tuning: train_step() buffers (question, model_answer)
+    pairs and periodically runs gradient steps to improve the model.
+    """
 
-    def __init__(self, model_name: str) -> None:
+    def __init__(self, model_name: str, training_mode: TrainingMode = TrainingMode.RLHF) -> None:
         self._model_name = model_name
         self._model = None
         self._tokenizer = None
+        self._training_mode = training_mode
+        self._train_buffer: list[tuple[str, str, str, float]] = []  # (q, expected, model_answer, reward)
+        self._train_batch_size = 8
+        self._learning_rate = 5e-5
+        self._optimizer = None
 
     @property
     def provider_type(self) -> str:
@@ -265,8 +272,50 @@ class RealLocalProvider(LLMProvider):
     def model_name(self) -> str | None:
         return self._model_name
 
-    def train_step(self, reward: float) -> None:
-        _ = reward
+    def train_step(self, question: str, expected_answer: str, model_answer: str, reward: float) -> None:
+        # Buffer everything; training mode determines how it's used
+        self._train_buffer.append((question, expected_answer, model_answer, reward))
+        if len(self._train_buffer) >= self._train_batch_size:
+            self._fine_tune()
+
+    def _fine_tune(self) -> None:
+        """Run gradient steps. SFT: train on expected_answer (correct target).
+        RLHF: reward-weighted regression on model_answer."""
+        self._model.train()
+        if self._optimizer is None:
+            from torch.optim import AdamW
+            self._optimizer = AdamW(self._model.parameters(), lr=self._learning_rate)
+
+        system_prompt = "Return a JSON object with keys: answer (string), confidence (number 0 to 1)."
+        total_loss = 0.0
+        for q, exp_a, model_a, r in self._train_buffer:
+            target = exp_a if self._training_mode == TrainingMode.SFT else model_a
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": f"Question: {q}"},
+                {"role": "assistant", "content": target},
+            ]
+            text = self._tokenizer.apply_chat_template(messages, tokenize=False)
+            inputs = self._tokenizer(text, return_tensors="pt").to(self._model.device)
+            labels = inputs["input_ids"].clone()
+            outputs = self._model(**inputs, labels=labels)
+
+            if self._training_mode == TrainingMode.RLHF:
+                # Reward-weighted: positive reward → reinforce, negative → suppress
+                loss = outputs.loss * (-r) / len(self._train_buffer)
+            else:
+                # SFT: standard cross-entropy on correct target
+                loss = outputs.loss / len(self._train_buffer)
+            total_loss += loss.item()
+            loss.backward()
+
+        self._optimizer.step()
+        self._optimizer.zero_grad()
+        self._model.eval()
+        batch = len(self._train_buffer)
+        mode_name = self._training_mode.value.upper()
+        self._train_buffer.clear()
+        print(f"  [{mode_name}] {batch} examples, loss={total_loss:.4f}")
 
     @staticmethod
     def _threshold(mode: Mode) -> float:
@@ -401,11 +450,12 @@ def build_llm_provider(
     simulation_mode: SimulationMode,
     model_name: str | None = None,
     base_url: str | None = None,
+    training_mode: TrainingMode = TrainingMode.RLHF,
 ) -> LLMProvider:
     if provider_type == LLMProviderType.REAL_STUB:
         return RealLLMProviderStub(model_name=model_name or "gpt-5.3-codex")
     if provider_type == LLMProviderType.REAL_VLLM:
         return RealVLLMProvider(model_name=model_name or "Qwen/Qwen2.5-0.5B-Instruct", base_url=base_url)
     if provider_type == LLMProviderType.REAL_LOCAL:
-        return RealLocalProvider(model_name=model_name or "Qwen/Qwen2.5-0.5B-Instruct")
+        return RealLocalProvider(model_name=model_name or "Qwen/Qwen2.5-0.5B-Instruct", training_mode=training_mode)
     return SimulatedLLMProvider(seed=seed, simulation_mode=simulation_mode)

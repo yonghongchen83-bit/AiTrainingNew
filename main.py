@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 from src.training import ClosedLoopTrainer, TrainerConfig
-from src.models import LLMProviderType, Mode, SimulationMode
+from src.models import LLMProviderType, Mode, SimulationMode, TrainingMode
 
 
 def _parse_stage_test_roots(pairs: list[str]) -> dict[str, str]:
@@ -100,6 +100,13 @@ def parse_args() -> argparse.Namespace:
         default=False,
         help="Make test simulator always fail — verify early termination",
     )
+    p.add_argument(
+        "--training-mode",
+        type=str,
+        default="rlhf",
+        choices=["rlhf", "sft"],
+        help="Training mode for real model providers: rlhf (reward-weighted) or sft (supervised on correct answer)",
+    )
     return p.parse_args()
 
 
@@ -120,6 +127,7 @@ def main() -> int:
             stage_initial_budget=args.stage_initial_budget,
             stage_test_roots=stage_test_roots,
             dumb_mode=args.dumb_mode,
+            training_mode=TrainingMode(args.training_mode),
         )
     )
     summary = trainer.run()
