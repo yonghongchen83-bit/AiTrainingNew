@@ -15,7 +15,10 @@
   "test_contract": "training/materials/sft_framework_patterns_v1/config/test_contract.json",
   "reward_function": "training/materials/sft_framework_patterns_v1/reward/reward.py",
   "retention": {
-    "keep": ["best", "last"]
+    "keep": [
+      "best",
+      "last"
+    ]
   },
   "promotion": {
     "human_approval_required": true
@@ -23,5 +26,6 @@
   "reproducibility": {
     "seed_required": true,
     "frozen_config_snapshot_required": true
-  }
+  },
+  "seed": 101
 }

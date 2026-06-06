@@ -8,6 +8,20 @@ from src.training import ClosedLoopTrainer, TrainerConfig
 from src.models import LLMProviderType, Mode, SimulationMode
 
 
+def _parse_stage_test_roots(pairs: list[str]) -> dict[str, str]:
+    mapping: dict[str, str] = {}
+    for raw in pairs:
+        if "=" not in raw:
+            raise ValueError(f"Invalid --stage-test-root format: {raw}. Expected StageName=path")
+        stage_name, test_root = raw.split("=", 1)
+        stage_name = stage_name.strip()
+        test_root = test_root.strip()
+        if not stage_name or not test_root:
+            raise ValueError(f"Invalid --stage-test-root value: {raw}. Expected StageName=path")
+        mapping[stage_name] = test_root
+    return mapping
+
+
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Meta-cognitive closed-loop trainer (Phase 0-4)")
     p.add_argument("--episodes", type=int, default=120, help="Total episodes across Stage 0-2")
@@ -63,11 +77,18 @@ def parse_args() -> argparse.Namespace:
         default="gpt-5.3-codex",
         help="Model name metadata for LLM provider (used by real_stub and future real provider)",
     )
+    p.add_argument(
+        "--stage-test-root",
+        action="append",
+        default=[],
+        help="Generic stage test root mapping in the form StageName=path (repeatable)",
+    )
     return p.parse_args()
 
 
 def main() -> int:
     args = parse_args()
+    stage_test_roots = _parse_stage_test_roots(args.stage_test_root)
     trainer = ClosedLoopTrainer(
         TrainerConfig(
             episodes=args.episodes,
@@ -79,6 +100,7 @@ def main() -> int:
             llm_model_name=args.llm_model,
             max_recursion_depth=args.max_recursion_depth,
             stage_initial_budget=args.stage_initial_budget,
+            stage_test_roots=stage_test_roots,
         )
     )
     summary = trainer.run()
@@ -95,6 +117,7 @@ def main() -> int:
         "llm_provider": summary.get("llm_provider", {}),
         "simulation_mode": summary.get("simulation_mode"),
         "stop_reason": summary.get("stop_reason"),
+        "stage_tests": summary.get("stage_tests", {}),
         "fallback_events": summary.get("fallback_events", []),
         "tool_invocations": summary.get("tool_invocations", []),
     }

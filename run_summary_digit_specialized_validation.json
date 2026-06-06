@@ -1,0 +1,42 @@
+{
+  "episodes": 270,
+  "total_reward": 204.055,
+  "calibration_error": 0.1191,
+  "false_high_confidence": 0,
+  "budget_efficiency": 1.0,
+  "stage_metrics": {
+    "PlaceValue": {
+      "success_rate": 0.425,
+      "mean_surprise": 0.505,
+      "episodes": 40
+    },
+    "DigitCounting": {
+      "success_rate": 0.987,
+      "mean_surprise": 0.052,
+      "episodes": 230
+    }
+  },
+  "self_extension": {
+    "enabled": false,
+    "generated_tasks": 0,
+    "added_tools": [],
+    "expanded_stages": []
+  },
+  "llm_provider": {
+    "type": "simulated",
+    "model": null
+  },
+  "simulation_mode": "improving",
+  "stop_reason": "DigitCountingCapabilityBoundary@4Digits",
+  "digit_counting": {
+    "enabled": true,
+    "status": "stopped_capability_boundary",
+    "max_verified_digits": 3,
+    "boundary_digits": 4,
+    "samples": 230,
+    "stop_reason": "DigitCountingCapabilityBoundary@4Digits",
+    "tool_name": "DigitCountingCapability"
+  },
+  "fallback_events": [],
+  "tool_invocations": []
+}

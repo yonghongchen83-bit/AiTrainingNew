@@ -54,6 +54,38 @@ Last Updated: 2026-06-06
 - [x] Add promotion decision script for human approval flow
 - [x] Validate stage launcher and promotion utility execution
 - [x] Commit training operator scripts milestone
+- [x] Document reusable training AIM and stage curriculum structure
+- [x] Implement DigitCounting dynamic complexity loop with strict 10/10 and confidence 1.0 gate
+- [x] Implement progressRatio confidence pressure in stage reward path
+- [x] Separate per-task fallback from trainer-level stop criteria
+- [x] Implement stop conditions for capability boundary and max requirement (20 digits)
+- [x] Register capability summary tool for downstream stage reuse
+- [x] Validate updated runtime and export run_summary_digit_curriculum.json
+- [x] Move test simulation logic into each training material package
+- [x] Add per-test evaluation contract near test data and reward logic
+- [x] Add configurable step size, batch size, required confidence, and pass conditions per test
+- [x] Write test run evidence into each test material results folder
+- [x] Validate RLHF and SFT contract-driven test evaluation runs
+- [x] Create dedicated DigitCounting curriculum test contract under training/materials
+- [x] Wire DigitCounting runtime to load curriculum parameters from test contract
+- [x] Add CLI arg to override DigitCounting test contract path
+- [x] Validate run summary includes active digit_counting.contract pointer
+- [x] Standardize test contract shape with explicit test_id/controller/generic/test_specific fields
+- [x] Move DigitCounting loop controller into test-local runtime module
+- [x] Refactor generic trainer to discover test contract by folder and dispatch test controller
+- [x] Remove DigitCounting-specific contract parser/gate logic from generic trainer
+- [x] Validate RLHF pipeline compatibility after adding standard self-identification contract fields
+- [x] Generalize stage dispatch to configurable stage_test_roots mapping
+- [x] Add generic CLI mapping support via --stage-test-root StageName=path
+- [x] Validate generalized dispatch still discovers DigitCounting capability boundary at 4 with max verified 3
+- [x] Remove backward-compatibility `digit_test_root` path from generic trainer
+- [x] Remove compatibility CLI `--digit-test-root`; require explicit --stage-test-root mapping
+- [x] Remove legacy `digit_counting` summary alias and keep `stage_tests` as canonical output
+- [x] Validate explicit stage mapping preserves natural DigitCounting 3/4 boundary behavior
+- [x] Remove legacy evaluation fallback parsing from training pipeline (`simulation_module`, `simulation_entry`, `evaluation.*`)
+- [x] Enforce strict contract-v2 evaluation schema (`controller` + `generic` + `test_specific`)
+- [x] Remove legacy compatibility keys from RLHF/SFT test contracts
+- [x] Validate RLHF and SFT dry-runs with strict contract-v2-only flow
 
 ## Evidence Pointers
 
@@ -77,6 +109,19 @@ Last Updated: 2026-06-06
 - Training workspace root: training/
 - Training runner: scripts/run_training_pipeline.py
 - Training operator scripts: training/scripts/
+- Reusable curriculum doc: Docs/TrainingAIMAndStructure.md
+- Digit curriculum run artifact: run_summary_digit_curriculum.json
+- RLHF test contract: training/materials/rlhf_confidence_v1/config/test_contract.json
+- SFT test contract: training/materials/sft_framework_patterns_v1/config/test_contract.json
+- RLHF local test results: training/materials/rlhf_confidence_v1/results/
+- SFT local test results: training/materials/sft_framework_patterns_v1/results/
+- DigitCounting contract: training/materials/digit_counting_curriculum_v1/config/test_contract.json
+- Digit contract-driven run artifact: run_summary_digit_contract_driven.json
+- DigitCounting test controller: training/materials/digit_counting_curriculum_v1/runtime/controller.py
+- Generalized dispatch validation artifact: run_summary_digit_contract_driven.json
+- Compatibility-removal validation artifact: run_summary_stage_test_only.json
+- RLHF strict-v2 validation artifact: training/runs/20260606T104947Z_rlhf_confidence_v1/run_summary.json
+- SFT strict-v2 validation artifact: training/runs/20260606T104949Z_sft_framework_patterns_v1/run_summary.json
 
 ## Notes
 

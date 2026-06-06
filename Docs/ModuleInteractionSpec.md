@@ -95,3 +95,32 @@ Last Updated: 2026-06-06
 2. `training/scripts/start_training.py` resolves stage-to-config mapping and invokes `scripts/run_training_pipeline.py`.
 3. `training/scripts/promote_stage_model.py` records human promotion decision and, on approval, writes `training/models/promoted/stageN.end.model`.
 4. Promotion decision events are appended to `training/registry/runs_manifest.jsonl` with `record_type=promotion_decision`.
+
+## Self-Contained Test Controller Flow
+
+1. `main.py` passes stage-to-test package mapping (`--stage-test-root StageName=path`) into trainer config.
+2. `src.training.ClosedLoopTrainer` discovers `config/test_contract.json` under that root.
+3. Contract self-identifies test via `test_id` and defines controller dispatch metadata via `controller.module` + `controller.entry`.
+4. Trainer imports the controller dynamically and invokes it through a generic callback contract.
+5. Test-owned controller (`training/materials/<test_id>/runtime/controller.py`) reads both `generic` and `test_specific` fields and controls loop progression and stop decision.
+6. Each sample execution still reuses generic runtime episode path (`_execute_stage_episode`) for predict, fallback, reward, and train_step.
+7. Controller returns stop reason + summary payload; trainer records these without interpreting test-specific schema.
+8. Capability summary tool is registered through a generic helper keyed by `test_id`, and run summary exports stage-scoped test results under `stage_tests`.
+
+## Stage-to-Test Mapping Dispatch
+
+1. `main.py` supports generic `--stage-test-root StageName=path` entries (repeatable).
+2. `TrainerConfig.stage_test_roots` stores stage-name to test-root mappings and is the single source for controller dispatch.
+3. `src.training.ClosedLoopTrainer._run_stage` checks mapped test package for current stage and dispatches controller if present.
+4. Unmapped stages continue to use generic per-episode training loop.
+5. Run summary exports `stage_tests` for mapped stages.
+
+## Test-Local Evaluation Contract Flow
+
+1. `training/materials/<training_id>/config/training_config.json` points to `test_contract` in the same material package.
+2. `scripts/run_training_pipeline.py` loads that contract and imports `simulation/simulator.py` from the same package.
+3. Contract must define `controller.module`/`controller.entry`, `generic`, and `test_specific.pass_conditions`.
+4. Pipeline evaluates the `datasets.test` samples through the test-local simulator function.
+5. Evaluation evidence is written under `training/materials/<training_id>/results/` as JSON summary + predictions JSONL.
+6. Run summary still records pointers to these local artifacts for centralized audit and manifest history.
+7. Deprecated compatibility keys (`simulation_module`, `simulation_entry`, `evaluation`) are no longer parsed by pipeline runtime.

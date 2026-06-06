@@ -113,3 +113,52 @@ Last Updated: 2026-06-06
 - Decision: Add human-friendly stage launcher scripts and an explicit promotion decision utility under `training/scripts`.
 - Rationale: Reduce operator friction for stage-targeted execution while preserving human-gated promotion requirements.
 - Consequence: Users can start stage-specific training and record promotion approval/rejection without editing command internals.
+
+## ADR-017: Unified Stage Curriculum Controller with Capability-Boundary Stops
+
+- Date: 2026-06-06
+- Decision: Introduce a reusable curriculum control loop that combines training and evaluation online, applies progressRatio confidence pressure, and stops globally when either capability boundary is determined or human max requirement is reached.
+- Rationale: User requested the same training structure be reusable across stages and explicitly separated per-task fallback from trainer-level stop decisions.
+- Consequence: DigitCounting now runs as a dynamic level-based curriculum (1..20 digits) with strict gate tolerance=0 and exports capability summary metadata for reuse by later stages.
+
+## ADR-018: Capability Boundary by Sustained Strict-Gate Non-Pass
+
+- Date: 2026-06-06
+- Decision: Refine DigitCounting boundary determination to stop on sustained strict-gate non-pass at max loops, without requiring fallback-count thresholds.
+- Rationale: Specialized simulator profiles may fail strict gate due to confidence/accuracy limits while producing few fallback events; trainer must still discover boundary naturally.
+- Consequence: Boundary detection is now robust for fixed-capability simulators and aligns with expected result patterns (for the current profile: verify 1-3 digits, boundary at 4).
+
+## ADR-019: Test-Local Simulation and Evaluation Contract
+
+- Date: 2026-06-06
+- Decision: Move simulation behavior and evaluation criteria into each training material package using `config/test_contract.json` + `simulation/simulator.py`, and write test evidence to material-local `results/`.
+- Rationale: As test count grows, centralizing all simulation/test logic in one agent/module becomes hard to maintain and auditable evidence should live with the owning test data.
+- Consequence: Each test can independently define step size, batch size, required confidence, and pass conditions while producing colocated artifacts that support or invalidate claims.
+
+## ADR-020: DigitCounting Curriculum Parameters Must Be Test-Contract Driven
+
+- Date: 2026-06-06
+- Decision: Remove hardcoded DigitCounting curriculum knobs from trainer defaults and load them from a test-local contract file.
+- Rationale: User required DigitCounting curriculum behavior to live with the owning test contract rather than runtime hardcoded values.
+- Consequence: Runtime now reads `training/materials/digit_counting_curriculum_v1/config/test_contract.json` and records the active contract path in `digit_counting.contract` run summary output.
+
+## ADR-021: Self-Contained Test Package Contract with Controller Dispatch
+
+- Date: 2026-06-06
+- Decision: Standardize each test package to self-identify (`test_id`) and provide its own loop controller (`controller.module` + `controller.entry`), while engine receives only test-folder path and dispatches generically.
+- Rationale: User required test-specific loop control and stop decisions to remain inside the owning test folder, with parent runtime remaining test-agnostic.
+- Consequence: `src/training.py` now discovers `config/test_contract.json` from test root, imports test controller dynamically, and delegates stage loop execution through test-owned runtime code.
+
+## ADR-022: Stage-to-Test Mapping for Runtime Controller Dispatch
+
+- Date: 2026-06-06
+- Decision: Replace stage-name hardcoding with configurable stage-to-test-root mapping (`stage_test_roots`) and remove backward-compatibility defaults from the generic runtime.
+- Rationale: Runtime should scale to additional self-contained tests without modifying core stage dispatch logic for each new test.
+- Consequence: Trainer now routes only explicitly configured stages through generic controller dispatch, and run summary exposes only `stage_tests` for test-controller outputs.
+
+## ADR-023: Strict Contract-v2 Evaluation Pipeline (No Legacy Fallback)
+
+- Date: 2026-06-06
+- Decision: Remove legacy fallback parsing in `scripts/run_training_pipeline.py` and require evaluation contracts to define `controller`, `generic`, and `test_specific` directly.
+- Rationale: Generic engine/pipeline should not carry compatibility branches once standardized contract structure is established.
+- Consequence: RLHF/SFT evaluation contracts no longer include deprecated `simulation_module`, `simulation_entry`, or `evaluation` duplicates; pipeline fails fast on schema violations.

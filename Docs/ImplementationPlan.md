@@ -60,6 +60,36 @@ Last Updated: 2026-06-06
 - [x] P8-02 Add human-gated promotion decision utility
 - [x] P8-03 Document operator commands for stage execution and promotion
 - [x] GIT-12 Commit training operator scripts milestone
+- [x] P9-01 Document reusable training AIM and dynamic capability-boundary structure
+- [x] P9-02 Implement unified train+eval curriculum loop for DigitCounting with tolerance=0 gate
+- [x] P9-03 Implement progressRatio confidence-pressure reward path
+- [x] P9-04 Implement global stop logic: capability boundary or requirement reached
+- [x] P9-05 Emit DigitCounting capability summary tool metadata in run summary
+- [x] P9-06 Execute validation run for DigitCounting curriculum loop
+- [x] P10-01 Add test-local simulation module contract per training material
+- [x] P10-02 Add per-test evaluation contract with step size, batch size, required confidence, and pass conditions
+- [x] P10-03 Write test result evidence artifacts into each test material folder
+- [x] P10-04 Validate RLHF and SFT configs with contract-driven test evaluation flow
+- [x] P11-01 Add dedicated DigitCounting test-local contract for curriculum parameters
+- [x] P11-02 Load DigitCounting curriculum knobs from contract in runtime trainer
+- [x] P11-03 Add runtime CLI contract path for DigitCounting contract override
+- [x] P11-04 Validate run summary exports active DigitCounting contract path
+- [x] P12-01 Define standard self-contained test contract structure (test_id/controller/generic/test_specific)
+- [x] P12-02 Update DigitCounting contract to standard structure and add test-owned runtime controller
+- [x] P12-03 Refactor trainer to discover test contract from test root folder and dispatch controller generically
+- [x] P12-04 Remove DigitCounting-specific contract parsing and gate logic from generic trainer
+- [x] P12-05 Validate standardized contract compatibility in training pipeline evaluator
+- [x] P13-01 Generalize runtime stage dispatch from hardcoded DigitCounting to configurable stage_test_roots mapping
+- [x] P13-02 Add generic CLI stage mapping input (--stage-test-root StageName=path)
+- [x] P13-03 Validate generalized dispatch preserves DigitCounting natural capability boundary result (3 verified / 4 boundary)
+- [x] P14-01 Remove `digit_test_root` backward-compatibility default from generic trainer config
+- [x] P14-02 Remove `--digit-test-root` compatibility CLI argument in favor of explicit `--stage-test-root` mapping
+- [x] P14-03 Remove legacy `digit_counting` summary alias; expose test-controller output via `stage_tests` only
+- [x] P14-04 Validate explicit mapping path still reaches DigitCounting boundary result (3 verified / 4 boundary)
+- [x] P15-01 Remove evaluation-pipeline fallback parsing for legacy contract fields (`simulation_module`, `simulation_entry`, `evaluation.*`)
+- [x] P15-02 Enforce strict evaluation contract-v2 schema (`controller` + `generic` + `test_specific`)
+- [x] P15-03 Remove legacy compatibility fields from RLHF/SFT test contracts
+- [x] P15-04 Validate RLHF and SFT dry-runs succeed with strict contract-v2-only evaluation flow
 
 ## Runtime Entry Points
 

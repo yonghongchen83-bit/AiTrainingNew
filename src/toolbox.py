@@ -93,10 +93,18 @@ class Toolbox:
         ranked.sort(key=lambda t: t.usage_count, reverse=True)
         return ranked
 
-    def register(self, trigger_words: list[str], description: str, name: str | None = None) -> None:
+    def register(
+        self,
+        trigger_words: list[str],
+        description: str,
+        name: str | None = None,
+        capability: str | None = None,
+    ) -> None:
         canonical = name or trigger_words[0]
         if canonical in self._tools:
             self._tools[canonical].usage_count += 1
+            if capability is not None:
+                self._tools[canonical].capability = capability
             for alias in trigger_words:
                 self._alias_to_name[alias] = canonical
             return
@@ -104,6 +112,7 @@ class Toolbox:
             name=canonical,
             trigger_words=trigger_words,
             description=description,
+            capability=capability,
             usage_count=1,
             cache_level="L2",
             must_keep=False,

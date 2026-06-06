@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import importlib.util
 import json
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from math import exp, log
+from pathlib import Path
 from typing import Any
 
 from .environment import MathEnvironment
@@ -26,7 +28,6 @@ from .reward import compute_reward_profile
 from .self_extension import SelfExtensionPlanner
 from .toolbox import Toolbox
 
-
 @dataclass
 class TrainerConfig:
     episodes: int = 120
@@ -42,6 +43,7 @@ class TrainerConfig:
     convergence_window: int = 20
     convergence_success: float = 0.9
     convergence_surprise: float = 0.12
+    stage_test_roots: dict[str, str] = field(default_factory=dict)
 
 
 class ClosedLoopTrainer:
@@ -65,13 +67,85 @@ class ClosedLoopTrainer:
         self.tool_invocations: list[OpenAIToolCall] = []
         self.fallback_events: list[FallbackEvent] = []
         self.stop_reason: str = "Completed"
+        self.stage_test_packages: dict[str, dict[str, Any]] = {
+            stage_name: self._load_stage_test_package(test_root)
+            for stage_name, test_root in self.config.stage_test_roots.items()
+        }
+
+        self.stage_test_summaries: dict[str, dict[str, Any]] = {
+            stage_name: {
+                "enabled": True,
+                "test_id": package["test_id"],
+                "status": "not_run",
+                "contract": package["contract_relpath"],
+                "max_verified_digits": 0,
+                "boundary_digits": None,
+                "samples": 0,
+                "stop_reason": None,
+                "tool_name": None,
+            }
+            for stage_name, package in self.stage_test_packages.items()
+        }
+
+    def _import_function(self, module_path: Path, function_name: str):
+        spec = importlib.util.spec_from_file_location(f"test_runtime_{module_path.stem}", module_path)
+        if spec is None or spec.loader is None:
+            raise RuntimeError(f"Unable to load test runtime module from: {module_path}")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        fn = getattr(module, function_name, None)
+        if fn is None:
+            raise RuntimeError(f"Function '{function_name}' not found in module: {module_path}")
+        return fn
+
+    def _load_stage_test_package(self, test_root_ref: str) -> dict[str, Any]:
+        repo_root = Path(__file__).resolve().parent.parent
+        test_root = Path(test_root_ref)
+        if not test_root.is_absolute():
+            test_root = repo_root / test_root
+
+        contract_path = test_root / "config" / "test_contract.json"
+        if not contract_path.exists():
+            raise RuntimeError(f"Missing test contract: {contract_path}")
+
+        payload = json.loads(contract_path.read_text(encoding="utf-8"))
+        test_id = payload.get("test_id")
+        if not isinstance(test_id, str) or not test_id:
+            raise RuntimeError("test_contract.json must define non-empty string field: test_id")
+
+        controller_cfg = payload.get("controller", {})
+        if not isinstance(controller_cfg, dict):
+            raise RuntimeError("test_contract.json field 'controller' must be an object")
+
+        module_ref = controller_cfg.get("module")
+        if module_ref is None:
+            module_path = test_root / "runtime" / "controller.py"
+        else:
+            module_path = Path(str(module_ref))
+            if not module_path.is_absolute():
+                module_path = repo_root / module_path
+
+        entry_name = str(controller_cfg.get("entry", "run_test_loop"))
+        controller = self._import_function(module_path, entry_name)
+
+        return {
+            "test_id": test_id,
+            "test_root": test_root,
+            "contract_path": contract_path,
+            "contract_relpath": str(contract_path.relative_to(repo_root)),
+            "contract": payload,
+            "controller": controller,
+        }
 
     def run(self) -> dict[str, object]:
         records: list[EpisodeRecord] = []
         per_stage = max(1, self.config.episodes // len(self.stages))
 
         for idx, stage in enumerate(self.stages):
-            self._run_stage(stage=stage, episodes=per_stage, records=records)
+            should_continue = self._run_stage(stage=stage, episodes=per_stage, records=records)
+            if not should_continue:
+                break
+
             if self._is_naturally_converged(records) and self.config.simulation_mode == SimulationMode.IMPROVING:
                 self.stop_reason = f"NaturalConvergence@{stage.name}"
                 # 达到自然收敛后提前结束主循环。
@@ -131,13 +205,14 @@ class ClosedLoopTrainer:
         ]
         summary["stop_reason"] = self.stop_reason
         summary["simulation_mode"] = self.config.simulation_mode.value
+        summary["stage_tests"] = self.stage_test_summaries
         summary["llm_provider"] = {
             "type": self.llm.provider_type,
             "model": self.llm.model_name,
         }
         return summary
 
-    def _run_stage(self, stage: StageConfig, episodes: int, records: list[EpisodeRecord]) -> None:
+    def _run_stage(self, stage: StageConfig, episodes: int, records: list[EpisodeRecord]) -> bool:
         env = MathEnvironment(
             stage=stage,
             seed=self.config.seed + stage.index,
@@ -146,132 +221,232 @@ class ClosedLoopTrainer:
         if stage.name not in self.stats.stage_metrics:
             self.stats.stage_metrics[stage.name] = StageMetrics()
 
+        package = self.stage_test_packages.get(stage.name)
+        if package is not None:
+            return self._run_stage_test_controller(stage=stage, env=env, records=records, package=package)
+
         for _ in range(episodes):
-            problem = env.reset()
-            recursion_depth = 0
+            self._execute_stage_episode(stage=stage, env=env, records=records)
+
+        return True
+
+    def _run_stage_test_controller(
+        self,
+        stage: StageConfig,
+        env: MathEnvironment,
+        records: list[EpisodeRecord],
+        package: dict[str, Any],
+    ) -> bool:
+        controller = package["controller"]
+
+        def execute_episode(
+            *,
+            difficulty: int | None = None,
+            progress_ratio: float = 0.0,
+            confidence_pressure_strength: float = 0.0,
+        ) -> EpisodeRecord:
+            return self._execute_stage_episode(
+                stage=stage,
+                env=env,
+                records=records,
+                difficulty=difficulty,
+                progress_ratio=progress_ratio,
+                confidence_pressure_strength=confidence_pressure_strength,
+            )
+
+        def register_capability_summary(
+            *,
+            test_id: str,
+            max_verified: int,
+            boundary: int | None,
+            reason: str,
+            capability: str | None = None,
+        ) -> str:
+            return self._register_test_capability_summary(
+                test_id=test_id,
+                max_verified=max_verified,
+                boundary=boundary,
+                reason=reason,
+                capability=capability,
+            )
+
+        result = controller(
+            stage=stage,
+            contract=package["contract"],
+            contract_path=package["contract_relpath"],
+            execute_episode=execute_episode,
+            register_capability_summary=register_capability_summary,
+        )
+        if not isinstance(result, dict):
+            raise RuntimeError("Test controller must return a dict result")
+
+        stop_reason = result.get("stop_reason")
+        if isinstance(stop_reason, str) and stop_reason:
+            self.stop_reason = stop_reason
+
+        summary = result.get("summary")
+        if isinstance(summary, dict):
+            self.stage_test_summaries[stage.name] = summary
+
+        continue_training = result.get("continue_training")
+        if isinstance(continue_training, bool):
+            return continue_training
+
+        return False
+
+    def _execute_stage_episode(
+        self,
+        stage: StageConfig,
+        env: MathEnvironment,
+        records: list[EpisodeRecord],
+        difficulty: int | None = None,
+        progress_ratio: float = 0.0,
+        confidence_pressure_strength: float = 0.0,
+    ) -> EpisodeRecord:
+        problem = env.reset(difficulty=difficulty)
+        recursion_depth = 0
+        out = self.llm.predict(
+            question=problem.question,
+            expected_answer=problem.expected_answer,
+            budget=env.budget,
+            mode=self.config.mode,
+            stage=stage,
+        )
+
+        threshold = self._threshold(self.config.mode)
+        while out.confidence < threshold:
+            if out.use_tool and out.tool_trigger and self.toolbox.has_tool(out.tool_trigger):
+                self.toolbox.use_tool(out.tool_trigger)
+                self._emit_tool_call(
+                    "toolsApplication",
+                    {
+                        "tool": out.tool_trigger,
+                        "stage": stage.name,
+                        "task": problem.question,
+                        "reason": "low_confidence_need_tool",
+                    },
+                )
+                break
+
+            if recursion_depth >= self.config.max_recursion_depth or env.budget * 0.8 <= 0:
+                # improving 分支允许在中等置信度下继续尝试，避免全量退化为失败回退。
+                min_attempt_conf = max(0.35, threshold - 0.25)
+                can_attempt = self.config.simulation_mode == SimulationMode.IMPROVING and out.confidence >= min_attempt_conf
+                if can_attempt:
+                    break
+
+                self._register_fallback(
+                    stage=stage.name,
+                    task=problem.question,
+                    failure_type=FailureType.IRREDUCIBLE_UNCERTAINTY,
+                    remaining_budget=env.budget,
+                    reason="low_confidence_and_no_tool",
+                    details={"confidence": round(out.confidence, 4), "threshold": threshold},
+                )
+                record = EpisodeRecord(
+                    stage_name=stage.name,
+                    question=problem.question,
+                    answer=out.answer,
+                    expected=problem.expected_answer,
+                    success=False,
+                    confidence=out.confidence,
+                    surprise=abs(out.confidence - 0.0),
+                    reward=-1.0,
+                    cost=0.0,
+                    used_tool=None,
+                    recursion_flag=True,
+                    background_locked=out.background_locked,
+                    failure_type=FailureType.IRREDUCIBLE_UNCERTAINTY,
+                )
+                records.append(record)
+                self._accumulate(record)
+                return record
+
+            recursion_depth += 1
+            child_budget = env.budget * 0.8
             out = self.llm.predict(
                 question=problem.question,
                 expected_answer=problem.expected_answer,
-                budget=env.budget,
+                budget=child_budget,
                 mode=self.config.mode,
                 stage=stage,
             )
 
-            threshold = self._threshold(self.config.mode)
-            while out.confidence < threshold:
-                if out.use_tool and out.tool_trigger and self.toolbox.has_tool(out.tool_trigger):
-                    self.toolbox.use_tool(out.tool_trigger)
-                    self._emit_tool_call(
-                        "toolsApplication",
-                        {
-                            "tool": out.tool_trigger,
-                            "stage": stage.name,
-                            "task": problem.question,
-                            "reason": "low_confidence_need_tool",
-                        },
-                    )
-                    break
+        if out.use_tool:
+            self.toolbox.use_tool(out.tool_trigger)
 
-                if recursion_depth >= self.config.max_recursion_depth or env.budget * 0.8 <= 0:
-                    # improving 分支允许在中等置信度下继续尝试，避免全量退化为失败回退。
-                    min_attempt_conf = max(0.35, threshold - 0.25)
-                    can_attempt = (
-                        self.config.simulation_mode == SimulationMode.IMPROVING
-                        and out.confidence >= min_attempt_conf
-                    )
-                    if can_attempt:
-                        break
+        reward, success, actual_cost = env.step(
+            out=out,
+            expected_answer=problem.expected_answer,
+            recursion_depth=recursion_depth,
+            progress_ratio=progress_ratio,
+            confidence_pressure_strength=confidence_pressure_strength,
+        )
+        self.llm.train_step(reward)
 
-                    self._register_fallback(
-                        stage=stage.name,
-                        task=problem.question,
-                        failure_type=FailureType.IRREDUCIBLE_UNCERTAINTY,
-                        remaining_budget=env.budget,
-                        reason="low_confidence_and_no_tool",
-                        details={"confidence": round(out.confidence, 4), "threshold": threshold},
-                    )
-                    record = EpisodeRecord(
-                        stage_name=stage.name,
-                        question=problem.question,
-                        answer=out.answer,
-                        expected=problem.expected_answer,
-                        success=False,
-                        confidence=out.confidence,
-                        surprise=abs(out.confidence - 0.0),
-                        reward=-1.0,
-                        cost=0.0,
-                        used_tool=None,
-                        recursion_flag=True,
-                        background_locked=out.background_locked,
-                        failure_type=FailureType.IRREDUCIBLE_UNCERTAINTY,
-                    )
-                    records.append(record)
-                    self._accumulate(record)
-                    out = None
-                    break
-
-                recursion_depth += 1
-                child_budget = env.budget * 0.8
-                out = self.llm.predict(
-                    question=problem.question,
-                    expected_answer=problem.expected_answer,
-                    budget=child_budget,
-                    mode=self.config.mode,
-                    stage=stage,
-                )
-
-            if out is None:
-                continue
-
-            if out.use_tool:
-                self.toolbox.use_tool(out.tool_trigger)
-
-            reward, success, actual_cost = env.step(
-                out=out,
-                expected_answer=problem.expected_answer,
-                recursion_depth=recursion_depth,
+        surprise = abs(out.confidence - (1.0 if success else 0.0))
+        failure_type = FailureType.NONE
+        if env.budget <= 0:
+            failure_type = FailureType.BUDGET_EXHAUSTED
+            self._register_fallback(
+                stage=stage.name,
+                task=problem.question,
+                failure_type=FailureType.BUDGET_EXHAUSTED,
+                remaining_budget=env.budget,
+                reason="remaining_budget<=0",
+                details={"actual_cost": round(actual_cost, 4)},
             )
-            self.llm.train_step(reward)
+        elif not success and out.confidence > 0.8:
+            failure_type = FailureType.VALIDATION_FAILED
 
-            surprise = abs(out.confidence - (1.0 if success else 0.0))
-            failure_type = FailureType.NONE
-            if env.budget <= 0:
-                failure_type = FailureType.BUDGET_EXHAUSTED
-                self._register_fallback(
-                    stage=stage.name,
-                    task=problem.question,
-                    failure_type=FailureType.BUDGET_EXHAUSTED,
-                    remaining_budget=env.budget,
-                    reason="remaining_budget<=0",
-                    details={"actual_cost": round(actual_cost, 4)},
-                )
-            elif not success and out.confidence > 0.8:
-                failure_type = FailureType.VALIDATION_FAILED
-
-            if success and out.confidence > 0.9:
-                self.toolbox.register(
-                    trigger_words=["高信心模板", "HighConfidenceTemplate"],
-                    description="在高置信成功情形下可复用的步骤模板",
-                    name="HighConfidenceTemplate",
-                )
-
-            record = EpisodeRecord(
-                stage_name=stage.name,
-                question=problem.question,
-                answer=out.answer,
-                expected=problem.expected_answer,
-                success=success,
-                confidence=out.confidence,
-                surprise=surprise,
-                reward=reward,
-                cost=actual_cost,
-                used_tool=out.tool_trigger,
-                recursion_flag=recursion_depth > 0,
-                background_locked=out.background_locked,
-                failure_type=failure_type,
+        if success and out.confidence > 0.9:
+            self.toolbox.register(
+                trigger_words=["高信心模板", "HighConfidenceTemplate"],
+                description="在高置信成功情形下可复用的步骤模板",
+                name="HighConfidenceTemplate",
             )
-            records.append(record)
-            self._accumulate(record)
+
+        record = EpisodeRecord(
+            stage_name=stage.name,
+            question=problem.question,
+            answer=out.answer,
+            expected=problem.expected_answer,
+            success=success,
+            confidence=out.confidence,
+            surprise=surprise,
+            reward=reward,
+            cost=actual_cost,
+            used_tool=out.tool_trigger,
+            recursion_flag=recursion_depth > 0,
+            background_locked=out.background_locked,
+            failure_type=failure_type,
+        )
+        records.append(record)
+        self._accumulate(record)
+        return record
+
+    def _register_test_capability_summary(
+        self,
+        test_id: str,
+        max_verified: int,
+        boundary: int | None,
+        reason: str,
+        capability: str | None = None,
+    ) -> str:
+        tool_name = f"{''.join(part.capitalize() for part in test_id.split('_'))}Capability"
+        boundary_text = str(boundary) if boundary is not None else "none"
+        description = (
+            f"{test_id} capability summary: "
+            f"max_verified={max_verified}, boundary={boundary_text}, reason={reason}"
+        )
+        capability_name = capability or f"meta_capability.{test_id}"
+        self.toolbox.register(
+            trigger_words=[tool_name, f"{test_id}_capability"],
+            description=description,
+            name=tool_name,
+            capability=capability_name,
+        )
+        return tool_name
 
     def _run_generated_stage(
         self,

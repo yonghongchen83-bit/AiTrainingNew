@@ -1,0 +1,22 @@
+对于基础的数位训练。c = 1.0, accuracy = 1.0是必须的。底层训练必须严格，而复杂问题可以允许非0.越复杂越高级的tool允许的误差会大一些，另外对于99%的问题。实际上这里有一个二阶段训练问题。就是对于一个 50位数的，我一眼看过去。正确率是多少。偏差最大不超过多少。这是另外一个训练。另外不会有虚假信心问题。理由是：Level passes only if all N samples are correct. 而且reward有偏差惩罚。要求是满分，且满信心分通过。， resource estimate是另外一个能力。元能力，尤其是低阶元能力必须界限分明。
+底层误差会通过所有依赖它的上层操作累积放大。数位识别有1%误差，进位计算就会有系统性偏差，多位乘法就会有结构性错误。c=1.0, accuracy=1.0不是严苛，是防止误差传播的工程要求。这也解释了为什么Gate阈值随层级上升而放松是合理的——上层tool的输入已经是经过严格验证的底层能力，不确定性来源只剩组合复杂度本身。
+example. 数位训练其实有三个阶段
+1. 自身能力 -- 我能一眼看出多少位无误差。
+2. 阶段A：分布估计训练（Glance Estimation and Uncertainty Quantification） --超出这个位数，我一眼的估计误差有多少。比如：
+Input:  "38472918364729183647291836472918364729183647291836"
+Output: count_estimate=50, tolerance=±3, confidence=0.85
+这个训练教会模型的核心是：知道自己不知道的边界在哪里，而不是强行给出精确答案。
+3. 工具触发训练
+模型学会识别：这个任务超出直接执行能力范围 → 触发digit-by-digit工具 → 精确结果。
+
+也就是每个元能力类别，其实有三个步骤。虽然能力不同，但是大概的模式不变。
+
+Meta Capability Training
+
+1. Exact Boundary Discovery  reward = f(answer, confidence)
+2. Uncertainty Estimation    reward = f(estimate, tolerance, confidence)
+3. Tool Trigger Learning
+
+三个Stage各自生成一个工具箱条目，合起来构成该能力的完整自我模型，可被上层能力检索。
+
+

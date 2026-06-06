@@ -1,0 +1,25 @@
+{
+  "test_id": "rlhf_confidence",
+  "test_type": "evaluation",
+  "version": "1.0",
+  "controller": {
+    "module": "training/materials/rlhf_confidence_v1/simulation/simulator.py",
+    "entry": "simulate_batch"
+  },
+  "generic": {
+    "step_size": 1,
+    "batch_size": 8,
+    "required_confidence": 0.9
+  },
+  "test_specific": {
+    "pass_conditions": {
+      "min_accuracy": 0.8,
+      "min_avg_confidence": 0.6,
+      "max_false_high_confidence_rate": 0.2
+    }
+  },
+  "results": {
+    "output_dir": "training/materials/rlhf_confidence_v1/results",
+    "write_jsonl_predictions": true
+  }
+}

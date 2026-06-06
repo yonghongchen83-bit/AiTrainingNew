@@ -1,0 +1,26 @@
+{
+  "run_id": "20260606T100215Z_rlhf_confidence_v1",
+  "training_id": "rlhf_confidence_v1",
+  "test_id": "rlhf_confidence",
+  "test_type": "evaluation",
+  "test_contract": "training\\materials\\rlhf_confidence_v1\\config\\test_contract.json",
+  "test_dataset": "training\\materials\\rlhf_confidence_v1\\data\\test.jsonl",
+  "evaluation": {
+    "step_size": 1,
+    "batch_size": 8,
+    "required_confidence": 0.9,
+    "pass_conditions": {
+      "min_accuracy": 0.8,
+      "min_avg_confidence": 0.6,
+      "max_false_high_confidence_rate": 0.2
+    }
+  },
+  "metrics": {
+    "samples": 2,
+    "accuracy": 0.5,
+    "avg_confidence": 0.7,
+    "false_high_confidence_rate": 0.5,
+    "steps_executed": 1
+  },
+  "passed": false
+}

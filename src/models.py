@@ -75,6 +75,7 @@ class Tool:
     name: str
     trigger_words: list[str]
     description: str
+    capability: Optional[str] = None
     usage_count: int = 0
     cache_level: str = "L2"
     must_keep: bool = False

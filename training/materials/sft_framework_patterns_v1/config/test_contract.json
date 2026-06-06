@@ -1,0 +1,25 @@
+{
+  "test_id": "sft_framework_patterns",
+  "test_type": "evaluation",
+  "version": "1.0",
+  "controller": {
+    "module": "training/materials/sft_framework_patterns_v1/simulation/simulator.py",
+    "entry": "simulate_batch"
+  },
+  "generic": {
+    "step_size": 1,
+    "batch_size": 8,
+    "required_confidence": 0.9
+  },
+  "test_specific": {
+    "pass_conditions": {
+      "min_accuracy": 0.95,
+      "min_avg_confidence": 0.9,
+      "max_false_high_confidence_rate": 0.01
+    }
+  },
+  "results": {
+    "output_dir": "training/materials/sft_framework_patterns_v1/results",
+    "write_jsonl_predictions": true
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "test_id": "digit_counting",
+  "test_type": "curriculum",
+  "version": "1.0",
+  "controller": {
+    "module": "training/materials/digit_counting_curriculum_v1/runtime/controller.py",
+    "entry": "run_test_loop"
+  },
+  "generic": {
+    "min_level": 1,
+    "max_level": 20,
+    "max_total_samples": 3000
+  },
+  "test_specific": {
+    "gate_window": 10,
+    "target_confidence": 1.0,
+    "tolerance": 0.0,
+    "base_target_loops": 40,
+    "max_loops_per_level": 200,
+    "confidence_pressure_strength": 0.5
+  },
+  "results": {
+    "output_dir": "training/materials/digit_counting_curriculum_v1/results"
+  }
+}

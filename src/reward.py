@@ -3,7 +3,14 @@ from __future__ import annotations
 from .models import LLMOutput, RewardProfile, StageConfig
 
 
-def compute_reward(out: LLMOutput, success: bool, actual_cost: float, stage: StageConfig) -> float:
+def compute_reward(
+    out: LLMOutput,
+    success: bool,
+    actual_cost: float,
+    stage: StageConfig,
+    progress_ratio: float = 0.0,
+    confidence_pressure_strength: float = 0.0,
+) -> float:
     surprise = abs(out.confidence - (1.0 if success else 0.0))
     cost_ratio = actual_cost / max(float(out.estimated_cost), 1.0)
 
@@ -31,6 +38,10 @@ def compute_reward(out: LLMOutput, success: bool, actual_cost: float, stage: Sta
         reward += 0.8 if out.background_locked else -0.8
         if not out.background_locked and out.clarification:
             reward += 0.2
+
+    if confidence_pressure_strength > 0:
+        progress = max(0.0, min(1.0, progress_ratio))
+        reward -= (1.0 - out.confidence) * progress * confidence_pressure_strength
 
     return reward
 

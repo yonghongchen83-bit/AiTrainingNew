@@ -20,11 +20,11 @@ class MathEnvironment:
         self.initial_budget = initial_budget
         self.budget = self.initial_budget
 
-    def reset(self) -> MathProblem:
+    def reset(self, difficulty: int | None = None) -> MathProblem:
         self.budget = self.initial_budget
-        return self._generate_problem()
+        return self._generate_problem(difficulty=difficulty)
 
-    def _generate_problem(self) -> MathProblem:
+    def _generate_problem(self, difficulty: int | None = None) -> MathProblem:
         if self.stage.name == "PlaceValue":
             n = self._rng.randint(10, 999)
             place = self._rng.choice(["个位", "十位", "百位"])
@@ -40,7 +40,13 @@ class MathEnvironment:
             )
 
         if self.stage.name == "DigitCounting":
-            n = self._rng.randint(0, 99999)
+            digits = max(1, difficulty or 1)
+            if digits == 1:
+                n = self._rng.randint(0, 9)
+            else:
+                low = 10 ** (digits - 1)
+                high = (10**digits) - 1
+                n = self._rng.randint(low, high)
             return MathProblem(
                 question=f"数字 {n} 一共有几位？",
                 expected_answer=str(len(str(n))),
@@ -54,9 +60,23 @@ class MathEnvironment:
             expected_answer=str(a + b),
         )
 
-    def step(self, out: LLMOutput, expected_answer: str, recursion_depth: int) -> tuple[float, bool, float]:
+    def step(
+        self,
+        out: LLMOutput,
+        expected_answer: str,
+        recursion_depth: int,
+        progress_ratio: float = 0.0,
+        confidence_pressure_strength: float = 0.0,
+    ) -> tuple[float, bool, float]:
         success = out.answer.strip() == expected_answer
         actual_cost = 1.0 + (len(out.answer) / 10.0) + (recursion_depth * 2.0)
-        reward = compute_reward(out=out, success=success, actual_cost=actual_cost, stage=self.stage)
+        reward = compute_reward(
+            out=out,
+            success=success,
+            actual_cost=actual_cost,
+            stage=self.stage,
+            progress_ratio=progress_ratio,
+            confidence_pressure_strength=confidence_pressure_strength,
+        )
         self.budget -= actual_cost
         return reward, success, actual_cost

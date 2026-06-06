@@ -251,6 +251,7 @@ enum FailureType
 class Tool : Task
 {
     list<string> triggerwords;          // AI自提炼或人工赋予的触发词
+    string capability;
     string humanDesc;        // 给人类审计的简短说明
     Step template;           // 步骤模板
 
@@ -306,15 +307,16 @@ CacheLevel Compute(Tool t) {
 
 ColdStartToolBox =
 {
-	"Fail to complete", ”Prompt user that I am unable to complete the task, explain error code, show task expansion stack "
-	"Fail to frame context", "Prompt user, unable to determine the context and explain the problem"
-	"Apply External Tool", "Use standad tool invoke protocol to fire a requrest for external tool, details the name, purpose, user case, sample context of the tool and justification"
-        "Search Web", "Fire web searching tool by following tools standard, when not available, prompt user to search for result and conver this task into <Ask User for clarification>"
-         "Ask User for clarification", "Prompt user, exact where the confusion is and ask for confirmatino of clarification, provide options if can be defined"
-        "Request resource extension", "Prompt user or requestor for resource extension and explain the gap"
-	"Merge Tool", "Search for tools boxes for similiar tools but slightly different context and boundary, try to generalize the tool by merging use case/context"
-	"Purge Tool", "follow tool invoke protocol to delete teh register tool, detail the name and reason for purging"
-	"TrainingRequired", "follow tool invoke protocol to file a request record for a domain level training process, detailing the domain, training material, estimate effort and benefit with justification and sample use cases/contexts"
+	// note there can be more than 1 trigger word for each tool, can rename
+	{"CompletionFailed", "Fail to complete"}, ”Prompt user that I am unable to complete the task, explain error code, show task expansion stack "
+	{"FramingFailed", "Fail to frame context"}, "Prompt user, unable to determine the context and explain the problem"
+	{"toolsApplication","Apply External Tool"}, "Use standad tool invoke protocol to fire a requrest for external tool, details the name, purpose, user case, sample context of the tool and justification"
+        {"webSearch", "Search Web"}, "Fire web searching tool by following tools standard, when not available, prompt user to search for result and conver this task into <Ask User for clarification>"
+         {"Ask User for clarification"}, "Prompt user, exact where the confusion is and ask for confirmatino of clarification, provide options if can be defined"
+        {"ToolsExtension", "Request resource extension"}, "Prompt user or requestor for resource extension and explain the gap"
+	{"Merge Tool"}, "Search for tools boxes for similiar tools but slightly different context and boundary, try to generalize the tool by merging use case/context"
+	{"Purge Tool"}, "follow tool invoke protocol to delete teh register tool, detail the name and reason for purging"
+	{"TrainingRequired"}, "follow tool invoke protocol to file a request record for a domain level training process, detailing the domain, training material, estimate effort and benefit with justification and sample use cases/contexts"
 }
 class MetaCognitivePredictor
 {

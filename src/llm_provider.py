@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from .agent import HeuristicLLMAgent
+from .agent import DigitCountingSimulationLLM, HeuristicLLMAgent
 from .models import LLMOutput, LLMProviderType, Mode, SimulationMode, StageConfig
 
 
@@ -39,6 +39,7 @@ class LLMProvider(ABC):
 class SimulatedLLMProvider(LLMProvider):
     def __init__(self, seed: int, simulation_mode: SimulationMode) -> None:
         self._agent = HeuristicLLMAgent(seed=seed, simulation_mode=simulation_mode)
+        self._digit_counting_agent = DigitCountingSimulationLLM(seed=seed + 17, simulation_mode=simulation_mode)
 
     @property
     def provider_type(self) -> str:
@@ -49,6 +50,7 @@ class SimulatedLLMProvider(LLMProvider):
 
     def train_step(self, reward: float) -> None:
         self._agent.train_step(reward)
+        self._digit_counting_agent.train_step(reward)
 
     def predict(
         self,
@@ -58,6 +60,15 @@ class SimulatedLLMProvider(LLMProvider):
         mode: Mode,
         stage: StageConfig,
     ) -> LLMOutput:
+        if stage.name == "DigitCounting":
+            return self._digit_counting_agent.predict(
+                question=question,
+                expected_answer=expected_answer,
+                budget=budget,
+                mode=mode,
+                stage=stage,
+            )
+
         return self._agent.predict(
             question=question,
             expected_answer=expected_answer,
