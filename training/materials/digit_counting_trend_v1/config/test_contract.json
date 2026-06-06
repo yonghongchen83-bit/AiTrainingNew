@@ -1,0 +1,22 @@
+{
+  "test_id": "digit_counting_trend",
+  "test_type": "long_run_trend",
+  "version": "1.0",
+  "controller": {
+    "module": "training/materials/digit_counting_trend_v1/runtime/controller.py",
+    "entry": "run_trend_loop"
+  },
+  "generic": {
+    "min_level": 1,
+    "max_level": 1,
+    "max_total_samples": 100
+  },
+  "test_specific": {
+    "trend_window": 100,
+    "report_interval": 10,
+    "confidence_pressure_strength": 0.5
+  },
+  "results": {
+    "output_dir": "training/materials/digit_counting_trend_v1/results"
+  }
+}

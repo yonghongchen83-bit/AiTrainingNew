@@ -137,10 +137,29 @@ class RealVLLMProvider(LLMProvider):
 
     @staticmethod
     def _extract_answer_fallback(text: str) -> str:
+        # Try Arabic digits first
         match = re.search(r"-?\d+", text)
         if match:
             return match.group(0)
+        # Try Chinese numeral (e.g. "一位" → "1", "两位数" → "2")
+        cn_digits = {"零": "0", "一": "1", "二": "2", "两": "2", "三": "3",
+                     "四": "4", "五": "5", "六": "6", "七": "7", "八": "8",
+                     "九": "9", "十": "10"}
+        for ch, digit in cn_digits.items():
+            if ch in text:
+                return digit
         return "0"
+
+    @staticmethod
+    def _cn_to_arabic(text: str) -> str:
+        """Convert a Chinese numeral word to Arabic digits, e.g. '一位' → '1', '两位数' → '2'."""
+        cn_digits = {"零": "0", "一": "1", "二": "2", "两": "2", "三": "3",
+                     "四": "4", "五": "5", "六": "6", "七": "7", "八": "8",
+                     "九": "9", "十": "10"}
+        for ch, digit in cn_digits.items():
+            if ch in text:
+                return digit
+        return text
 
     @staticmethod
     def _extract_json_block(text: str) -> dict | None:
@@ -157,8 +176,7 @@ class RealVLLMProvider(LLMProvider):
 
     def _query_vllm(self, question: str) -> tuple[str, int, str | None]:
         system_prompt = (
-            "You are a careful math assistant. "
-            "Return JSON only with keys: answer (string), confidence (number 0 to 1)."
+            "Return a JSON object with keys: answer (string), confidence (number 0 to 1)."
         )
         user_prompt = f"Question: {question}"
         payload = {
@@ -260,10 +278,29 @@ class RealLocalProvider(LLMProvider):
 
     @staticmethod
     def _extract_answer_fallback(text: str) -> str:
+        # Try Arabic digits first
         match = re.search(r"-?\d+", text)
         if match:
             return match.group(0)
+        # Try Chinese numeral (e.g. "一位" → "1", "两位数" → "2")
+        cn_digits = {"零": "0", "一": "1", "二": "2", "两": "2", "三": "3",
+                     "四": "4", "五": "5", "六": "6", "七": "7", "八": "8",
+                     "九": "9", "十": "10"}
+        for ch, digit in cn_digits.items():
+            if ch in text:
+                return digit
         return "0"
+
+    @staticmethod
+    def _cn_to_arabic(text: str) -> str:
+        """Convert a Chinese numeral word to Arabic digits, e.g. '一位' → '1', '两位数' → '2'."""
+        cn_digits = {"零": "0", "一": "1", "二": "2", "两": "2", "三": "3",
+                     "四": "4", "五": "5", "六": "6", "七": "7", "八": "8",
+                     "九": "9", "十": "10"}
+        for ch, digit in cn_digits.items():
+            if ch in text:
+                return digit
+        return text
 
     @staticmethod
     def _extract_json_block(text: str) -> dict | None:
@@ -306,8 +343,7 @@ class RealLocalProvider(LLMProvider):
         try:
             self._ensure_loaded()
             system_prompt = (
-                "You are a careful math assistant. "
-                "Return JSON only with keys: answer (string), confidence (number 0 to 1)."
+                "Return a JSON object with keys: answer (string), confidence (number 0 to 1)."
             )
             messages = [
                 {"role": "system", "content": system_prompt},
@@ -320,9 +356,7 @@ class RealLocalProvider(LLMProvider):
             outputs = self._model.generate(
                 **inputs,
                 max_new_tokens=64,
-                temperature=0.0,
                 do_sample=False,
-                pad_token_id=self._tokenizer.pad_token_id,
             )
             generated = outputs[0][inputs["input_ids"].shape[1]:]
             content = self._tokenizer.decode(generated, skip_special_tokens=True).strip()
@@ -334,6 +368,7 @@ class RealLocalProvider(LLMProvider):
                 confidence = 0.35
             else:
                 answer = str(parsed.get("answer", self._extract_answer_fallback(content))).strip()
+                answer = self._cn_to_arabic(answer)
                 try:
                     confidence = float(parsed.get("confidence", 0.35))
                 except (TypeError, ValueError):

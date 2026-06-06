@@ -161,7 +161,13 @@ class ClosedLoopTrainer:
         records: list[EpisodeRecord] = []
         per_stage = max(1, self.config.episodes // len(self.stages))
 
-        for idx, stage in enumerate(self.stages):
+        # When stage_test_roots are configured, only run stages that have a test package.
+        # Non-test stages are skipped entirely.
+        stages_to_run = self.stages
+        if self.config.stage_test_roots:
+            stages_to_run = [s for s in self.stages if s.name in self.stage_test_packages]
+
+        for idx, stage in enumerate(stages_to_run):
             should_continue = self._run_stage(stage=stage, episodes=per_stage, records=records)
             if not should_continue:
                 break
@@ -169,7 +175,7 @@ class ClosedLoopTrainer:
             if self._is_naturally_converged(records) and self.config.simulation_mode == SimulationMode.IMPROVING:
                 self.stop_reason = f"NaturalConvergence@{stage.name}"
                 # 达到自然收敛后提前结束主循环。
-                if idx < len(self.stages) - 1:
+                if idx < len(stages_to_run) - 1:
                     break
 
         self_extension_summary: dict[str, object] = {
@@ -259,9 +265,12 @@ class ClosedLoopTrainer:
     ) -> bool:
         controller = package["controller"]
 
-        # If the test has its own simulator, swap it in for this stage
+        # If the test has its own simulator, swap it in only for simulated providers.
+        # Real providers (real_local, real_vllm) use the actual LLM so the test measures
+        # the real model's capability boundary, not the fake simulator's.
         sim_factory = package.get("simulator_factory")
-        if sim_factory is not None:
+        is_real_provider = self.config.llm_provider_type in (LLMProviderType.REAL_LOCAL, LLMProviderType.REAL_VLLM)
+        if sim_factory is not None and not is_real_provider:
             old_llm = self.llm
             self.llm = sim_factory(seed=self.config.seed + stage.index, dumb_mode=self.config.dumb_mode)
         else:
@@ -344,7 +353,6 @@ class ClosedLoopTrainer:
             mode=self.config.mode,
             stage=stage,
         )
-
         threshold = self._threshold(self.config.mode)
         while out.confidence < threshold:
             if out.use_tool and out.tool_trigger and self.toolbox.has_tool(out.tool_trigger):
