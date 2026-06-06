@@ -38,12 +38,14 @@ class TrainerConfig:
     simulation_mode: SimulationMode = SimulationMode.IMPROVING
     llm_provider_type: LLMProviderType = LLMProviderType.SIMULATED
     llm_model_name: str | None = None
+    llm_base_url: str | None = None
     max_recursion_depth: int = 2
     stage_initial_budget: float = 100.0
     convergence_window: int = 20
     convergence_success: float = 0.9
     convergence_surprise: float = 0.12
     stage_test_roots: dict[str, str] = field(default_factory=dict)
+    dumb_mode: bool = False
 
 
 class ClosedLoopTrainer:
@@ -55,6 +57,7 @@ class ClosedLoopTrainer:
             seed=config.seed,
             simulation_mode=config.simulation_mode,
             model_name=config.llm_model_name,
+            base_url=config.llm_base_url,
         )
 
         self.stages = [
@@ -98,6 +101,15 @@ class ClosedLoopTrainer:
             raise RuntimeError(f"Function '{function_name}' not found in module: {module_path}")
         return fn
 
+    @staticmethod
+    def _import_module(module_name: str, module_path: Path):
+        spec = importlib.util.spec_from_file_location(module_name, module_path)
+        if spec is None or spec.loader is None:
+            raise RuntimeError(f"Unable to load module from: {module_path}")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
     def _load_stage_test_package(self, test_root_ref: str) -> dict[str, Any]:
         repo_root = Path(__file__).resolve().parent.parent
         test_root = Path(test_root_ref)
@@ -128,6 +140,13 @@ class ClosedLoopTrainer:
         entry_name = str(controller_cfg.get("entry", "run_test_loop"))
         controller = self._import_function(module_path, entry_name)
 
+        # Auto-discover test-specific simulator (optional)
+        simulator = None
+        sim_path = test_root / "simulation" / "simulator.py"
+        if sim_path.exists():
+            sim_mod = self._import_module(f"test_sim_{test_root.stem}", sim_path)
+            simulator = getattr(sim_mod, "create_simulator", None)
+
         return {
             "test_id": test_id,
             "test_root": test_root,
@@ -135,6 +154,7 @@ class ClosedLoopTrainer:
             "contract_relpath": str(contract_path.relative_to(repo_root)),
             "contract": payload,
             "controller": controller,
+            "simulator_factory": simulator,
         }
 
     def run(self) -> dict[str, object]:
@@ -239,6 +259,14 @@ class ClosedLoopTrainer:
     ) -> bool:
         controller = package["controller"]
 
+        # If the test has its own simulator, swap it in for this stage
+        sim_factory = package.get("simulator_factory")
+        if sim_factory is not None:
+            old_llm = self.llm
+            self.llm = sim_factory(seed=self.config.seed + stage.index, dumb_mode=self.config.dumb_mode)
+        else:
+            old_llm = None
+
         def execute_episode(
             *,
             difficulty: int | None = None,
@@ -279,6 +307,10 @@ class ClosedLoopTrainer:
         )
         if not isinstance(result, dict):
             raise RuntimeError("Test controller must return a dict result")
+
+        # Restore original LLM if we swapped in a test simulator
+        if old_llm is not None:
+            self.llm = old_llm
 
         stop_reason = result.get("stop_reason")
         if isinstance(stop_reason, str) and stop_reason:

@@ -1,0 +1,31 @@
+{
+  "training_id": "rlhf_confidence_v1",
+  "stage": "stage2",
+  "training_mode": "rlhf",
+  "engine": "huggingface",
+  "engine_runtime_eval": "vllm",
+  "engine_optional_inference": "ollama",
+  "input_model": "training/models/base/model_placeholder",
+  "output_model_prefix": "stage2_confidence",
+  "datasets": {
+    "train": "training/materials/rlhf_confidence_v1/data/train.jsonl",
+    "val": "training/materials/rlhf_confidence_v1/data/val.jsonl",
+    "test": "training/materials/rlhf_confidence_v1/data/test.jsonl"
+  },
+  "test_contract": "training/materials/rlhf_confidence_v1/config/test_contract.json",
+  "reward_function": "training/materials/rlhf_confidence_v1/reward/reward.py",
+  "retention": {
+    "keep": [
+      "best",
+      "last"
+    ]
+  },
+  "promotion": {
+    "human_approval_required": true
+  },
+  "reproducibility": {
+    "seed_required": true,
+    "frozen_config_snapshot_required": true
+  },
+  "seed": 105
+}

@@ -500,3 +500,93 @@ Last Updated: 2026-06-06
 ### Notes
 
 - SFT test contract also runs successfully under strict contract-v2-only evaluation parsing.
+
+## Run 039
+
+- Command: vllm --version
+- Status: Failed (environment readiness)
+
+### Notes
+
+- Local shell does not have vLLM command available.
+
+## Run 040
+
+- Command: d:/AI/AITraining2/.venv/Scripts/python.exe -c "import importlib.util;print('vllm_installed=', importlib.util.find_spec('vllm') is not None)"
+- Status: Success
+
+### Key Metrics
+
+- vllm_installed: False
+
+### Notes
+
+- Project Python environment currently does not include `vllm` package.
+
+## Run 041
+
+- Command: curl http://127.0.0.1:8000/v1/models
+- Status: Failed (endpoint readiness)
+
+### Notes
+
+- No local vLLM OpenAI-compatible server reachable at `127.0.0.1:8000`.
+
+## Run 042
+
+- Command: d:/AI/AITraining2/.venv/Scripts/python.exe main.py --episodes 3 --llm-provider real_vllm --llm-model Qwen/Qwen2.5-0.5B-Instruct --llm-base-url http://127.0.0.1:8000/v1 --simulation-mode improving --out run_summary_vllm_provider_smoke.json
+- Status: Success
+- Output Artifact: run_summary_vllm_provider_smoke.json
+
+### Key Metrics
+
+- llm_provider.type: real_vllm
+- stop_reason: Completed
+- episodes: 3
+
+### Notes
+
+- Runtime real_vllm provider path executes end-to-end and fails fast with low-confidence fallback when endpoint is unavailable.
+- Real DigitCounting boundary probing requires active vLLM server with tiny Hugging Face model.
+
+## Run 043
+
+- Command: d:/AI/AITraining2/.venv/Scripts/python.exe scripts/run_training_pipeline.py --config training/materials/rlhf_confidence_v1/config/training_config.json --seed 105 --dry-run
+- Status: Success
+- Output Artifact: training/runs/20260606T120217Z_rlhf_confidence_v1/run_summary.json
+
+### Key Metrics
+
+- training_mode: rlhf
+- artifacts.ollama.status: conversion_required
+- artifacts.ollama.modelfile: training/runs/20260606T120217Z_rlhf_confidence_v1/ollama/Modelfile
+
+### Notes
+
+- RLHF pipeline now emits run-scoped Ollama handoff bundle.
+- GGUF not yet present; conversion note generated under run ollama folder.
+
+## Run 044
+
+- Command: d:/AI/AITraining2/.venv/Scripts/python.exe scripts/run_training_pipeline.py --config training/materials/sft_framework_patterns_v1/config/training_config.json --seed 106 --dry-run
+- Status: Failed (expected guard)
+
+### Notes
+
+- Pipeline correctly rejects non-RLHF mode with explicit RuntimeError.
+
+## Run 045
+
+- Command: d:/AI/AITraining2/.venv/Scripts/python.exe scripts/run_training_pipeline.py --config training/materials/rlhf_confidence_v1/config/training_config.json --seed 107 --dry-run
+- Status: Success
+- Output Artifact: training/runs/20260606T120259Z_rlhf_confidence_v1/run_summary.json
+
+### Key Metrics
+
+- training_mode: rlhf
+- artifacts.ollama.model_name: stage2-confidence
+- artifacts.ollama.status: conversion_required
+
+### Notes
+
+- RLHF dry-run remains healthy after adding RLHF-only guard and Ollama handoff metadata.

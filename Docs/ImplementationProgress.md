@@ -86,6 +86,14 @@ Last Updated: 2026-06-06
 - [x] Enforce strict contract-v2 evaluation schema (`controller` + `generic` + `test_specific`)
 - [x] Remove legacy compatibility keys from RLHF/SFT test contracts
 - [x] Validate RLHF and SFT dry-runs with strict contract-v2-only flow
+- [x] Add real_vllm runtime provider using OpenAI-compatible endpoint protocol
+- [x] Add CLI support for real_vllm selection and explicit --llm-base-url
+- [x] Add README tiny-model run path for vLLM + Hugging Face
+- [x] Validate provider path with short real_vllm smoke run and log local readiness blocker
+- [x] Enforce RLHF-only mode in training pipeline and reject non-RLHF configs
+- [x] Generate run-scoped Ollama handoff bundle under training/runs/<run_id>/ollama
+- [x] Add RLHF config ollama metadata fields (model_name, gguf_path, system_prompt, template)
+- [x] Validate RLHF dry-run emits Ollama Modelfile + conversion-required marker
 
 ## Evidence Pointers
 
@@ -122,6 +130,8 @@ Last Updated: 2026-06-06
 - Compatibility-removal validation artifact: run_summary_stage_test_only.json
 - RLHF strict-v2 validation artifact: training/runs/20260606T104947Z_rlhf_confidence_v1/run_summary.json
 - SFT strict-v2 validation artifact: training/runs/20260606T104949Z_sft_framework_patterns_v1/run_summary.json
+- real_vllm smoke artifact: run_summary_vllm_provider_smoke.json
+- RLHF ollama handoff artifact: training/runs/20260606T120259Z_rlhf_confidence_v1/run_summary.json
 
 ## Notes
 

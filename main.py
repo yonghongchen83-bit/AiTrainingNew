@@ -25,7 +25,7 @@ def _parse_stage_test_roots(pairs: list[str]) -> dict[str, str]:
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Meta-cognitive closed-loop trainer (Phase 0-4)")
     p.add_argument("--episodes", type=int, default=120, help="Total episodes across Stage 0-2")
-    p.add_argument("--out", type=str, default="run_summary.json", help="Summary output JSON path")
+    p.add_argument("--out", type=str, default="output/run_summary.json", help="Summary output JSON path")
     p.add_argument(
         "--enable-self-extension",
         action="store_true",
@@ -68,8 +68,13 @@ def parse_args() -> argparse.Namespace:
         "--llm-provider",
         type=str,
         default=LLMProviderType.SIMULATED.value,
-        choices=[LLMProviderType.SIMULATED.value, LLMProviderType.REAL_STUB.value],
-        help="LLM provider backend: simulated or real_stub",
+        choices=[
+            LLMProviderType.SIMULATED.value,
+            LLMProviderType.REAL_STUB.value,
+            LLMProviderType.REAL_VLLM.value,
+            LLMProviderType.REAL_LOCAL.value,
+        ],
+        help="LLM provider backend: simulated, real_stub, real_vllm, or real_local",
     )
     p.add_argument(
         "--llm-model",
@@ -78,10 +83,22 @@ def parse_args() -> argparse.Namespace:
         help="Model name metadata for LLM provider (used by real_stub and future real provider)",
     )
     p.add_argument(
+        "--llm-base-url",
+        type=str,
+        default=None,
+        help="OpenAI-compatible base URL for real_vllm provider (default: http://127.0.0.1:8000/v1)",
+    )
+    p.add_argument(
         "--stage-test-root",
         action="append",
         default=[],
         help="Generic stage test root mapping in the form StageName=path (repeatable)",
+    )
+    p.add_argument(
+        "--dumb-mode",
+        action="store_true",
+        default=False,
+        help="Make test simulator always fail — verify early termination",
     )
     return p.parse_args()
 
@@ -98,14 +115,17 @@ def main() -> int:
             simulation_mode=SimulationMode(args.simulation_mode),
             llm_provider_type=LLMProviderType(args.llm_provider),
             llm_model_name=args.llm_model,
+            llm_base_url=args.llm_base_url,
             max_recursion_depth=args.max_recursion_depth,
             stage_initial_budget=args.stage_initial_budget,
             stage_test_roots=stage_test_roots,
+            dumb_mode=args.dumb_mode,
         )
     )
     summary = trainer.run()
 
     out_path = Path(args.out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "episodes": summary["episodes"],
         "total_reward": summary["total_reward"],

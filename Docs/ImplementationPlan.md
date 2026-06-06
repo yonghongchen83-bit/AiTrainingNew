@@ -90,6 +90,14 @@ Last Updated: 2026-06-06
 - [x] P15-02 Enforce strict evaluation contract-v2 schema (`controller` + `generic` + `test_specific`)
 - [x] P15-03 Remove legacy compatibility fields from RLHF/SFT test contracts
 - [x] P15-04 Validate RLHF and SFT dry-runs succeed with strict contract-v2-only evaluation flow
+- [x] P16-01 Add runtime real-vLLM provider path using OpenAI-compatible endpoint
+- [x] P16-02 Expose runtime provider selection and base URL CLI for real_vllm
+- [x] P16-03 Add tiny-model execution docs for vLLM + Hugging Face digit-boundary probing
+- [x] P16-04 Run real_vllm smoke validation and capture environment readiness blocker (vLLM not installed/server not running)
+- [x] P17-01 Enforce RLHF-only mode in training orchestrator path and fail fast on non-RLHF config
+- [x] P17-02 Generate run-scoped Ollama handoff bundle (`training/runs/<run_id>/ollama/Modelfile`)
+- [x] P17-03 Add RLHF config fields for Ollama handoff metadata (`model_name`, `gguf_path`, prompt/template)
+- [x] P17-04 Validate RLHF dry-run emits Ollama bundle and conversion-required marker when GGUF is absent
 
 ## Runtime Entry Points
 

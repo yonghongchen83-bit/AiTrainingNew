@@ -1,3 +1,0 @@
-{"prompt":"3 + 7 = ?","response":"10","confidence":0.2,"correct":true}
-{"prompt":"1 + 5 = ?","response":"7","confidence":0.9,"correct":false}
-{"prompt":"7 + 8 = ?","response":"15","confidence":0.6,"correct":true}

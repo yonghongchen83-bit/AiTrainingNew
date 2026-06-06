@@ -19,6 +19,8 @@ class SimulationMode(str, Enum):
 class LLMProviderType(str, Enum):
     SIMULATED = "simulated"
     REAL_STUB = "real_stub"
+    REAL_VLLM = "real_vllm"
+    REAL_LOCAL = "real_local"
 
 
 class FailureType(str, Enum):

@@ -4,13 +4,14 @@ import argparse
 import importlib.util
 import json
 import math
+import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Training pipeline orchestrator stub (RLHF/SFT)")
+    p = argparse.ArgumentParser(description="Training pipeline orchestrator stub (RLHF only)")
     p.add_argument("--config", type=str, required=True, help="Path to training config json")
     p.add_argument("--seed", type=int, required=True, help="Required fixed seed for reproducibility")
     p.add_argument("--dry-run", action="store_true", default=False, help="Do not create model artifacts")
@@ -199,12 +200,91 @@ def _evaluate_test_contract(cfg: dict[str, Any], repo_root: Path, seed: int, run
     }
 
 
+def _validate_training_mode(cfg: dict[str, Any]) -> None:
+    mode = str(cfg.get("training_mode", "")).strip().lower()
+    if mode != "rlhf":
+        raise RuntimeError(
+            "This orchestrator path is RLHF-only. "
+            f"Received training_mode='{cfg.get('training_mode')}'."
+        )
+
+
+def _build_ollama_bundle(
+    cfg: dict[str, Any],
+    repo_root: Path,
+    run_dir: Path,
+) -> dict[str, Any]:
+    ollama_cfg = cfg.get("ollama", {})
+    if not isinstance(ollama_cfg, dict):
+        raise RuntimeError("config.ollama must be an object when present")
+
+    ollama_dir = run_dir / "ollama"
+    ollama_dir.mkdir(parents=True, exist_ok=True)
+    modelfile_path = ollama_dir / "Modelfile"
+
+    model_name = str(ollama_cfg.get("model_name", cfg.get("training_id", "rlhf_model")))
+    system_prompt = str(
+        ollama_cfg.get(
+            "system_prompt",
+            "You are a careful assistant focused on correctness and calibrated confidence.",
+        )
+    )
+    template = ollama_cfg.get("template")
+
+    gguf_ref = ollama_cfg.get("gguf_path")
+    gguf_path = _ensure_relative(str(gguf_ref), repo_root) if gguf_ref else None
+    local_gguf = ollama_dir / "model.gguf"
+
+    status = "conversion_required"
+    conversion_note_path = ollama_dir / "CONVERSION_REQUIRED.md"
+
+    if gguf_path and gguf_path.exists():
+        shutil.copyfile(gguf_path, local_gguf)
+        status = "ready"
+    else:
+        conversion_note = (
+            "# GGUF Conversion Required\n\n"
+            "No ready GGUF model was found for this run.\n\n"
+            f"Configured gguf_path: {gguf_ref}\n"
+            f"Input model path: {cfg.get('input_model')}\n\n"
+            "After conversion, place the model at:\n"
+            f"- {local_gguf}\n"
+        )
+        conversion_note_path.write_text(conversion_note, encoding="utf-8")
+
+    modelfile_lines = [
+        "FROM ./model.gguf",
+        f'SYSTEM "{system_prompt.replace("\\", "\\\\").replace("\"", "\\\"")}"',
+    ]
+    if isinstance(template, str) and template.strip():
+        escaped_template = template.replace("\\", "\\\\").replace('"', '\\"')
+        modelfile_lines.append(f'TEMPLATE "{escaped_template}"')
+
+    modelfile_path.write_text("\n".join(modelfile_lines) + "\n", encoding="utf-8")
+
+    return {
+        "status": status,
+        "model_name": model_name,
+        "bundle_dir": str(ollama_dir.relative_to(repo_root)),
+        "modelfile": str(modelfile_path.relative_to(repo_root)),
+        "gguf": str(local_gguf.relative_to(repo_root)),
+        "create_command": f"ollama create {model_name} -f {modelfile_path}",
+        "run_command": f"ollama run {model_name}",
+        "conversion_note": (
+            str(conversion_note_path.relative_to(repo_root))
+            if conversion_note_path.exists()
+            else None
+        ),
+    }
+
+
 def main() -> int:
     args = parse_args()
     repo_root = Path(__file__).resolve().parent.parent
 
     cfg_path = _ensure_relative(args.config, repo_root)
     cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+    _validate_training_mode(cfg)
 
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + f"_{cfg['training_id']}"
     run_dir = repo_root / "training" / "runs" / run_id
@@ -231,6 +311,12 @@ def main() -> int:
             "promoted": f"training/models/promoted/{cfg.get('stage', 'stageX')}.end.model",
         },
     }
+
+    summary["artifacts"]["ollama"] = _build_ollama_bundle(
+        cfg=cfg,
+        repo_root=repo_root,
+        run_dir=run_dir,
+    )
 
     summary["test_evaluation"] = _evaluate_test_contract(
         cfg=cfg,

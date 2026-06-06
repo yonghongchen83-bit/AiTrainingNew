@@ -19,7 +19,7 @@ Last Updated: 2026-06-06
 
 - src.llm_provider.LLMProvider.predict(question, expected_answer, budget, mode, stage) -> LLMOutput
 - src.llm_provider.LLMProvider.train_step(reward) -> None
-- src.llm_provider.build_llm_provider(provider_type, seed, simulation_mode, model_name) -> LLMProvider
+- src.llm_provider.build_llm_provider(provider_type, seed, simulation_mode, model_name, base_url) -> LLMProvider
 - src.environment.MathEnvironment.reset() -> MathProblem
 - src.environment.MathEnvironment.step(out, expected_answer, recursion_depth) -> (reward, success, cost)
 - src.reward.compute_reward(out, success, actual_cost, stage) -> float
@@ -79,15 +79,16 @@ Last Updated: 2026-06-06
 6. src.training.ClosedLoopTrainer executes generated tasks and scores with src.reward.compute_reward_profile.
 7. main.py exports self_extension summary into run output JSON.
 
-## Training Workspace Flow (RLHF/SFT)
+## Training Workspace Flow (RLHF)
 
 1. `scripts/run_training_pipeline.py` reads per-training config from `training/materials/<training_id>/config/training_config.json`.
 2. Orchestrator enforces seed presence and writes immutable config snapshot into `training/runs/<run_id>/config_snapshot.json`.
-3. Mode is selected by config field `training_mode` (`rlhf` default, `sft` in later pattern stages).
+3. Orchestrator enforces `training_mode=rlhf` and fails fast for non-RLHF configs.
 4. Orchestrator writes run summary to `training/runs/<run_id>/run_summary.json`.
 5. Best/last checkpoint artifact placeholders are written to `training/models/checkpoints/`.
-6. One-line run record is appended to `training/registry/runs_manifest.jsonl`.
-7. Promotion to `training/models/promoted/stageN.end.model` is gated by human approval.
+6. Orchestrator writes Ollama handoff artifacts under `training/runs/<run_id>/ollama/` (`Modelfile`, optional `model.gguf`, and conversion note if GGUF is absent).
+7. One-line run record is appended to `training/registry/runs_manifest.jsonl`.
+8. Promotion to `training/models/promoted/stageN.end.model` is gated by human approval.
 
 ## Operator Script Flow
 
@@ -124,3 +125,11 @@ Last Updated: 2026-06-06
 5. Evaluation evidence is written under `training/materials/<training_id>/results/` as JSON summary + predictions JSONL.
 6. Run summary still records pointers to these local artifacts for centralized audit and manifest history.
 7. Deprecated compatibility keys (`simulation_module`, `simulation_entry`, `evaluation`) are no longer parsed by pipeline runtime.
+
+## Runtime Real-vLLM Provider Flow
+
+1. `main.py` accepts `--llm-provider real_vllm` and optional `--llm-base-url`.
+2. `src.training.TrainerConfig` forwards runtime provider settings to `src.llm_provider.build_llm_provider`.
+3. `src.llm_provider.RealVLLMProvider` sends OpenAI-compatible chat-completions requests to vLLM endpoint.
+4. Provider normalizes model output into internal `LLMOutput` (`answer`, `confidence`, `estimated_cost`) for unchanged trainer/test-controller interfaces.
+5. If endpoint is unavailable, provider returns low-confidence fallback output with clarification tag so runtime remains executable and auditable.

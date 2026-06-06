@@ -1,1 +1,0 @@
-{"prompt":"Describe retention policy","response":"Keep best and last checkpoints only, plus summary and config snapshot."}

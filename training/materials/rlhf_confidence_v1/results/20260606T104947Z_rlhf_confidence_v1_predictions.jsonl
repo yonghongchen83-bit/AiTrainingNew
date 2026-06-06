@@ -1,2 +1,0 @@
-{"prompt": "1 + 6 = ?", "response": "7", "confidence": 0.5, "correct": true, "step_index": 0}
-{"prompt": "7 + 6 = ?", "response": "14", "confidence": 0.9, "correct": false, "step_index": 0}

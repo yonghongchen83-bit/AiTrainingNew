@@ -162,3 +162,17 @@ Last Updated: 2026-06-06
 - Decision: Remove legacy fallback parsing in `scripts/run_training_pipeline.py` and require evaluation contracts to define `controller`, `generic`, and `test_specific` directly.
 - Rationale: Generic engine/pipeline should not carry compatibility branches once standardized contract structure is established.
 - Consequence: RLHF/SFT evaluation contracts no longer include deprecated `simulation_module`, `simulation_entry`, or `evaluation` duplicates; pipeline fails fast on schema violations.
+
+## ADR-024: Runtime Real Provider Path Uses vLLM OpenAI-Compatible Endpoint
+
+- Date: 2026-06-06
+- Decision: Introduce `real_vllm` runtime provider that calls a Hugging Face model served through vLLM OpenAI-compatible API (`/v1/chat/completions`).
+- Rationale: User requested real-model capability probing for DigitCounting boundary with tiny model substitution while preserving generic test-controller architecture.
+- Consequence: `main.py` now supports `--llm-provider real_vllm` and `--llm-base-url`; runtime can probe real-model behavior when vLLM service is available, while failing fast when endpoint is unavailable.
+
+## ADR-025: RLHF-Only Orchestrator Slice with Ollama Handoff Bundle
+
+- Date: 2026-06-06
+- Decision: Restrict `scripts/run_training_pipeline.py` to `training_mode=rlhf` and generate a run-scoped Ollama bundle (`Modelfile` + GGUF pointer/copy state) under `training/runs/<run_id>/ollama/`.
+- Rationale: User explicitly requested to ignore SFT for this phase and to save/load the resulting model through Ollama.
+- Consequence: Non-RLHF configs now fail fast in this orchestrator path; each RLHF run emits explicit Ollama create/run commands and conversion-required evidence when GGUF is not yet present.

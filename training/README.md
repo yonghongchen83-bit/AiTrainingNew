@@ -2,7 +2,7 @@
 
 Last Updated: 2026-06-06
 
-This folder is the official training workspace for both RLHF and SFT workflows.
+This folder is the official training workspace. The current orchestrator path is RLHF-only.
 
 ## Layout
 
@@ -13,9 +13,9 @@ This folder is the official training workspace for both RLHF and SFT workflows.
 
 ## Mode Policy
 
-- Default mode: RLHF
-- SFT is enabled when stage objective switches to framework-pattern learning
-- Switching mode must be done by config only; orchestration path remains unchanged
+- Current orchestrator mode: RLHF only
+- Non-RLHF configs are rejected by `scripts/run_training_pipeline.py`
+- SFT remains a future path and is not executed by this orchestrator slice
 
 ## Retention Policy
 
@@ -35,14 +35,25 @@ If a stage passes human review:
 Stage launchers:
 
 - `training/scripts/start_stage2_confidence.ps1 -Seed 42 [-DryRun]`
-- `training/scripts/start_stage3_patterns.ps1 -Seed 43 [-DryRun]`
 
 Generic launcher:
 
 - `python training/scripts/start_training.py --stage stage2 --seed 42 --dry-run`
-- `python training/scripts/start_training.py --stage stage3 --seed 43`
 
 Promotion decision (human gate):
 
 - `training/scripts/promote_stage.ps1 -RunId <run_id> -Stage stage2 -Approve -Reason "passed human review"`
 - `python training/scripts/promote_stage_model.py --run-id <run_id> --stage stage2 --approve --reason "passed human review"`
+
+## Ollama Handoff Bundle
+
+Each run writes an Ollama handoff folder under `training/runs/<run_id>/ollama/`:
+
+- `Modelfile`
+- `model.gguf` (when available)
+- `CONVERSION_REQUIRED.md` (when GGUF is not yet available)
+
+Typical load commands:
+
+- `ollama create <model_name> -f training/runs/<run_id>/ollama/Modelfile`
+- `ollama run <model_name>`
