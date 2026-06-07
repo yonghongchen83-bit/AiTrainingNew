@@ -283,13 +283,19 @@ class RealLocalProvider(LLMProvider):
         RLHF: reward-weighted regression on model_answer."""
         self._model.train()
         if self._optimizer is None:
-            from torch.optim import AdamW
-            self._optimizer = AdamW(self._model.parameters(), lr=self._learning_rate)
+            from torch.optim import Adafactor
+            self._optimizer = Adafactor(
+                self._model.parameters(),
+                lr=self._learning_rate,
+            )
 
         system_prompt = "Return a JSON object with keys: answer (string), confidence (number 0 to 1)."
         total_loss = 0.0
         for q, exp_a, model_a, r in self._train_buffer:
-            target = exp_a if self._training_mode == TrainingMode.SFT else model_a
+            if self._training_mode == TrainingMode.SFT:
+                target = json.dumps({"answer": exp_a, "confidence": 1.0}, ensure_ascii=False)
+            else:
+                target = model_a
             messages = [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"Question: {q}"},
@@ -377,7 +383,9 @@ class RealLocalProvider(LLMProvider):
             torch_dtype="auto",
         )
         if self._tokenizer.pad_token is None:
-            self._tokenizer.pad_token = self._tokenizer.eos_token
+            # Single-sequence generation — no batching needed, so pad_token
+            # collision with eos_token is harmless when not passed to generate().
+            pass
         print(f"[RealLocalProvider] {self._model_name} loaded.")
 
     def predict(

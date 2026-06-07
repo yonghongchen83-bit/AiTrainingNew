@@ -15,8 +15,11 @@
     "phases": [
       {
         "type": "sft",
-        "level": 1,
-        "episodes": 10,
+        "levels": [
+          {"level": 1, "episodes": 10},
+          {"level": 2, "episodes": 20},
+          {"level": 3, "episodes": 20}
+        ],
         "confidence_pressure_strength": 0.5
       },
       {

@@ -1,0 +1,86 @@
+{
+  "episodes": 280,
+  "total_reward": 219.4962,
+  "calibration_error": 0.1186,
+  "false_high_confidence": 0,
+  "budget_efficiency": 1.0,
+  "stage_metrics": {
+    "DigitCounting": {
+      "success_rate": 0.9214,
+      "mean_surprise": 0.1186,
+      "episodes": 280
+    }
+  },
+  "self_extension": {
+    "enabled": false,
+    "generated_tasks": 0,
+    "added_tools": [],
+    "expanded_stages": []
+  },
+  "llm_provider": {
+    "type": "simulated",
+    "model": null
+  },
+  "simulation_mode": "improving",
+  "stop_reason": "DigitCountingMultiStageComplete",
+  "stage_tests": {
+    "DigitCounting": {
+      "enabled": true,
+      "test_id": "digit_counting",
+      "status": "completed",
+      "contract": "training\\materials\\digit_counting_curriculum_v1\\config\\test_contract.json",
+      "phases": [
+        {
+          "phase_type": "sft",
+          "level_results": [
+            {
+              "level": 1,
+              "episodes": 10,
+              "success_count": 10,
+              "accuracy": 1.0
+            },
+            {
+              "level": 2,
+              "episodes": 20,
+              "success_count": 20,
+              "accuracy": 1.0
+            },
+            {
+              "level": 3,
+              "episodes": 20,
+              "success_count": 20,
+              "accuracy": 1.0
+            }
+          ],
+          "total_episodes": 50,
+          "total_success": 50,
+          "overall_accuracy": 1.0
+        },
+        {
+          "phase_type": "curriculum",
+          "status": "stopped_capability_boundary",
+          "max_verified_digits": 3,
+          "boundary_digits": 4,
+          "samples": 230,
+          "stop_reason": "DigitCountingCapabilityBoundary@4Digits",
+          "tool_name": "DigitCountingCapability",
+          "level_trends": [
+            {
+              "level": 4,
+              "episode_at_level": 100,
+              "total_samples": 130
+            },
+            {
+              "level": 4,
+              "episode_at_level": 200,
+              "total_samples": 230
+            }
+          ]
+        }
+      ],
+      "tool_name": "DigitCountingCapability"
+    }
+  },
+  "fallback_events": [],
+  "tool_invocations": []
+}
