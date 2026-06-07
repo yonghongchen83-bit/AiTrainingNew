@@ -92,7 +92,7 @@ def _normalize_phases(phases_cfg: Any) -> list[dict[str, Any]]:
         if not isinstance(item, dict):
             continue
         phase_type = str(item.get("type", "")).strip().lower()
-        if phase_type not in {"sft", "trend", "sft_warmup", "legacy"}:
+        if phase_type not in {"sft", "trend", "curriculum", "sft_warmup", "legacy"}:
             continue
         phase = dict(item)
         phase["type"] = "sft" if phase_type == "sft_warmup" else phase_type
@@ -130,69 +130,119 @@ def _run_sft_phase(
     }
 
 
-def _run_trend_phase(
+def _run_curriculum_phase(
     phase_cfg: dict[str, Any],
     execute_episode: Callable[..., Any],
+    register_capability_summary: Callable[..., str],
+    test_id: str,
+    stage_name: str,
 ) -> dict[str, Any]:
-    level = _to_int(phase_cfg, "level", 1)
-    max_total_samples = _to_int(phase_cfg, "max_total_samples", 1000)
-    trend_window = _to_int(phase_cfg, "trend_window", 100)
-    report_interval = _to_int(phase_cfg, "report_interval", 100)
+    """Progressive curriculum — gates upward through difficulty levels using RLHF.
+    Discovers the model's capability boundary and reports trend data at each level."""
+    min_level = _to_int(phase_cfg, "min_level", 1)
+    max_level = _to_int(phase_cfg, "max_level", 20)
+    max_total_samples = _to_int(phase_cfg, "max_total_samples", 3000)
+    gate_window_size = _to_int(phase_cfg, "gate_window", 10)
+    target_confidence = _to_float(phase_cfg, "target_confidence", 1.0)
+    tolerance = _to_float(phase_cfg, "tolerance", 0.0)
+    base_target_loops = _to_int(phase_cfg, "base_target_loops", 40)
+    max_loops_per_level = _to_int(phase_cfg, "max_loops_per_level", 200)
     confidence_pressure_strength = _to_float(phase_cfg, "confidence_pressure_strength", 0.5)
+    report_interval = _to_int(phase_cfg, "report_interval", 100)
 
-    recent_success = deque(maxlen=trend_window)
-    recent_confidence = deque(maxlen=trend_window)
-    recent_reward = deque(maxlen=trend_window)
-    total_reward = 0.0
-    total_success = 0
-    trend_points: list[dict[str, Any]] = []
+    level = min_level
+    level_loops = 0
+    total_samples = 0
+    best_verified = 0
+    gate_window = deque(maxlen=max(1, gate_window_size))
 
-    for episode in range(1, max_total_samples + 1):
+    # Track per-level trend snapshots
+    level_trends: list[dict[str, Any]] = []
+
+    while level <= max_level and total_samples < max_total_samples:
+        target_loops = max(1, base_target_loops * level)
+        progress_ratio = min(1.0, level_loops / target_loops)
+
         record = execute_episode(
             difficulty=level,
-            progress_ratio=min(1.0, episode / max_total_samples),
+            progress_ratio=progress_ratio,
             confidence_pressure_strength=confidence_pressure_strength,
             training_mode="rlhf",
         )
 
-        total_reward += record.reward
-        if record.success:
-            total_success += 1
+        level_loops += 1
+        total_samples += 1
+        gate_window.append(_gate_hit(record, target_confidence=target_confidence, tolerance=tolerance))
 
-        recent_success.append(1 if record.success else 0)
-        recent_confidence.append(record.confidence)
-        recent_reward.append(record.reward)
-
-        if episode % report_interval == 0:
-            window_acc = sum(recent_success) / len(recent_success)
-            window_conf = sum(recent_confidence) / len(recent_confidence)
-            window_reward = sum(recent_reward) / len(recent_reward)
-            overall_acc = total_success / episode
-
-            trend_points.append({
-                "episode": episode,
-                "overall_accuracy": round(overall_acc, 4),
-                "window_accuracy": round(window_acc, 4),
-                "window_avg_confidence": round(window_conf, 4),
-                "window_avg_reward": round(window_reward, 4),
-                "total_reward": round(total_reward, 4),
+        # Snapshot at report intervals within each level
+        if level_loops % report_interval == 0:
+            level_trends.append({
+                "level": level,
+                "episode_at_level": level_loops,
+                "total_samples": total_samples,
             })
 
-    overall_acc = total_success / max(1, max_total_samples)
-    window_acc = sum(recent_success) / len(recent_success)
-    window_conf = sum(recent_confidence) / len(recent_confidence)
-    window_reward = sum(recent_reward) / len(recent_reward)
+        if len(gate_window) == gate_window.maxlen and all(gate_window):
+            best_verified = level
+            if level >= max_level:
+                stop_reason = f"{stage_name}RequirementReached@{level}Digits"
+                tool_name = register_capability_summary(
+                    test_id=test_id,
+                    max_verified=best_verified,
+                    boundary=None,
+                    reason="max_requirement_reached",
+                )
+                return {
+                    "phase_type": "curriculum",
+                    "status": "stopped_requirement_reached",
+                    "max_verified_digits": best_verified,
+                    "boundary_digits": None,
+                    "samples": total_samples,
+                    "stop_reason": stop_reason,
+                    "tool_name": tool_name,
+                    "level_trends": level_trends,
+                }
 
+            level += 1
+            level_loops = 0
+            gate_window.clear()
+            continue
+
+        if level_loops >= max_loops_per_level:
+            stop_reason = f"{stage_name}CapabilityBoundary@{level}Digits"
+            tool_name = register_capability_summary(
+                test_id=test_id,
+                max_verified=best_verified,
+                boundary=level,
+                reason="capability_boundary_reached_nonpass",
+            )
+            return {
+                "phase_type": "curriculum",
+                "status": "stopped_capability_boundary",
+                "max_verified_digits": best_verified,
+                "boundary_digits": level,
+                "samples": total_samples,
+                "stop_reason": stop_reason,
+                "tool_name": tool_name,
+                "level_trends": level_trends,
+            }
+
+    stop_reason = f"{stage_name}SampleBudgetReached@{level}Digits"
+    tool_name = register_capability_summary(
+        test_id=test_id,
+        max_verified=best_verified,
+        boundary=level,
+        reason="sample_budget_reached",
+    )
     return {
-        "phase_type": "trend",
-        "level": level,
-        "total_episodes": max_total_samples,
-        "overall_accuracy": round(overall_acc, 4),
-        "final_window_accuracy": round(window_acc, 4),
-        "final_window_confidence": round(window_conf, 4),
-        "final_window_reward": round(window_reward, 4),
-        "total_reward": round(total_reward, 4),
-        "trend_points": trend_points,
+        "phase_type": "curriculum",
+        "status": "stopped_sample_budget",
+        "max_verified_digits": best_verified,
+        "boundary_digits": level,
+        "samples": total_samples,
+        "stop_reason": stop_reason,
+        "tool_name": tool_name,
+        "level_trends": level_trends,
     }
 
 
@@ -222,8 +272,10 @@ def _run_staged_test(
     for phase in phases:
         if phase["type"] == "sft":
             phase_summaries.append(_run_sft_phase(phase, execute_episode))
-        elif phase["type"] == "trend":
-            phase_summaries.append(_run_trend_phase(phase, execute_episode))
+        elif phase["type"] == "curriculum":
+            phase_summaries.append(_run_curriculum_phase(
+                phase, execute_episode, register_capability_summary, test_id, stage.name,
+            ))
 
     tool_name = register_capability_summary(
         test_id=test_id,
