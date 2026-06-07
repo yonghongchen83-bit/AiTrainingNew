@@ -78,7 +78,7 @@ class SftTraining:
             })
             print(f"  Level {lvl} done — {lvl_success}/{ep} ({round(lvl_success/max(1,ep)*100,1)}%)\n")
 
-        print(f"SFT done — {total_success}/{total_episodes} (accuracy {round(total_success/max(1,total_episodes)*100,1)}%)\n")
+        print(f"SFT END — {total_success}/{total_episodes} (accuracy {round(total_success/max(1,total_episodes)*100,1)}%)\n")
 
         return {
             "phase_type": "sft",

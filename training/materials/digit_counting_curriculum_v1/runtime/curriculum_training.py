@@ -83,6 +83,7 @@ class CurriculumTraining:
                 best_verified = level
                 print(f"  >> Level {level} passed!  → level {level+1}  (samples: {total_samples})")
                 if level >= self._max_level:
+                    print(f"CURRICULUM END — all levels cleared (verified={best_verified})\n")
                     stop_reason = f"{stage_name}RequirementReached@{level}Digits"
                     tool_name = register_capability_summary(
                         test_id=test_id,
@@ -109,11 +110,13 @@ class CurriculumTraining:
                     boundary=level,
                     reason="capability_boundary_reached_nonpass",
                 )
+                print(f"CURRICULUM END — verified={best_verified}  boundary={level}  samples={total_samples}\n")
                 return self._result(
                     "stopped_capability_boundary", best_verified, level,
                     total_samples, stop_reason, tool_name, level_trends,
                 )
 
+        print(f"CURRICULUM END — verified={best_verified}  boundary={level}  samples={total_samples}\n")
         stop_reason = f"{stage_name}SampleBudgetReached@{level}Digits"
         tool_name = register_capability_summary(
             test_id=test_id,
