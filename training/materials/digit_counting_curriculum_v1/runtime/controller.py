@@ -33,6 +33,221 @@ def _gate_hit(record, target_confidence: float, tolerance: float) -> bool:
     return bool(record.success) and confidence_ok
 
 
+def _to_training_mode(value: Any, default: str = "rlhf") -> str:
+    mode = str(value).strip().lower() if value is not None else default
+    return mode if mode in ("rlhf", "sft") else default
+
+
+def _normalize_training_schedule(schedule_cfg: Any, max_level: int) -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    if not isinstance(schedule_cfg, list):
+        return entries
+
+    for item in schedule_cfg:
+        if not isinstance(item, dict):
+            continue
+
+        mode = _to_training_mode(item.get("mode", "rlhf"))
+        episodes = _to_int(item, "episodes", 0)
+        if episodes <= 0:
+            continue
+
+        if "level" in item:
+            min_level = max_level = int(item["level"])
+        else:
+            min_level = _to_int(item, "min_level", 1) if "min_level" in item else 1
+            max_level = _to_int(item, "max_level", max_level) if "max_level" in item else max_level
+
+        if min_level > max_level:
+            min_level, max_level = max_level, min_level
+
+        entries.append(
+            {
+                "mode": mode,
+                "min_level": min_level,
+                "max_level": max_level,
+                "remaining": episodes,
+            }
+        )
+
+    return entries
+
+
+def _select_training_mode(level: int, schedule: list[dict[str, Any]], default_mode: str) -> str:
+    for entry in schedule:
+        if entry["remaining"] <= 0:
+            continue
+        if entry["min_level"] <= level <= entry["max_level"]:
+            entry["remaining"] -= 1
+            return entry["mode"]
+    return default_mode
+
+
+def _normalize_phases(phases_cfg: Any) -> list[dict[str, Any]]:
+    phases: list[dict[str, Any]] = []
+    if not isinstance(phases_cfg, list):
+        return phases
+
+    for item in phases_cfg:
+        if not isinstance(item, dict):
+            continue
+        phase_type = str(item.get("type", "")).strip().lower()
+        if phase_type not in {"sft", "trend", "sft_warmup", "legacy"}:
+            continue
+        phase = dict(item)
+        phase["type"] = "sft" if phase_type == "sft_warmup" else phase_type
+        phases.append(phase)
+
+    return phases
+
+
+def _run_sft_phase(
+    phase_cfg: dict[str, Any],
+    execute_episode: Callable[..., Any],
+) -> dict[str, Any]:
+    episodes = _to_int(phase_cfg, "episodes", 10)
+    level = _to_int(phase_cfg, "level", 1)
+    confidence_pressure_strength = _to_float(phase_cfg, "confidence_pressure_strength", 0.5)
+
+    success_count = 0
+    for episode in range(1, episodes + 1):
+        progress_ratio = episode / max(1, episodes)
+        record = execute_episode(
+            difficulty=level,
+            progress_ratio=progress_ratio,
+            confidence_pressure_strength=confidence_pressure_strength,
+            training_mode="sft",
+        )
+        if bool(record.success):
+            success_count += 1
+
+    return {
+        "phase_type": "sft",
+        "level": level,
+        "episodes": episodes,
+        "success_count": success_count,
+        "accuracy": round(success_count / max(1, episodes), 4),
+    }
+
+
+def _run_trend_phase(
+    phase_cfg: dict[str, Any],
+    execute_episode: Callable[..., Any],
+) -> dict[str, Any]:
+    level = _to_int(phase_cfg, "level", 1)
+    max_total_samples = _to_int(phase_cfg, "max_total_samples", 1000)
+    trend_window = _to_int(phase_cfg, "trend_window", 100)
+    report_interval = _to_int(phase_cfg, "report_interval", 100)
+    confidence_pressure_strength = _to_float(phase_cfg, "confidence_pressure_strength", 0.5)
+
+    recent_success = deque(maxlen=trend_window)
+    recent_confidence = deque(maxlen=trend_window)
+    recent_reward = deque(maxlen=trend_window)
+    total_reward = 0.0
+    total_success = 0
+    trend_points: list[dict[str, Any]] = []
+
+    for episode in range(1, max_total_samples + 1):
+        record = execute_episode(
+            difficulty=level,
+            progress_ratio=min(1.0, episode / max_total_samples),
+            confidence_pressure_strength=confidence_pressure_strength,
+            training_mode="rlhf",
+        )
+
+        total_reward += record.reward
+        if record.success:
+            total_success += 1
+
+        recent_success.append(1 if record.success else 0)
+        recent_confidence.append(record.confidence)
+        recent_reward.append(record.reward)
+
+        if episode % report_interval == 0:
+            window_acc = sum(recent_success) / len(recent_success)
+            window_conf = sum(recent_confidence) / len(recent_confidence)
+            window_reward = sum(recent_reward) / len(recent_reward)
+            overall_acc = total_success / episode
+
+            trend_points.append({
+                "episode": episode,
+                "overall_accuracy": round(overall_acc, 4),
+                "window_accuracy": round(window_acc, 4),
+                "window_avg_confidence": round(window_conf, 4),
+                "window_avg_reward": round(window_reward, 4),
+                "total_reward": round(total_reward, 4),
+            })
+
+    overall_acc = total_success / max(1, max_total_samples)
+    window_acc = sum(recent_success) / len(recent_success)
+    window_conf = sum(recent_confidence) / len(recent_confidence)
+    window_reward = sum(recent_reward) / len(recent_reward)
+
+    return {
+        "phase_type": "trend",
+        "level": level,
+        "total_episodes": max_total_samples,
+        "overall_accuracy": round(overall_acc, 4),
+        "final_window_accuracy": round(window_acc, 4),
+        "final_window_confidence": round(window_conf, 4),
+        "final_window_reward": round(window_reward, 4),
+        "total_reward": round(total_reward, 4),
+        "trend_points": trend_points,
+    }
+
+
+def _run_staged_test(
+    *,
+    stage,
+    contract: dict[str, Any],
+    contract_path: str,
+    execute_episode: Callable[..., Any],
+    register_capability_summary: Callable[..., str],
+) -> dict[str, Any]:
+    test_id = str(contract.get("test_id", "digit_counting"))
+    specific_cfg = dict(DEFAULT_SPECIFIC)
+    specific_cfg.update(contract.get("test_specific", {}))
+
+    phases = _normalize_phases(specific_cfg.get("phases", []))
+    if not phases:
+        return run_test_loop(
+            stage=stage,
+            contract=contract,
+            contract_path=contract_path,
+            execute_episode=execute_episode,
+            register_capability_summary=register_capability_summary,
+        )
+
+    phase_summaries: list[dict[str, Any]] = []
+    for phase in phases:
+        if phase["type"] == "sft":
+            phase_summaries.append(_run_sft_phase(phase, execute_episode))
+        elif phase["type"] == "trend":
+            phase_summaries.append(_run_trend_phase(phase, execute_episode))
+
+    tool_name = register_capability_summary(
+        test_id=test_id,
+        max_verified=1,
+        boundary=1,
+        reason="multistage_test_complete",
+    )
+
+    summary = {
+        "enabled": True,
+        "test_id": test_id,
+        "status": "completed",
+        "contract": contract_path,
+        "phases": phase_summaries,
+        "tool_name": tool_name,
+    }
+
+    return {
+        "continue_training": False,
+        "stop_reason": f"{stage.name}MultiStageComplete",
+        "summary": summary,
+    }
+
+
 def run_test_loop(
     *,
     stage,
@@ -49,6 +264,16 @@ def run_test_loop(
     specific_cfg = dict(DEFAULT_SPECIFIC)
     specific_cfg.update(contract.get("test_specific", {}))
 
+    phases = _normalize_phases(specific_cfg.get("phases", []))
+    if phases:
+        return _run_staged_test(
+            stage=stage,
+            contract=contract,
+            contract_path=contract_path,
+            execute_episode=execute_episode,
+            register_capability_summary=register_capability_summary,
+        )
+
     level = _to_int(generic_cfg, "min_level", 1)
     max_level = _to_int(generic_cfg, "max_level", 20)
     max_total_samples = _to_int(generic_cfg, "max_total_samples", 3000)
@@ -59,6 +284,11 @@ def run_test_loop(
     base_target_loops = _to_int(specific_cfg, "base_target_loops", 40)
     max_loops_per_level = _to_int(specific_cfg, "max_loops_per_level", 200)
     confidence_pressure_strength = _to_float(specific_cfg, "confidence_pressure_strength", 0.5)
+    default_training_mode = _to_training_mode(specific_cfg.get("default_training_mode", "rlhf"))
+    training_mode_schedule = _normalize_training_schedule(
+        specific_cfg.get("training_mode_schedule", []),
+        max_level=max_level,
+    )
 
     best_verified = 0
     level_loops = 0
@@ -80,11 +310,17 @@ def run_test_loop(
     while level <= max_level and total_samples < max_total_samples:
         target_loops = max(1, base_target_loops * level)
         progress_ratio = min(1.0, level_loops / target_loops)
+        episode_training_mode = _select_training_mode(
+            level=level,
+            schedule=training_mode_schedule,
+            default_mode=default_training_mode,
+        )
 
         record = execute_episode(
             difficulty=level,
             progress_ratio=progress_ratio,
             confidence_pressure_strength=confidence_pressure_strength,
+            training_mode=episode_training_mode,
         )
 
         level_loops += 1

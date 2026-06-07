@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import inspect
 import json
 import uuid
 from dataclasses import dataclass, field
@@ -284,15 +285,28 @@ class ClosedLoopTrainer:
             difficulty: int | None = None,
             progress_ratio: float = 0.0,
             confidence_pressure_strength: float = 0.0,
+            training_mode: TrainingMode | str | None = None,
         ) -> EpisodeRecord:
-            return self._execute_stage_episode(
-                stage=stage,
-                env=env,
-                records=records,
-                difficulty=difficulty,
-                progress_ratio=progress_ratio,
-                confidence_pressure_strength=confidence_pressure_strength,
-            )
+            should_restore = hasattr(self.llm, "_training_mode")
+            old_training_mode = getattr(self.llm, "_training_mode", None) if should_restore else None
+
+            if training_mode is not None and should_restore:
+                if isinstance(training_mode, str):
+                    training_mode = TrainingMode(training_mode)
+                self.llm._training_mode = training_mode
+
+            try:
+                return self._execute_stage_episode(
+                    stage=stage,
+                    env=env,
+                    records=records,
+                    difficulty=difficulty,
+                    progress_ratio=progress_ratio,
+                    confidence_pressure_strength=confidence_pressure_strength,
+                )
+            finally:
+                if should_restore:
+                    self.llm._training_mode = old_training_mode
 
         def register_capability_summary(
             *,
@@ -425,7 +439,21 @@ class ClosedLoopTrainer:
             progress_ratio=progress_ratio,
             confidence_pressure_strength=confidence_pressure_strength,
         )
-        self.llm.train_step(problem.question, problem.expected_answer, out.answer, reward)
+        train_fn = self.llm.train_step
+        try:
+            signature = inspect.signature(train_fn)
+            parameters = len(signature.parameters)
+        except (ValueError, TypeError):
+            parameters = 4
+
+        if parameters >= 4:
+            train_fn(problem.question, problem.expected_answer, out.answer, reward)
+        elif parameters == 3:
+            train_fn(problem.question, out.answer, reward)
+        elif parameters == 1:
+            train_fn(reward)
+        else:
+            train_fn()
 
         surprise = abs(out.confidence - (1.0 if success else 0.0))
         failure_type = FailureType.NONE

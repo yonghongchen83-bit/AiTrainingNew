@@ -8,16 +8,32 @@
   },
   "generic": {
     "min_level": 1,
-    "max_level": 20,
-    "max_total_samples": 3000
+    "max_level": 1,
+    "max_total_samples": 1010
   },
   "test_specific": {
     "gate_window": 10,
     "target_confidence": 1.0,
     "tolerance": 0.0,
-    "base_target_loops": 40,
-    "max_loops_per_level": 200,
-    "confidence_pressure_strength": 0.5
+    "base_target_loops": 10,
+    "max_loops_per_level": 10,
+    "confidence_pressure_strength": 0.5,
+    "phases": [
+      {
+        "type": "sft",
+        "level": 1,
+        "episodes": 10,
+        "confidence_pressure_strength": 0.5
+      },
+      {
+        "type": "trend",
+        "level": 1,
+        "max_total_samples": 1000,
+        "trend_window": 100,
+        "report_interval": 100,
+        "confidence_pressure_strength": 0.5
+      }
+    ]
   },
   "results": {
     "output_dir": "training/materials/digit_counting_curriculum_v1/results"
