@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import importlib.util
-import inspect
 import json
 import uuid
 from dataclasses import dataclass, field
 from math import exp, log
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from .environment import MathEnvironment
 from .llm_provider import LLMProvider, build_llm_provider
@@ -16,6 +15,7 @@ from .models import (
     FailureType,
     FallbackEvent,
     GeneratedTask,
+    LLMOutput,
     LLMProviderType,
     Mode,
     OpenAIFunction,
@@ -28,6 +28,7 @@ from .models import (
 )
 from .reward import compute_reward_profile
 from .self_extension import SelfExtensionPlanner
+from .stage_validator import StageValidator
 from .toolbox import Toolbox
 
 @dataclass
@@ -176,12 +177,6 @@ class ClosedLoopTrainer:
             if not should_continue:
                 break
 
-            if self._is_naturally_converged(records) and self.config.simulation_mode == SimulationMode.IMPROVING:
-                self.stop_reason = f"NaturalConvergence@{stage.name}"
-                # 达到自然收敛后提前结束主循环。
-                if idx < len(stages_to_run) - 1:
-                    break
-
         self_extension_summary: dict[str, object] = {
             "enabled": self.config.enable_self_extension,
             "generated_tasks": 0,
@@ -280,6 +275,26 @@ class ClosedLoopTrainer:
         else:
             old_llm = None
 
+        # Read no_predict_force_solving from test contract
+        specific_cfg = package["contract"].get("test_specific", {})
+        force_confidence = bool(specific_cfg.get("no_predict_force_solving", False))
+
+        # Auto-discover optional StageValidator from test package
+        test_root = package.get("test_root")
+        validator = StageValidator()
+        if test_root is not None:
+            sv_path = test_root / "runtime" / "stage_validator.py"
+            if sv_path.exists():
+                sv_mod = self._import_module(f"stage_validator_{test_root.stem}", sv_path)
+                validator_cls = None
+                for name in dir(sv_mod):
+                    obj = getattr(sv_mod, name)
+                    if isinstance(obj, type) and issubclass(obj, StageValidator) and obj is not StageValidator:
+                        validator_cls = obj
+                        break
+                if validator_cls is not None:
+                    validator = validator_cls()
+
         def execute_episode(
             *,
             difficulty: int | None = None,
@@ -303,6 +318,8 @@ class ClosedLoopTrainer:
                     difficulty=difficulty,
                     progress_ratio=progress_ratio,
                     confidence_pressure_strength=confidence_pressure_strength,
+                    force_confidence=force_confidence,
+                    validator=validator,
                 )
             finally:
                 if should_restore:
@@ -360,16 +377,22 @@ class ClosedLoopTrainer:
         difficulty: int | None = None,
         progress_ratio: float = 0.0,
         confidence_pressure_strength: float = 0.0,
+        force_confidence: bool = False,
+        validator: StageValidator | None = None,
     ) -> EpisodeRecord:
-        problem = env.reset(difficulty=difficulty)
+        problem = env.reset(difficulty=difficulty,
+                           problem_generator=validator.generate_problem if validator else None)
         recursion_depth = 0
-        out = self.llm.predict(
+        # Step 1: predict confidence (just self-assessment, no answer)
+        out = self.llm.predict_confidence(
             question=problem.question,
             expected_answer=problem.expected_answer,
             budget=env.budget,
             mode=self.config.mode,
             stage=stage,
+            force_confidence=force_confidence,
         )
+        predicted_confidence = out.confidence
         threshold = self._threshold(self.config.mode)
         while out.confidence < threshold:
             if out.use_tool and out.tool_trigger and self.toolbox.has_tool(out.tool_trigger):
@@ -403,11 +426,11 @@ class ClosedLoopTrainer:
                 record = EpisodeRecord(
                     stage_name=stage.name,
                     question=problem.question,
-                    answer=out.answer,
+                    answer=problem.expected_answer,
                     expected=problem.expected_answer,
                     success=False,
-                    confidence=out.confidence,
-                    surprise=abs(out.confidence - 0.0),
+                    confidence=predicted_confidence,
+                    surprise=abs(predicted_confidence - 0.0),
                     reward=-1.0,
                     cost=0.0,
                     used_tool=None,
@@ -421,41 +444,58 @@ class ClosedLoopTrainer:
 
             recursion_depth += 1
             child_budget = env.budget * 0.8
-            out = self.llm.predict(
+            out = self.llm.predict_confidence(
                 question=problem.question,
                 expected_answer=problem.expected_answer,
                 budget=child_budget,
                 mode=self.config.mode,
                 stage=stage,
+                force_confidence=force_confidence,
             )
 
         if out.use_tool:
             self.toolbox.use_tool(out.tool_trigger)
 
-        reward, success, actual_cost = env.step(
+        # Step 2: model was confident enough — now actually answer the question.
+        # During SFT mode the answer is provided directly — no LLM generation needed.
+        is_sft = getattr(self.llm, '_training_mode', None) == TrainingMode.SFT
+        if is_sft:
+            # In SFT we train on the correct answer directly
+            answer_out = LLMOutput(
+                answer=problem.expected_answer, confidence=1.0, estimated_cost=1,
+                use_tool=False, tool_trigger=None, recursion_flag=False,
+                background_locked=True, clarification=None,
+            )
+        else:
+            answer_out = self.llm.generate_answer(
+            question=problem.question,
+            mode=self.config.mode,
+            stage=stage,
+        )
+        # Determine correctness via validator (test can override)
+        v = validator or StageValidator()
+        answer_is_correct = v.check_answer(problem.question, answer_out.answer, problem.expected_answer)
+
+        reward = v.compute_reward(
             out=out,
-            expected_answer=problem.expected_answer,
-            recursion_depth=recursion_depth,
+            success=answer_is_correct,
+            actual_cost=1.0 + (len(problem.expected_answer) / 10.0) + (recursion_depth * 2.0),
+            stage=stage,
             progress_ratio=progress_ratio,
             confidence_pressure_strength=confidence_pressure_strength,
         )
-        train_fn = self.llm.train_step
-        try:
-            signature = inspect.signature(train_fn)
-            parameters = len(signature.parameters)
-        except (ValueError, TypeError):
-            parameters = 4
+        _, _, actual_cost = env.step(
+            out=out,
+            expected_answer=problem.expected_answer,
+            recursion_depth=recursion_depth,
+            success=answer_is_correct,
+            progress_ratio=progress_ratio,
+            confidence_pressure_strength=confidence_pressure_strength,
+            reward=reward,
+        )
+        self.llm.train_step(problem.question, problem.expected_answer, reward)
 
-        if parameters >= 4:
-            train_fn(problem.question, problem.expected_answer, out.answer, reward)
-        elif parameters == 3:
-            train_fn(problem.question, out.answer, reward)
-        elif parameters == 1:
-            train_fn(reward)
-        else:
-            train_fn()
-
-        surprise = abs(out.confidence - (1.0 if success else 0.0))
+        surprise = abs(predicted_confidence - (1.0 if answer_is_correct else 0.0))
         failure_type = FailureType.NONE
         if env.budget <= 0:
             failure_type = FailureType.BUDGET_EXHAUSTED
@@ -467,10 +507,10 @@ class ClosedLoopTrainer:
                 reason="remaining_budget<=0",
                 details={"actual_cost": round(actual_cost, 4)},
             )
-        elif not success and out.confidence > 0.8:
+        elif not answer_is_correct and predicted_confidence > 0.8:
             failure_type = FailureType.VALIDATION_FAILED
 
-        if success and out.confidence > 0.9:
+        if answer_is_correct and predicted_confidence > 0.9:
             self.toolbox.register(
                 trigger_words=["高信心模板", "HighConfidenceTemplate"],
                 description="在高置信成功情形下可复用的步骤模板",
@@ -480,10 +520,10 @@ class ClosedLoopTrainer:
         record = EpisodeRecord(
             stage_name=stage.name,
             question=problem.question,
-            answer=out.answer,
+            answer=answer_out.answer,
             expected=problem.expected_answer,
-            success=success,
-            confidence=out.confidence,
+            success=answer_is_correct,
+            confidence=predicted_confidence,
             surprise=surprise,
             reward=reward,
             cost=actual_cost,
@@ -530,39 +570,49 @@ class ClosedLoopTrainer:
             self.stats.stage_metrics[stage.name] = StageMetrics()
 
         for task in tasks:
-            out = self.llm.predict(
+            out = self.llm.predict_confidence(
                 question=task.question,
                 expected_answer=task.expected_answer,
                 budget=100.0,
                 mode=self.config.mode,
                 stage=stage,
             )
-            actual_cost = 1.0 + len(out.answer) / 10.0 + (2.0 if out.recursion_flag else 0.0)
-            success = out.answer.strip() == task.expected_answer
+            predicted_confidence = out.confidence
+            if predicted_confidence >= self._threshold(self.config.mode):
+                answer_out = self.llm.generate_answer(
+                    question=task.question,
+                    mode=self.config.mode,
+                    stage=stage,
+                )
+            else:
+                answer_out = out
+            answer = answer_out.answer
+            actual_cost = 1.0 + len(task.expected_answer) / 10.0 + (2.0 if out.recursion_flag else 0.0)
+            answer_is_correct = answer.strip() == task.expected_answer
             reward = compute_reward_profile(
                 out=out,
-                success=success,
+                success=answer_is_correct,
                 actual_cost=actual_cost,
                 estimated_cost=out.estimated_cost,
                 profile=profile,
             )
-            self.llm.train_step(task.question, task.expected_answer, out.answer, reward)
+            self.llm.train_step(task.question, task.expected_answer, reward)
 
             if out.use_tool:
                 self.toolbox.use_tool(out.tool_trigger)
 
             failure_type = FailureType.NONE
-            if not success and out.confidence > 0.8:
+            if not answer_is_correct and predicted_confidence > 0.8:
                 failure_type = FailureType.VALIDATION_FAILED
 
             record = EpisodeRecord(
                 stage_name=stage.name,
                 question=task.question,
-                answer=out.answer,
+                answer=answer,
                 expected=task.expected_answer,
-                success=success,
-                confidence=out.confidence,
-                surprise=abs(out.confidence - (1.0 if success else 0.0)),
+                success=answer_is_correct,
+                confidence=predicted_confidence,
+                surprise=abs(predicted_confidence - (1.0 if answer_is_correct else 0.0)),
                 reward=reward,
                 cost=actual_cost,
                 used_tool=out.tool_trigger,

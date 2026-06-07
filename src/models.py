@@ -49,6 +49,7 @@ class LLMOutput:
     recursion_flag: bool
     background_locked: bool
     clarification: Optional[str]
+    internal_correct: bool = True
 
 
 @dataclass

@@ -33,9 +33,10 @@
         "base_target_loops": 40,
         "max_loops_per_level": 200,
         "confidence_pressure_strength": 0.5,
-        "report_interval": 100
+        "report_interval": 20
       }
-    ]
+    ],
+    "no_predict_force_solving": false
   },
   "results": {
     "output_dir": "training/materials/digit_counting_curriculum_v1/results"

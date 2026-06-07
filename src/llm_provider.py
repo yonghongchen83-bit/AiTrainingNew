@@ -25,18 +25,29 @@ class LLMProvider(ABC):
         return 0.5
 
     @abstractmethod
-    def train_step(self, question: str, expected_answer: str, model_answer: str, reward: float) -> None:
+    def train_step(self, question: str, expected_answer: str, reward: float) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    def predict(
+    def predict_confidence(
         self,
         question: str,
         expected_answer: str,
         budget: float,
         mode: Mode,
         stage: StageConfig,
+        force_confidence: bool = False,
     ) -> LLMOutput:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def generate_answer(
+        self,
+        question: str,
+        mode: Mode,
+        stage: StageConfig,
+    ) -> LLMOutput:
+        """Ask the LLM to actually solve the question. Returns answer + confidence."""
         raise NotImplementedError()
 
 
@@ -51,21 +62,35 @@ class SimulatedLLMProvider(LLMProvider):
     def learning_progress(self) -> float:
         return self._agent.skill
 
-    def train_step(self, question: str, expected_answer: str, model_answer: str, reward: float) -> None:
+    def train_step(self, question: str, expected_answer: str, reward: float) -> None:
         self._agent.train_step(reward)
 
-    def predict(
+    def predict_confidence(
         self,
         question: str,
         expected_answer: str,
         budget: float,
         mode: Mode,
         stage: StageConfig,
+        force_confidence: bool = False,
     ) -> LLMOutput:
-        return self._agent.predict(
+        return self._agent.predict_confidence(
             question=question,
             expected_answer=expected_answer,
             budget=budget,
+            mode=mode,
+            stage=stage,
+            force_confidence=force_confidence,
+        )
+
+    def generate_answer(
+        self,
+        question: str,
+        mode: Mode,
+        stage: StageConfig,
+    ) -> LLMOutput:
+        return self._agent.generate_answer(
+            question=question,
             mode=mode,
             stage=stage,
         )
@@ -83,21 +108,24 @@ class RealLLMProviderStub(LLMProvider):
     def model_name(self) -> str | None:
         return self._model_name
 
-    def train_step(self, question: str, expected_answer: str, model_answer: str, reward: float) -> None:
-        _ = (question, model_answer, reward)
+    def train_step(self, question: str, expected_answer: str, reward: float) -> None:
+        _ = (question, expected_answer, reward)
 
-    def predict(
+    def predict_confidence(
         self,
         question: str,
         expected_answer: str,
         budget: float,
         mode: Mode,
         stage: StageConfig,
+        force_confidence: bool = False,
     ) -> LLMOutput:
         _ = (question, expected_answer, budget, mode)
+        if force_confidence:
+            return LLMOutput(answer="", confidence=1.0, estimated_cost=1, use_tool=False, tool_trigger=None, recursion_flag=False, background_locked=True, clarification="force_solve")
         tool_trigger = stage.required_tool if stage.tool_required else None
         return LLMOutput(
-            answer="0",
+            answer="",
             confidence=0.2,
             estimated_cost=3,
             use_tool=stage.tool_required,
@@ -105,6 +133,24 @@ class RealLLMProviderStub(LLMProvider):
             recursion_flag=True,
             background_locked=True,
             clarification="real_llm_provider_stub_active",
+        )
+
+    def generate_answer(
+        self,
+        question: str,
+        mode: Mode,
+        stage: StageConfig,
+    ) -> LLMOutput:
+        _ = (question, mode, stage)
+        return LLMOutput(
+            answer="0",
+            confidence=0.5,
+            estimated_cost=3,
+            use_tool=False,
+            tool_trigger=None,
+            recursion_flag=False,
+            background_locked=True,
+            clarification="real_llm_provider_stub_generated",
         )
 
 
@@ -123,8 +169,8 @@ class RealVLLMProvider(LLMProvider):
     def model_name(self) -> str | None:
         return self._model_name
 
-    def train_step(self, question: str, expected_answer: str, model_answer: str, reward: float) -> None:
-        _ = (question, expected_answer, model_answer, reward)
+    def train_step(self, question: str, expected_answer: str, reward: float) -> None:
+        _ = (question, expected_answer, reward)
 
     @staticmethod
     def _threshold(mode: Mode) -> float:
@@ -133,32 +179,6 @@ class RealVLLMProvider(LLMProvider):
         if mode == Mode.EXPERT:
             return 0.8
         return 0.9
-
-    @staticmethod
-    def _extract_answer_fallback(text: str) -> str:
-        # Try Arabic digits first
-        match = re.search(r"-?\d+", text)
-        if match:
-            return match.group(0)
-        # Try Chinese numeral (e.g. "一位" → "1", "两位数" → "2")
-        cn_digits = {"零": "0", "一": "1", "二": "2", "两": "2", "三": "3",
-                     "四": "4", "五": "5", "六": "6", "七": "7", "八": "8",
-                     "九": "9", "十": "10"}
-        for ch, digit in cn_digits.items():
-            if ch in text:
-                return digit
-        return "0"
-
-    @staticmethod
-    def _cn_to_arabic(text: str) -> str:
-        """Convert a Chinese numeral word to Arabic digits, e.g. '一位' → '1', '两位数' → '2'."""
-        cn_digits = {"零": "0", "一": "1", "二": "2", "两": "2", "三": "3",
-                     "四": "4", "五": "5", "六": "6", "七": "7", "八": "8",
-                     "九": "9", "十": "10"}
-        for ch, digit in cn_digits.items():
-            if ch in text:
-                return digit
-        return text
 
     @staticmethod
     def _extract_json_block(text: str) -> dict | None:
@@ -175,9 +195,9 @@ class RealVLLMProvider(LLMProvider):
 
     def _query_vllm(self, question: str) -> tuple[str, int, str | None]:
         system_prompt = (
-            "Return a JSON object with keys: answer (string), confidence (number 0 to 1)."
+            "Return a JSON object with key: confidence (number 0 to 1)."
         )
-        user_prompt = f"Question: {question}"
+        user_prompt = f"What do you think your confidence to solve this problem: {question}"
         payload = {
             "model": self._model_name,
             "messages": [
@@ -206,29 +226,29 @@ class RealVLLMProvider(LLMProvider):
         estimated_tokens = int(usage.get("total_tokens", max(8, len(content) // 4)))
         return content, estimated_tokens, None
 
-    def predict(
+    def predict_confidence(
         self,
         question: str,
         expected_answer: str,
         budget: float,
         mode: Mode,
         stage: StageConfig,
+        force_confidence: bool = False,
     ) -> LLMOutput:
         _ = (expected_answer, budget)
+        if force_confidence:
+            return LLMOutput(answer="", confidence=1.0, estimated_cost=1, use_tool=False, tool_trigger=None, recursion_flag=False, background_locked=True, clarification="force_solve")
         try:
             content, estimated_tokens, clarification = self._query_vllm(question)
             parsed = self._extract_json_block(content)
             if parsed is None:
-                answer = self._extract_answer_fallback(content)
                 confidence = 0.35
             else:
-                answer = str(parsed.get("answer", self._extract_answer_fallback(content))).strip()
                 try:
                     confidence = float(parsed.get("confidence", 0.35))
                 except (TypeError, ValueError):
                     confidence = 0.35
         except (error.URLError, error.HTTPError, TimeoutError, KeyError, json.JSONDecodeError) as ex:
-            answer = "0"
             confidence = 0.15
             estimated_tokens = 16
             clarification = f"real_vllm_provider_error:{type(ex).__name__}"
@@ -237,7 +257,7 @@ class RealVLLMProvider(LLMProvider):
         recursion_flag = confidence < self._threshold(mode)
 
         return LLMOutput(
-            answer=answer,
+            answer="",
             confidence=confidence,
             estimated_cost=max(1, estimated_tokens // 8),
             use_tool=False,
@@ -247,19 +267,76 @@ class RealVLLMProvider(LLMProvider):
             clarification=clarification,
         )
 
+    def generate_answer(
+        self,
+        question: str,
+        mode: Mode,
+        stage: StageConfig,
+    ) -> LLMOutput:
+        """Ask the LLM to actually solve the question, using answer+confidence prompt."""
+        _ = (mode, stage)
+        try:
+            content, estimated_tokens, clarification = self._query_vllm_answer(question)
+            parsed = self._extract_json_block(content)
+            if parsed is None:
+                answer = "0"
+                confidence = 0.35
+            else:
+                answer = str(parsed.get("answer", "0")).strip()
+                try:
+                    confidence = float(parsed.get("confidence", 0.35))
+                except (TypeError, ValueError):
+                    confidence = 0.35
+        except (error.URLError, error.HTTPError, TimeoutError, KeyError, json.JSONDecodeError) as ex:
+            answer = "0"
+            confidence = 0.15
+            estimated_tokens = 16
+            clarification = f"real_vllm_error:{type(ex).__name__}"
+
+        confidence = max(0.01, min(1.0, confidence))
+        return LLMOutput(
+            answer=answer,
+            confidence=confidence,
+            estimated_cost=max(1, estimated_tokens // 8),
+            use_tool=False,
+            tool_trigger=None,
+            recursion_flag=False,
+            background_locked=True,
+            clarification=clarification,
+        )
+
+    @staticmethod
+    def _query_vllm_answer(question: str) -> tuple[str, int, str | None]:
+        """Query vLLM with a prompt asking for both answer and confidence."""
+        system_prompt = "Return a JSON object with keys: answer (string), confidence (number 0 to 1)."
+        user_prompt = f"Question: {question}"
+        payload = {
+            "model": "",  # will be filled by caller
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            "temperature": 0.0,
+            "max_tokens": 64,
+        }
+
 
 class RealLocalProvider(LLMProvider):
     """Loads a HuggingFace model directly in-process — no external server needed.
-    Supports online fine-tuning: train_step() buffers (question, model_answer)
+    Supports online fine-tuning: train_step() buffers (question, expected_answer, reward)
     pairs and periodically runs gradient steps to improve the model.
     """
 
-    def __init__(self, model_name: str, training_mode: TrainingMode = TrainingMode.RLHF) -> None:
+    def __init__(self, model_name: str, training_mode: TrainingMode = TrainingMode.RLHF,
+                 system_prompt: str | None = None) -> None:
         self._model_name = model_name
         self._model = None
         self._tokenizer = None
         self._training_mode = training_mode
-        self._train_buffer: list[tuple[str, str, str, float]] = []  # (q, expected, model_answer, reward)
+        self._system_prompt = system_prompt or (
+            "Return a JSON object with key: confidence (number 0 to 1)."
+        )
+        self._train_buffer: list[tuple[str, str, float]] = []  # (q, expected, reward)
         self._train_batch_size = 8
         self._learning_rate = 5e-5
         self._optimizer = None
@@ -272,15 +349,17 @@ class RealLocalProvider(LLMProvider):
     def model_name(self) -> str | None:
         return self._model_name
 
-    def train_step(self, question: str, expected_answer: str, model_answer: str, reward: float) -> None:
+    def train_step(self, question: str, expected_answer: str, reward: float) -> None:
+        # Ensure model loaded before buffering (needed when force_confidence skips predict)
+        self._ensure_loaded()
         # Buffer everything; training mode determines how it's used
-        self._train_buffer.append((question, expected_answer, model_answer, reward))
+        self._train_buffer.append((question, expected_answer, reward))
         if len(self._train_buffer) >= self._train_batch_size:
             self._fine_tune()
 
     def _fine_tune(self) -> None:
         """Run gradient steps. SFT: train on expected_answer (correct target).
-        RLHF: reward-weighted regression on model_answer."""
+        RLHF: reward-weighted regression on expected_answer."""
         self._model.train()
         if self._optimizer is None:
             from torch.optim import Adafactor
@@ -289,15 +368,13 @@ class RealLocalProvider(LLMProvider):
                 lr=self._learning_rate,
             )
 
-        system_prompt = "Return a JSON object with keys: answer (string), confidence (number 0 to 1)."
         total_loss = 0.0
-        for q, exp_a, model_a, r in self._train_buffer:
-            if self._training_mode == TrainingMode.SFT:
-                target = json.dumps({"answer": exp_a, "confidence": 1.0}, ensure_ascii=False)
-            else:
-                target = model_a
+        for q, exp_a, r in self._train_buffer:
+            # Always train on JSON-formatted answer so the model
+            # learns to answer correctly (used by generate_answer).
+            target = json.dumps({"answer": exp_a, "confidence": 1.0}, ensure_ascii=False)
             messages = [
-                {"role": "system", "content": system_prompt},
+                {"role": "system", "content": "Return a JSON object with keys: answer (string), confidence (number 0 to 1)."},
                 {"role": "user", "content": f"Question: {q}"},
                 {"role": "assistant", "content": target},
             ]
@@ -332,32 +409,6 @@ class RealLocalProvider(LLMProvider):
         return 0.9
 
     @staticmethod
-    def _extract_answer_fallback(text: str) -> str:
-        # Try Arabic digits first
-        match = re.search(r"-?\d+", text)
-        if match:
-            return match.group(0)
-        # Try Chinese numeral (e.g. "一位" → "1", "两位数" → "2")
-        cn_digits = {"零": "0", "一": "1", "二": "2", "两": "2", "三": "3",
-                     "四": "4", "五": "5", "六": "6", "七": "7", "八": "8",
-                     "九": "9", "十": "10"}
-        for ch, digit in cn_digits.items():
-            if ch in text:
-                return digit
-        return "0"
-
-    @staticmethod
-    def _cn_to_arabic(text: str) -> str:
-        """Convert a Chinese numeral word to Arabic digits, e.g. '一位' → '1', '两位数' → '2'."""
-        cn_digits = {"零": "0", "一": "1", "二": "2", "两": "2", "三": "3",
-                     "四": "4", "五": "5", "六": "6", "七": "7", "八": "8",
-                     "九": "9", "十": "10"}
-        for ch, digit in cn_digits.items():
-            if ch in text:
-                return digit
-        return text
-
-    @staticmethod
     def _extract_json_block(text: str) -> dict | None:
         match = re.search(r"\{.*\}", text, flags=re.DOTALL)
         if not match:
@@ -388,22 +439,77 @@ class RealLocalProvider(LLMProvider):
             pass
         print(f"[RealLocalProvider] {self._model_name} loaded.")
 
-    def predict(
+    def predict_confidence(
         self,
         question: str,
         expected_answer: str,
         budget: float,
         mode: Mode,
         stage: StageConfig,
+        force_confidence: bool = False,
     ) -> LLMOutput:
         _ = (expected_answer, budget)
+        if force_confidence:
+            return LLMOutput(answer="", confidence=1.0, estimated_cost=1, use_tool=False, tool_trigger=None, recursion_flag=False, background_locked=True, clarification="force_solve")
         try:
             self._ensure_loaded()
-            system_prompt = (
-                "Return a JSON object with keys: answer (string), confidence (number 0 to 1)."
-            )
             messages = [
-                {"role": "system", "content": system_prompt},
+                {"role": "system", "content": self._system_prompt},
+                {"role": "user", "content": f"What do you think your confidence to solve this problem: {question}"},
+            ]
+            text = self._tokenizer.apply_chat_template(
+                messages, tokenize=False, add_generation_prompt=True
+            )
+            inputs = self._tokenizer(text, return_tensors="pt").to(self._model.device)
+            outputs = self._model.generate(
+                **inputs,
+                max_new_tokens=64,
+                do_sample=False,
+            )
+            generated = outputs[0][inputs["input_ids"].shape[1]:]
+            content = self._tokenizer.decode(generated, skip_special_tokens=True).strip()
+            estimated_tokens = len(generated)
+
+            parsed = self._extract_json_block(content)
+            if parsed is None:
+                confidence = 0.35
+            else:
+                try:
+                    confidence = float(parsed.get("confidence", 0.35))
+                except (TypeError, ValueError):
+                    confidence = 0.35
+            clarification = None
+        except Exception as ex:
+            confidence = 0.15
+            estimated_tokens = 16
+            clarification = f"real_local_error:{type(ex).__name__}"
+
+        confidence = max(0.01, min(1.0, confidence))
+        recursion_flag = confidence < self._threshold(mode)
+
+        return LLMOutput(
+            answer="",
+            confidence=confidence,
+            estimated_cost=max(1, estimated_tokens // 8),
+            use_tool=False,
+            tool_trigger=None,
+            recursion_flag=recursion_flag,
+            background_locked=True,
+            clarification=clarification,
+        )
+
+    def generate_answer(
+        self,
+        question: str,
+        mode: Mode,
+        stage: StageConfig,
+    ) -> LLMOutput:
+        """Ask the LLM to actually solve the question. Uses answer+confidence prompt."""
+        _ = (mode, stage)
+        try:
+            self._ensure_loaded()
+            messages = [
+                {"role": "system", "content": "Return a JSON object with keys: answer (string), confidence (number 0 to 1)."},
                 {"role": "user", "content": f"Question: {question}"},
             ]
             text = self._tokenizer.apply_chat_template(
@@ -421,11 +527,10 @@ class RealLocalProvider(LLMProvider):
 
             parsed = self._extract_json_block(content)
             if parsed is None:
-                answer = self._extract_answer_fallback(content)
+                answer = "0"
                 confidence = 0.35
             else:
-                answer = str(parsed.get("answer", self._extract_answer_fallback(content))).strip()
-                answer = self._cn_to_arabic(answer)
+                answer = str(parsed.get("answer", "0")).strip()
                 try:
                     confidence = float(parsed.get("confidence", 0.35))
                 except (TypeError, ValueError):
@@ -438,15 +543,13 @@ class RealLocalProvider(LLMProvider):
             clarification = f"real_local_error:{type(ex).__name__}"
 
         confidence = max(0.01, min(1.0, confidence))
-        recursion_flag = confidence < self._threshold(mode)
-
         return LLMOutput(
             answer=answer,
             confidence=confidence,
             estimated_cost=max(1, estimated_tokens // 8),
             use_tool=False,
             tool_trigger=None,
-            recursion_flag=recursion_flag,
+            recursion_flag=False,
             background_locked=True,
             clarification=clarification,
         )
@@ -459,11 +562,16 @@ def build_llm_provider(
     model_name: str | None = None,
     base_url: str | None = None,
     training_mode: TrainingMode = TrainingMode.RLHF,
+    system_prompt: str | None = None,
 ) -> LLMProvider:
     if provider_type == LLMProviderType.REAL_STUB:
         return RealLLMProviderStub(model_name=model_name or "gpt-5.3-codex")
     if provider_type == LLMProviderType.REAL_VLLM:
         return RealVLLMProvider(model_name=model_name or "Qwen/Qwen2.5-0.5B-Instruct", base_url=base_url)
     if provider_type == LLMProviderType.REAL_LOCAL:
-        return RealLocalProvider(model_name=model_name or "Qwen/Qwen2.5-0.5B-Instruct", training_mode=training_mode)
+        return RealLocalProvider(
+            model_name=model_name or "Qwen/Qwen2.5-0.5B-Instruct",
+            training_mode=training_mode,
+            system_prompt=system_prompt,
+        )
     return SimulatedLLMProvider(seed=seed, simulation_mode=simulation_mode)

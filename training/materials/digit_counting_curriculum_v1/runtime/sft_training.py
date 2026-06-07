@@ -68,7 +68,7 @@ class SftTraining:
                     lvl_success += 1
                     total_success += 1
                 if (i + 1) % 10 == 0 or i == ep - 1:
-                    print(f"    [{i+1}/{ep}] acc={lvl_success}/{i+1}  reward={record.reward:+.2f}")
+                    print(f"    [{i+1}/{ep}] acc={lvl_success}/{i+1}")
 
             level_results.append({
                 "level": lvl,

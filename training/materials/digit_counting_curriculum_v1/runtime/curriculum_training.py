@@ -45,6 +45,8 @@ class CurriculumTraining:
         best_verified = 0
         gate_window = deque(maxlen=max(1, self._gate_window_size))
         level_trends: list[dict[str, Any]] = []
+        # Track stats per level for progress printing
+        level_stats: list[dict[str, Any]] = []
 
         print(f"\n{'='*70}")
         print(f"CURRICULUM (RLHF)  levels {self._min_level}→{self._max_level}")
@@ -68,12 +70,27 @@ class CurriculumTraining:
             gate_window.append(
                 self._gate_hit(record, self._target_confidence, self._tolerance)
             )
+            level_stats.append({
+                "success": bool(record.success),
+                "confidence": float(record.confidence),
+                "surprise": float(record.surprise),
+                "reward": float(record.reward),
+            })
 
-            if level_loops % self._report_interval == 0:
+            if level_loops % self._report_interval == 0 or level_loops == self._max_loops_per_level:
+                window = level_stats[-min(level_loops, self._report_interval):]
+                acc = sum(1 for s in window if s["success"]) / max(1, len(window))
+                avg_conf = sum(s["confidence"] for s in window) / max(1, len(window))
+                avg_surprise = sum(s["surprise"] for s in window) / max(1, len(window))
+                print(f"  Level {level} [{level_loops:>3}/{self._max_loops_per_level}] "
+                      f"acc={acc:.3f}  conf={avg_conf:.3f}  surprise={avg_surprise:.3f}  samples={total_samples}")
                 level_trends.append({
                     "level": level,
                     "episode_at_level": level_loops,
                     "total_samples": total_samples,
+                    "accuracy": round(acc, 4),
+                    "avg_confidence": round(avg_conf, 4),
+                    "avg_surprise": round(avg_surprise, 4),
                 })
 
             if (
@@ -81,7 +98,11 @@ class CurriculumTraining:
                 and all(gate_window)
             ):
                 best_verified = level
-                print(f"  >> Level {level} passed!  → level {level+1}  (samples: {total_samples})")
+                window = level_stats[-min(level_loops, self._report_interval):]
+                acc = sum(1 for s in window if s["success"]) / max(1, len(window))
+                avg_conf = sum(s["confidence"] for s in window) / max(1, len(window))
+                print(f"  >> Level {level} passed!  → level {level+1}  "
+                      f"acc={acc:.3f}  conf={avg_conf:.3f}  samples={total_samples}")
                 if level >= self._max_level:
                     print(f"CURRICULUM END — all levels cleared (verified={best_verified})\n")
                     stop_reason = f"{stage_name}RequirementReached@{level}Digits"
